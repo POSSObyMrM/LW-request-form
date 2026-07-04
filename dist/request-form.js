@@ -7,18 +7,29 @@
     <h2 id="dossier-course-title" class="lw-widget-in learnworlds-subheading learnworlds-element learnworlds-subheading-small">Descargar Dossier</h2>
     <div id="dossier-course-subtitle" class="lw-widget-in learnworlds-main-text learnworlds-main-text-large learnworlds-element" data-element-id="textLarge" data-node-type="text">Revisa tu correo, te acabamos de enviar lo que nos has pedido.</div>
 
-    <form id="dossierForm">
+    <form id="dossierForm" novalidate>
       <input type="hidden" id="modal-course-id">
       <input type="hidden" id="modal-course-name">
+      <input type="hidden" id="modal-page-url">
 
       <div class="dossier-input-group">
         <label for="dossier-nombre">Nombre completo *</label>
         <input type="text" id="dossier-nombre" required placeholder="Ej. Andrea P\xE9rez">
+        <span class="dossier-field-error" id="dossier-nombre-error"></span>
       </div>
 
       <div class="dossier-input-group">
         <label for="dossier-email">Correo electr\xF3nico *</label>
         <input type="email" id="dossier-email" required placeholder="ejemplo@correo.com">
+        <span class="dossier-field-error" id="dossier-email-error"></span>
+      </div>
+
+      <div class="dossier-input-group dossier-checkbox-group">
+        <label for="dossier-terms">
+          <input type="checkbox" id="dossier-terms" required>
+          Acepto los <a href="https://posso.es/terms" target="_blank" rel="noopener">T\xE9rminos y Condiciones</a> y la <a href="https://posso.es/privacy" target="_blank" rel="noopener">Pol\xEDtica de Privacidad</a> *
+        </label>
+        <span class="dossier-field-error" id="dossier-terms-error"></span>
       </div>
 
       <button type="submit" id="dossier-submit-btn" class="learnworlds-button">Solicitar Dossier</button>
@@ -105,7 +116,43 @@
 
   // src/request-form.js
   var LOG_PREFIX = "[RequestForm]";
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   console.log(LOG_PREFIX, "script parsed, readyState =", document.readyState);
+  function setFieldError(inputId, errorId, message) {
+    const input = document.getElementById(inputId);
+    const errorEl = document.getElementById(errorId);
+    if (errorEl) errorEl.textContent = message || "";
+    if (input) input.classList.toggle("dossier-input-invalid", !!message);
+  }
+  function validateDossierForm() {
+    const nombre = document.getElementById("dossier-nombre").value.trim();
+    const email = document.getElementById("dossier-email").value.trim();
+    const termsAccepted = document.getElementById("dossier-terms").checked;
+    let isValid = true;
+    if (!nombre) {
+      setFieldError("dossier-nombre", "dossier-nombre-error", "Este campo es obligatorio.");
+      isValid = false;
+    } else {
+      setFieldError("dossier-nombre", "dossier-nombre-error", "");
+    }
+    if (!email) {
+      setFieldError("dossier-email", "dossier-email-error", "Este campo es obligatorio.");
+      isValid = false;
+    } else if (!EMAIL_RE.test(email)) {
+      setFieldError("dossier-email", "dossier-email-error", "Introduce un correo electr\xF3nico v\xE1lido.");
+      isValid = false;
+    } else {
+      setFieldError("dossier-email", "dossier-email-error", "");
+    }
+    if (!termsAccepted) {
+      setFieldError("dossier-terms", "dossier-terms-error", "Debes aceptar los T\xE9rminos y la Pol\xEDtica de Privacidad.");
+      isValid = false;
+    } else {
+      setFieldError("dossier-terms", "dossier-terms-error", "");
+    }
+    console.log(LOG_PREFIX, "form validation", { nombreOk: !!nombre, emailOk: EMAIL_RE.test(email), termsAccepted, isValid });
+    return isValid;
+  }
   function injectModal() {
     if (document.getElementById("dossierModal")) {
       console.log(LOG_PREFIX, "#dossierModal already present, skipping injection");
@@ -211,6 +258,7 @@
       const { key: requestKey, config: typeConfig } = match;
       console.log(LOG_PREFIX, "matched request type", requestKey);
       const { courseId, courseName } = detectCourse();
+      const pageUrl = window.location.href;
       let loggedInUser = null;
       const utms = getUTMParams();
       if (window.LearnWorlds && window.LearnWorlds.analytics && window.LearnWorlds.analytics.user) {
@@ -226,6 +274,7 @@
           nombre: loggedInUser.name || (loggedInUser.first_name ? loggedInUser.first_name + " " + (loggedInUser.last_name || "") : "Usuario Registrado"),
           course_id: courseId,
           course_name: courseName,
+          page_url: pageUrl,
           request_type: typeConfig.payloadType,
           logged_in: true,
           utm_source: utms.utm_source || "",
@@ -248,6 +297,7 @@
         activeRequestKey = requestKey;
         document.getElementById("modal-course-id").value = courseId;
         document.getElementById("modal-course-name").value = courseName;
+        document.getElementById("modal-page-url").value = pageUrl;
         titleEl.textContent = typeConfig.modalTitle;
         subtitleEl.innerText = renderTemplate(typeConfig.subtitleTemplate, courseName);
         submitBtn.textContent = typeConfig.submitLabel;
@@ -268,6 +318,10 @@
         e.preventDefault();
         const typeConfig = requestTypes[activeRequestKey];
         if (!typeConfig) return;
+        if (!validateDossierForm()) {
+          console.warn(LOG_PREFIX, "submit blocked by validation");
+          return;
+        }
         submitBtn.textContent = typeConfig.sendingLabel;
         submitBtn.disabled = true;
         const utms = getUTMParams();
@@ -276,6 +330,7 @@
           nombre: document.getElementById("dossier-nombre").value,
           course_id: document.getElementById("modal-course-id").value,
           course_name: document.getElementById("modal-course-name").value,
+          page_url: document.getElementById("modal-page-url").value,
           request_type: typeConfig.payloadType,
           logged_in: false,
           utm_source: utms.utm_source || "",

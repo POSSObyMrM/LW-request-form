@@ -3,8 +3,52 @@ import { getUTMParams } from './utm.js';
 import { DEFAULT_REQUEST_TYPES, mergeRequestTypes, renderTemplate } from './request-types.js';
 
 const LOG_PREFIX = '[RequestForm]';
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 console.log(LOG_PREFIX, 'script parsed, readyState =', document.readyState);
+
+function setFieldError(inputId, errorId, message) {
+  const input = document.getElementById(inputId);
+  const errorEl = document.getElementById(errorId);
+  if (errorEl) errorEl.textContent = message || '';
+  if (input) input.classList.toggle('dossier-input-invalid', !!message);
+}
+
+function validateDossierForm() {
+  const nombre = document.getElementById('dossier-nombre').value.trim();
+  const email = document.getElementById('dossier-email').value.trim();
+  const termsAccepted = document.getElementById('dossier-terms').checked;
+
+  let isValid = true;
+
+  if (!nombre) {
+    setFieldError('dossier-nombre', 'dossier-nombre-error', 'Este campo es obligatorio.');
+    isValid = false;
+  } else {
+    setFieldError('dossier-nombre', 'dossier-nombre-error', '');
+  }
+
+  if (!email) {
+    setFieldError('dossier-email', 'dossier-email-error', 'Este campo es obligatorio.');
+    isValid = false;
+  } else if (!EMAIL_RE.test(email)) {
+    setFieldError('dossier-email', 'dossier-email-error', 'Introduce un correo electrónico válido.');
+    isValid = false;
+  } else {
+    setFieldError('dossier-email', 'dossier-email-error', '');
+  }
+
+  if (!termsAccepted) {
+    setFieldError('dossier-terms', 'dossier-terms-error', 'Debes aceptar los Términos y la Política de Privacidad.');
+    isValid = false;
+  } else {
+    setFieldError('dossier-terms', 'dossier-terms-error', '');
+  }
+
+  console.log(LOG_PREFIX, 'form validation', { nombreOk: !!nombre, emailOk: EMAIL_RE.test(email), termsAccepted, isValid });
+
+  return isValid;
+}
 
 function injectModal() {
   if (document.getElementById('dossierModal')) {
@@ -138,6 +182,7 @@ function init() {
     console.log(LOG_PREFIX, 'matched request type', requestKey);
 
     const { courseId, courseName } = detectCourse();
+    const pageUrl = window.location.href;
 
     let loggedInUser = null;
     const utms = getUTMParams();
@@ -158,6 +203,7 @@ function init() {
         nombre: loggedInUser.name || (loggedInUser.first_name ? loggedInUser.first_name + ' ' + (loggedInUser.last_name || '') : 'Usuario Registrado'),
         course_id: courseId,
         course_name: courseName,
+        page_url: pageUrl,
         request_type: typeConfig.payloadType,
         logged_in: true,
         utm_source: utms.utm_source || '',
@@ -182,6 +228,7 @@ function init() {
       activeRequestKey = requestKey;
       document.getElementById('modal-course-id').value = courseId;
       document.getElementById('modal-course-name').value = courseName;
+      document.getElementById('modal-page-url').value = pageUrl;
       titleEl.textContent = typeConfig.modalTitle;
       subtitleEl.innerText = renderTemplate(typeConfig.subtitleTemplate, courseName);
       submitBtn.textContent = typeConfig.submitLabel;
@@ -208,6 +255,11 @@ function init() {
       const typeConfig = requestTypes[activeRequestKey];
       if (!typeConfig) return;
 
+      if (!validateDossierForm()) {
+        console.warn(LOG_PREFIX, 'submit blocked by validation');
+        return;
+      }
+
       submitBtn.textContent = typeConfig.sendingLabel;
       submitBtn.disabled = true;
       const utms = getUTMParams();
@@ -217,6 +269,7 @@ function init() {
         nombre: document.getElementById('dossier-nombre').value,
         course_id: document.getElementById('modal-course-id').value,
         course_name: document.getElementById('modal-course-name').value,
+        page_url: document.getElementById('modal-page-url').value,
         request_type: typeConfig.payloadType,
         logged_in: false,
         utm_source: utms.utm_source || '',

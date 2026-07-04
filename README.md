@@ -10,7 +10,13 @@ the trigger button's CSS class and a small config object.
 CSS is **not** included here — it's handled in a separate project and is
 expected to already define styles for the classes/ids used below
 (`dossier-modal-container`, `dossier-modal-box`, `dossier-modal-close`,
-`dossier-input-group`, `#dossier-submit-btn`, etc).
+`dossier-input-group`, `#dossier-submit-btn`, etc). That separate project
+also needs to style the newer additions:
+- `dossier-checkbox-group` — wraps the terms/privacy checkbox + its label.
+- `dossier-field-error` — the (empty-by-default) error message span under
+  each field; populated with text by JS when validation fails.
+- `dossier-input-invalid` — toggled on an `<input>` by JS when it fails
+  validation, for an error state (e.g. red border).
 
 ## How it works
 
@@ -26,9 +32,17 @@ expected to already define styles for the classes/ids used below
 - The webhook payload includes `request_type` (`"dossier"` or `"info"`) so
   the receiving automation (Make/Zapier) can branch on which flow fired.
 - The course id/name are auto-detected from the URL path and the page's
-  `og:title` meta tag (falling back to `document.title`).
+  `og:title` meta tag (falling back to `document.title`). The page URL
+  (`window.location.href`) is captured the same way and sent as `page_url`.
 - UTM params are captured from the URL and persisted in `localStorage` so
   attribution survives navigation.
+- The popup form requires a name, a valid-looking email, and acceptance of
+  the [Terms](https://posso.es/terms) and [Privacy Policy](https://posso.es/privacy)
+  checkbox before it will submit. Failing validation shows an inline error
+  under the offending field(s) and blocks the webhook call — nothing is
+  sent until all three pass. (The logged-in, no-popup flow skips this,
+  since there's no form to validate — it uses the account's existing
+  email/name.)
 
 ## Project layout
 
@@ -56,7 +70,7 @@ to live in the committed/publicly-served JS file:
 
 ```html
 <script>
-  window.DossierFormConfig = {
+  window.RequestFormConfig = {
     webhookUrl: 'https://hook.eu2.make.com/xxxxxxxxxxxxxxxxxxxxxxxx'
   };
 </script>
@@ -67,7 +81,7 @@ to live in the committed/publicly-served JS file:
 this GitHub repo, GitHub Pages, etc. — as long as it serves
 `dist/request-form.js` over HTTPS.)
 
-If `window.DossierFormConfig.webhookUrl` is missing, the script logs an
+If `window.RequestFormConfig.webhookUrl` is missing, the script logs an
 error to the console and the form/button flow will not be able to submit.
 
 On any page, add a button/link with class `btn-dossier-request` or
@@ -77,14 +91,14 @@ JS is required, the script injects the modal itself.
 ### Customizing texts, or adding new request types
 
 Override or extend the defaults from `src/request-types.js` via
-`window.DossierFormConfig.requestTypes`, keyed by the same type name
+`window.RequestFormConfig.requestTypes`, keyed by the same type name
 (`dossier`, `info`, or a new one). Any field you omit falls back to the
 default. `{{course}}` in `subtitleTemplate` is replaced with the detected
 course name:
 
 ```html
 <script>
-  window.DossierFormConfig = {
+  window.RequestFormConfig = {
     webhookUrl: 'https://hook.eu2.make.com/xxxxxxxxxxxxxxxxxxxxxxxx',
     requestTypes: {
       info: {
