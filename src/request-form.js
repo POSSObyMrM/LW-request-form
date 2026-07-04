@@ -50,12 +50,12 @@ function findRequestType(requestTypes, target) {
 }
 
 function init() {
-  const config = window.DossierFormConfig || {};
+  const config = window.RequestFormConfig || {};
   const webhookUrl = config.webhookUrl;
   const requestTypes = mergeRequestTypes(DEFAULT_REQUEST_TYPES, config.requestTypes);
 
   if (!webhookUrl) {
-    console.error('[DossierForm] Falta window.DossierFormConfig.webhookUrl antes de cargar este script. El formulario no podrá enviarse.');
+    console.error('[DossierForm] Falta window.RequestFormConfig.webhookUrl antes de cargar este script. El formulario no podrá enviarse.');
   }
 
   injectModal();
