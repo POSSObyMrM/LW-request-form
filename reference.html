@@ -1,0 +1,226 @@
+<div id="dossierModal" class="dossier-modal-container">
+  <div class="dossier-modal-box">
+    <span class="dossier-modal-close">&times;</span>
+    <h2 id="dossier-course-title"  class="lw-widget-in learnworlds-subheading learnworlds-element learnworlds-subheading-small">Descargar Dossier</h2>
+    <div id="dossier-course-subtitle" class="lw-widget-in learnworlds-main-text learnworlds-main-text-large learnworlds-element" data-element-id="textLarge" data-node-type="text">Revisa tu correo, te acabamos de enviar lo que nos has pedido.</div>
+    
+    <form id="dossierForm">
+      <input type="hidden" id="modal-course-id">
+      <input type="hidden" id="modal-course-name">
+      
+      <div class="dossier-input-group">
+        <label for="dossier-nombre">Nombre completo *</label>
+        <input type="text" id="dossier-nombre" required placeholder="Ej. Andrea Pérez">
+      </div>
+      
+      <div class="dossier-input-group">
+        <label for="dossier-email">Correo electrónico *</label>
+        <input type="email" id="dossier-email" required placeholder="ejemplo@correo.com">
+      </div>
+      
+      <button type="submit" id="dossier-submit-btn" class="learnworlds-button">Solicitar Dossier</button>
+    </form>
+  </div>
+</div>
+
+<style>
+.dossier-modal-container {
+  display: none; 
+  position: fixed; 
+  z-index: 999999; 
+  left: 0; top: 0; width: 100%; height: 100%; 
+  background-color: rgba(0,0,0,0.6);
+  backdrop-filter: blur(3px);
+}
+.dossier-modal-box {
+  background-color: var(--salmon-200);
+  margin: 12% auto; 
+  padding: 35px; 
+  border-radius: 12px; 
+  width: 90%; max-width: 440px;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  font-family: "Poppins", sans-serif;
+}
+.dossier-modal-close {
+  position: absolute; right: 20px; top: 15px; 
+  font-size: 28px; cursor: pointer; color: #888;
+}
+
+.dossier-modal-close:hover { color: #000; }
+#dossier-course-title { margin-top: 0; margin-bottom: 32px !important}
+#dossier-course-subtitle { margin-bottom: 32px !important; }
+.dossier-input-group { margin-bottom: 32px; text-align: left; }
+.dossier-input-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #444; }
+.dossier-input-group input {
+  width: 100%; padding: 16px; border: none; background: var(--salmon-300); border-radius: 16px; box-sizing: border-box; font-size: 14px;
+}
+#dossier-submit-btn {
+  width: 100%; padding: 16px; background-color: var(--ash-700); 
+  color: var(--salmon-200); border: none; border-radius: 16px; cursor: pointer; font-size: 22px; font-weight: 600; margin-top: 12px;
+}
+#dossier-submit-btn:hover { opacity: 0.9; }
+</style>
+
+<script>
+  function getUTMParams() {
+    const params = new URLSearchParams(window.location.search);
+    const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+    const utms = {};
+    let foundAny = false;
+
+    utmKeys.forEach(key => {
+        const value = params.get(key);
+        if (value) {
+            utms[key] = value;
+            foundAny = true;
+        }
+    });
+
+    if (foundAny) {
+        // Hay UTMs en esta URL: pasan a ser la atribución vigente
+        localStorage.setItem('posso_utms', JSON.stringify(utms));
+        return utms;
+    }
+
+    // No hay UTMs en esta página: usamos los últimos guardados, si existen
+    const stored = localStorage.getItem('posso_utms');
+    return stored ? JSON.parse(stored) : {};
+}
+  
+document.addEventListener('DOMContentLoaded', function() {
+    // ⚠️ REEMPLAZA ESTA URL POR TU WEBHOOK DE MAKE O ZAPIER
+    const WEBHOOK_URL = 'https://hook.eu2.make.com/z4t4a1ircrqu7vlvqswzvqgc3uqvhdxs'; 
+    
+    const modal = document.getElementById('dossierModal');
+    const closeBtn = document.querySelector('.dossier-modal-close');
+    const form = document.getElementById('dossierForm');
+    const subtitlePlaceholder = document.getElementById('dossier-course-subtitle');
+    
+    document.body.addEventListener('click', function(e) {
+        if (e.target && e.target.classList.contains('btn-descargar-dossier')) {
+            e.preventDefault();
+            const btn = e.target;
+            
+            // ========================================================
+            // 🔍 DETECCIÓN AUTOMÁTICA DEL CURSO
+            // ========================================================
+            
+            // 1. Obtener el ID/Slug del curso desde la URL (Ej: /course/programa-marketing -> "programa-marketing")
+            let courseId = 'curso-desconocido';
+            const pathSegments = window.location.pathname.split('/');
+            const courseIdx = pathSegments.indexOf('course');
+            if (courseIdx !== -1 && pathSegments[courseIdx + 1]) {
+                courseId = pathSegments[courseIdx + 1];
+            }
+            
+            // 2. Obtener el Nombre oficial del curso desde las Meta Tags de LearnWorlds (SEO)
+            let courseName = '';
+            const metaOgTitle = document.querySelector('meta[property="og:title"]');
+            if (metaOgTitle && metaOgTitle.getAttribute('content')) {
+                courseName = metaOgTitle.getAttribute('content');
+            } else {
+                // Fallback: Si no encuentra la meta tag, lee el título de la pestaña del navegador
+                courseName = document.title.split('|')[0].trim();
+            }
+            // ========================================================
+            
+            // Intentar leer si hay un usuario logado
+            let loggedInUser = null;
+	        const utms = getUTMParams();
+            if (window.LearnWorlds && window.LearnWorlds.analytics && window.LearnWorlds.analytics.user) {
+                loggedInUser = window.LearnWorlds.analytics.user;
+            }
+            
+            if (loggedInUser && loggedInUser.email) {
+                // CASO A: Usuario Logado
+                const originalText = btn.innerText;
+                btn.innerText = 'Procesando...';
+                btn.disabled = true;
+                
+                const payload = {
+                    email: loggedInUser.email,
+                    nombre: loggedInUser.name || (loggedInUser.first_name ? loggedInUser.first_name + ' ' + (loggedInUser.last_name || '') : 'Usuario Registrado'),
+                    course_id: courseId,
+                    course_name: courseName,
+                    logged_in: true,
+                    utm_source: utms.utm_source || '',
+                    utm_medium: utms.utm_medium || '',
+                    utm_campaign: utms.utm_campaign || '',
+                    utm_term: utms.utm_term || '',
+                    utm_content: utms.utm_content || ''
+                };
+                
+                enviarHaciaWebhook(payload, function(esExitoso) {
+                    if (esExitoso) {
+                        btn.innerText = '¡Enviado!';
+                        alert('¡Listo! Te acabamos de enviar el dossier a tu correo electrónico.');
+                    } else {
+                        btn.innerText = originalText;
+                        btn.disabled = false;
+                        alert('Hubo un problema. Por favor, inténtalo de nuevo.');
+                    }
+                });
+                
+            } else {
+                // CASO B: Usuario NO Logado (Abrir Popup y guardar los datos detectados en los campos ocultos)
+                document.getElementById('modal-course-id').value = courseId;
+                document.getElementById('modal-course-name').value = courseName;
+                subtitlePlaceholder.innerText = 'Te enviaremos el dossier del ' + courseName + '.';
+                modal.style.display = 'block';
+            }
+        }
+    });
+    
+    // Cerrar el popup
+    if (closeBtn) { closeBtn.addEventListener('click', function() { modal.style.display = 'none'; }); }
+    window.addEventListener('click', function(e) { if (e.target === modal) { modal.style.display = 'none'; } });
+    
+    // Manejar el envío del formulario del popup (Para usuarios NO logados)
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('dossier-submit-btn');
+            submitBtn.innerText = 'Enviando...';
+            submitBtn.disabled = true;
+	        const utms = getUTMParams();
+            
+            const payload = {
+                email: document.getElementById('dossier-email').value,
+                nombre: document.getElementById('dossier-nombre').value,
+                course_id: document.getElementById('modal-course-id').value,
+                course_name: document.getElementById('modal-course-name').value,
+                logged_in: false,
+                utm_source: utms.utm_source || '',
+                utm_medium: utms.utm_medium || '',
+                utm_campaign: utms.utm_campaign || '',
+                utm_term: utms.utm_term || '',
+                utm_content: utms.utm_content || ''
+            };
+            
+            enviarHaciaWebhook(payload, function(esExitoso) {
+                submitBtn.innerText = 'Solicitar Dossier';
+                submitBtn.disabled = false;
+                if (esExitoso) {
+                    modal.style.display = 'none';
+                    form.reset();
+                    alert('¡Gracias! Revisa tu bandeja de entrada, el dossier va en camino.');
+                } else {
+                    alert('Ocurrió un error. Por favor inténtalo de nuevo.');
+                }
+            });
+        });
+    }
+    
+    function enviarHaciaWebhook(datos, resultado) {
+        fetch(WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(datos)
+        })
+        .then(res => { if (res.ok) { resultado(true); } else { resultado(false); } })
+        .catch(err => { console.error('Error Webhook:', err); resultado(false); });
+    }
+});
+</script>
