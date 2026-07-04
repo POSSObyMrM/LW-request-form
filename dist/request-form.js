@@ -14,22 +14,27 @@
 
       <div class="dossier-input-group">
         <label for="dossier-nombre">Nombre completo *</label>
-        <input type="text" id="dossier-nombre" required placeholder="Ej. Andrea P\xE9rez">
+        <input type="text" id="dossier-nombre" required placeholder="Ej. Andrea Pérez">
         <span class="dossier-field-error" id="dossier-nombre-error"></span>
       </div>
 
       <div class="dossier-input-group">
-        <label for="dossier-email">Correo electr\xF3nico *</label>
+        <label for="dossier-email">Correo electrónico *</label>
         <input type="email" id="dossier-email" required placeholder="ejemplo@correo.com">
         <span class="dossier-field-error" id="dossier-email-error"></span>
       </div>
 
-      <div class="dossier-input-group dossier-checkbox-group">
-        <label for="dossier-terms">
-          <input type="checkbox" id="dossier-terms" required>
-          Acepto los <a href="https://posso.es/terms" target="_blank" rel="noopener">T\xE9rminos y Condiciones</a> y la <a href="https://posso.es/privacy" target="_blank" rel="noopener">Pol\xEDtica de Privacidad</a> *
-        </label>
-        <span class="dossier-field-error" id="dossier-terms-error"></span>
+      <div class="lead-form__optin-checkbox">
+          <label for="dossier-terms" class="checkbox-label with-flexible-parts lw-checkbox learnworlds-align-left">
+              <input class="checkbox flexible-part js-optin-checkbox" type="checkbox" data-gtm-form-interact-field-id="0" id="dossier-terms" required>
+              <div class="checkbox-box lw-border-color-fadeout80 flexible-part">
+                  <span class="learnworlds-icon learnworlds-heading3-small fas fa-check"></span>
+              </div>
+              <div class="flexible-part">
+                  Acepto los <a href="/terms" target="_blank" rel="noopener">Términos y Condiciones</a> y la <a href="/privacy" target="_blank" rel="noopener">Política de Privacidad</a> *
+              </div>
+          </label>
+          <span class="dossier-field-error" id="dossier-terms-error"></span>
       </div>
 
       <button type="submit" id="dossier-submit-btn" class="learnworlds-button">Solicitar Dossier</button>
