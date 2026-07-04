@@ -1,4 +1,4 @@
-# LW Dossier Request Form
+# LW Request Form
 
 Injects a request modal/form into a LearnWorlds page and wires up all its
 behavior (course auto-detection, UTM capture, logged-in vs logged-out flow,
@@ -32,19 +32,19 @@ expected to already define styles for the classes/ids used below
 
 ## Project layout
 
-- `src/dossier-form.js` — main logic, auto-runs on load.
+- `src/request-form.js` — main logic, auto-runs on load.
 - `src/request-types.js` — per-flow copy/config (titles, labels, alerts) and
   the merge logic for overriding/extending it.
 - `src/template.js` — the modal's HTML markup (flavor-agnostic).
 - `src/utm.js` — UTM capture/persistence helper.
-- `dist/dossier-form.js` — bundled, single-file output for embedding.
+- `dist/request-form.js` — bundled, single-file output for embedding.
 
 ## Build
 
 ```bash
 npm install
-npm run build       # dist/dossier-form.js
-npm run build:min   # dist/dossier-form.min.js
+npm run build       # dist/request-form.js
+npm run build:min   # dist/request-form.min.js
 npm run watch        # rebuild on change, for local development
 ```
 
@@ -60,12 +60,12 @@ to live in the committed/publicly-served JS file:
     webhookUrl: 'https://hook.eu2.make.com/xxxxxxxxxxxxxxxxxxxxxxxx'
   };
 </script>
-<script src="https://cdn.jsdelivr.net/gh/<user>/<repo>@main/dist/dossier-form.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/<user>/<repo>@main/dist/request-form.js"></script>
 ```
 
 (Any static host works for the second `<script src>` — jsDelivr against
 this GitHub repo, GitHub Pages, etc. — as long as it serves
-`dist/dossier-form.js` over HTTPS.)
+`dist/request-form.js` over HTTPS.)
 
 If `window.DossierFormConfig.webhookUrl` is missing, the script logs an
 error to the console and the form/button flow will not be able to submit.

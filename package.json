@@ -1,12 +1,12 @@
 {
-  "name": "lw-dossier-request-form",
+  "name": "lw-request-form",
   "version": "1.0.0",
   "private": true,
-  "description": "Injects and wires up the LearnWorlds dossier request modal/form as a single embeddable script.",
+  "description": "Injects and wires up the LearnWorlds request modal/form (dossier, notify-me, etc.) as a single embeddable script.",
   "scripts": {
-    "build": "esbuild src/dossier-form.js --bundle --format=iife --outfile=dist/dossier-form.js",
-    "build:min": "esbuild src/dossier-form.js --bundle --format=iife --minify --outfile=dist/dossier-form.min.js",
-    "watch": "esbuild src/dossier-form.js --bundle --format=iife --outfile=dist/dossier-form.js --watch"
+    "build": "esbuild src/request-form.js --bundle --format=iife --outfile=dist/request-form.js",
+    "build:min": "esbuild src/request-form.js --bundle --format=iife --minify --outfile=dist/request-form.min.js",
+    "watch": "esbuild src/request-form.js --bundle --format=iife --outfile=dist/request-form.js --watch"
   },
   "devDependencies": {
     "esbuild": "^0.24.0"

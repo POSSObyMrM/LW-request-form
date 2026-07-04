@@ -103,7 +103,7 @@
     return result;
   }
 
-  // src/dossier-form.js
+  // src/request-form.js
   function injectModal() {
     if (document.getElementById("dossierModal")) return;
     const wrapper = document.createElement("div");
@@ -143,11 +143,11 @@
     return key ? { key, config: requestTypes[key] } : null;
   }
   function init() {
-    const config = window.RequestFormConfig || {};
+    const config = window.DossierFormConfig || {};
     const webhookUrl = config.webhookUrl;
     const requestTypes = mergeRequestTypes(DEFAULT_REQUEST_TYPES, config.requestTypes);
     if (!webhookUrl) {
-      console.error("[DossierForm] Falta window.RequestFormConfig.webhookUrl antes de cargar este script. El formulario no podr\xE1 enviarse.");
+      console.error("[DossierForm] Falta window.DossierFormConfig.webhookUrl antes de cargar este script. El formulario no podr\xE1 enviarse.");
     }
     injectModal();
     const modal = document.getElementById("dossierModal");
