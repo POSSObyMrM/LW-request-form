@@ -5,7 +5,7 @@ export function renderTemplate(template, courseName) {
 }
 
 // One entry per trigger button "flavor". Add more here (or via
-// window.DossierFormConfig.requestTypes) to support new flows without
+// window.RequestFormConfig.requestTypes) to support new flows without
 // touching the HTML or the click/submit logic.
 export const DEFAULT_REQUEST_TYPES = {
   dossier: {
