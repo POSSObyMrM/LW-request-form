@@ -22,13 +22,26 @@ export const dossierModalTemplate = `
         <span class="dossier-field-error" id="dossier-email-error"></span>
       </div>
 
+      <div class="dossier-input-group" id="dossier-empresa-group" hidden>
+        <label for="dossier-empresa">Empresa</label>
+        <input type="text" id="dossier-empresa" placeholder="Ej. Acme S.L.">
+      </div>
+
+      <div class="dossier-input-group" id="dossier-cargo-group" hidden>
+        <label for="dossier-cargo">Cargo</label>
+        <input type="text" id="dossier-cargo" placeholder="Ej. Responsable de formación">
+      </div>
+
+      <!-- Campo trampa para bots (solicitudes a POSSO): invisible, no lo quites -->
+      <input type="text" id="dossier-website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+
       <div class="lead-form__optin-checkbox">
           <label for="dossier-terms" class="checkbox-label with-flexible-parts lw-checkbox learnworlds-align-left">
               <input class="checkbox flexible-part js-optin-checkbox" type="checkbox" data-gtm-form-interact-field-id="0" id="dossier-terms" required>
               <div class="checkbox-box lw-border-color-fadeout80 flexible-part">
                   <span class="learnworlds-icon learnworlds-heading3-small fas fa-check"></span>
               </div>
-              <div class="flexible-part">
+              <div class="flexible-part" id="dossier-terms-label">
                   Acepto los <a href="/terms" target="_blank" rel="noopener">Términos y Condiciones</a> y la <a href="/privacy" target="_blank" rel="noopener">Política de Privacidad</a> *
               </div>
           </label>

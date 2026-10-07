@@ -14,15 +14,28 @@
 
       <div class="dossier-input-group">
         <label for="dossier-nombre">Nombre completo *</label>
-        <input type="text" id="dossier-nombre" required placeholder="Ej. Andrea Pérez">
+        <input type="text" id="dossier-nombre" required placeholder="Ej. Andrea P\xE9rez">
         <span class="dossier-field-error" id="dossier-nombre-error"></span>
       </div>
 
       <div class="dossier-input-group">
-        <label for="dossier-email">Correo electrónico *</label>
+        <label for="dossier-email">Correo electr\xF3nico *</label>
         <input type="email" id="dossier-email" required placeholder="ejemplo@correo.com">
         <span class="dossier-field-error" id="dossier-email-error"></span>
       </div>
+
+      <div class="dossier-input-group" id="dossier-empresa-group" hidden>
+        <label for="dossier-empresa">Empresa</label>
+        <input type="text" id="dossier-empresa" placeholder="Ej. Acme S.L.">
+      </div>
+
+      <div class="dossier-input-group" id="dossier-cargo-group" hidden>
+        <label for="dossier-cargo">Cargo</label>
+        <input type="text" id="dossier-cargo" placeholder="Ej. Responsable de formaci\xF3n">
+      </div>
+
+      <!-- Campo trampa para bots (solicitudes a POSSO): invisible, no lo quites -->
+      <input type="text" id="dossier-website" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
 
       <div class="lead-form__optin-checkbox">
           <label for="dossier-terms" class="checkbox-label with-flexible-parts lw-checkbox learnworlds-align-left">
@@ -30,8 +43,8 @@
               <div class="checkbox-box lw-border-color-fadeout80 flexible-part">
                   <span class="learnworlds-icon learnworlds-heading3-small fas fa-check"></span>
               </div>
-              <div class="flexible-part">
-                  Acepto los <a href="/terms" target="_blank" rel="noopener">Términos y Condiciones</a> y la <a href="/privacy" target="_blank" rel="noopener">Política de Privacidad</a> *
+              <div class="flexible-part" id="dossier-terms-label">
+                  Acepto los <a href="/terms" target="_blank" rel="noopener">T\xE9rminos y Condiciones</a> y la <a href="/privacy" target="_blank" rel="noopener">Pol\xEDtica de Privacidad</a> *
               </div>
           </label>
           <span class="dossier-field-error" id="dossier-terms-error"></span>
@@ -87,6 +100,24 @@
         errorAlert: "Hubo un problema. Por favor, int\xE9ntalo de nuevo."
       }
     },
+    // Recursos que gestiona POSSO Admin (no Make): el formulario llama a
+    // RequestFormConfig.possoUrl con el código "recurso" dado de alta en
+    // POSSO → Configuración → Recursos descargables. Siempre abre el popup
+    // (hace falta el consentimiento explícito, también con sesión iniciada).
+    // "textoConsentimiento" debe ser el MISMO texto configurado en POSSO.
+    incompany: {
+      triggerClass: "btn-incompany-request",
+      recurso: "dossier-incompany",
+      camposEmpresa: true,
+      textoConsentimiento: "Acepto que POSSO trate mis datos para enviarme este recurso y contactarme con informaci\xF3n sobre sus formaciones. Puedo darme de baja en cualquier momento.",
+      modalTitle: "Descargar Dossier InCompany",
+      subtitleTemplate: "Te enviaremos por email el dossier de formaci\xF3n InCompany.",
+      submitLabel: "Solicitar Dossier",
+      sendingLabel: "Enviando...",
+      successAlert: "\xA1Gracias! Revisa tu bandeja de entrada, el dossier va en camino.",
+      errorAlert: "Ocurri\xF3 un error. Por favor int\xE9ntalo de nuevo.",
+      loggedIn: {}
+    },
     info: {
       triggerClass: "btn-info-request",
       payloadType: "info",
@@ -122,6 +153,7 @@
   // src/request-form.js
   var LOG_PREFIX = "[RequestForm]";
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  var POSSO_URL_POR_DEFECTO = "https://admin.posso.es/api/public/recursos/solicitar";
   console.log(LOG_PREFIX, "script parsed, readyState =", document.readyState);
   function setFieldError(inputId, errorId, message) {
     const input = document.getElementById(inputId);
@@ -199,6 +231,25 @@
     console.log(LOG_PREFIX, "detected course", { courseId, courseName });
     return { courseId, courseName };
   }
+  var textoTerminosOriginal = null;
+  function prepararCamposRecurso(typeConfig) {
+    const conEmpresa = !!(typeConfig.recurso && typeConfig.camposEmpresa);
+    document.getElementById("dossier-empresa-group").hidden = !conEmpresa;
+    document.getElementById("dossier-cargo-group").hidden = !conEmpresa;
+    const etiqueta = document.getElementById("dossier-terms-label");
+    if (textoTerminosOriginal === null) textoTerminosOriginal = etiqueta.innerHTML;
+    if (typeConfig.recurso && typeConfig.textoConsentimiento) {
+      etiqueta.textContent = typeConfig.textoConsentimiento + " ";
+      const enlace = document.createElement("a");
+      enlace.href = "/privacy";
+      enlace.target = "_blank";
+      enlace.rel = "noopener";
+      enlace.textContent = "Pol\xEDtica de Privacidad";
+      etiqueta.append("(", enlace, ") *");
+    } else {
+      etiqueta.innerHTML = textoTerminosOriginal;
+    }
+  }
   function findRequestType(requestTypes, target) {
     const key = Object.keys(requestTypes).find(
       (typeKey) => target.classList.contains(requestTypes[typeKey].triggerClass)
@@ -270,6 +321,23 @@
         loggedInUser = window.LearnWorlds.analytics.user;
       }
       console.log(LOG_PREFIX, "logged in user?", loggedInUser);
+      if (typeConfig.recurso) {
+        activeRequestKey = requestKey;
+        document.getElementById("modal-course-id").value = courseId;
+        document.getElementById("modal-course-name").value = courseName;
+        document.getElementById("modal-page-url").value = pageUrl;
+        if (loggedInUser && loggedInUser.email) {
+          document.getElementById("dossier-email").value = loggedInUser.email;
+          const nombreSesion = loggedInUser.name || [loggedInUser.first_name, loggedInUser.last_name].filter(Boolean).join(" ");
+          if (nombreSesion) document.getElementById("dossier-nombre").value = nombreSesion;
+        }
+        prepararCamposRecurso(typeConfig);
+        titleEl.textContent = typeConfig.modalTitle;
+        subtitleEl.innerText = renderTemplate(typeConfig.subtitleTemplate, courseName);
+        submitBtn.textContent = typeConfig.submitLabel;
+        modal.style.display = "block";
+        return;
+      }
       if (loggedInUser && loggedInUser.email) {
         const originalText = btn.innerText;
         btn.innerText = typeConfig.loggedIn.processingLabel;
@@ -303,6 +371,7 @@
         document.getElementById("modal-course-id").value = courseId;
         document.getElementById("modal-course-name").value = courseName;
         document.getElementById("modal-page-url").value = pageUrl;
+        prepararCamposRecurso(typeConfig);
         titleEl.textContent = typeConfig.modalTitle;
         subtitleEl.innerText = renderTemplate(typeConfig.subtitleTemplate, courseName);
         submitBtn.textContent = typeConfig.submitLabel;
@@ -330,6 +399,40 @@
         submitBtn.textContent = typeConfig.sendingLabel;
         submitBtn.disabled = true;
         const utms = getUTMParams();
+        const alTerminar = function(esExitoso) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = typeConfig.submitLabel;
+          if (esExitoso) {
+            modal.style.display = "none";
+            form.reset();
+            alert(typeConfig.successAlert);
+          } else {
+            alert(typeConfig.errorAlert);
+          }
+        };
+        if (typeConfig.recurso) {
+          const valor = (id) => document.getElementById(id).value.trim();
+          sendToWebhook(
+            config.possoUrl || POSSO_URL_POR_DEFECTO,
+            {
+              recurso: typeConfig.recurso,
+              nombre: valor("dossier-nombre"),
+              email: valor("dossier-email"),
+              empresa: typeConfig.camposEmpresa ? valor("dossier-empresa") : "",
+              cargo: typeConfig.camposEmpresa ? valor("dossier-cargo") : "",
+              consentimiento: document.getElementById("dossier-terms").checked,
+              website: document.getElementById("dossier-website").value,
+              url: valor("modal-page-url"),
+              utm_source: utms.utm_source || "",
+              utm_medium: utms.utm_medium || "",
+              utm_campaign: utms.utm_campaign || "",
+              utm_term: utms.utm_term || "",
+              utm_content: utms.utm_content || ""
+            },
+            alTerminar
+          );
+          return;
+        }
         const payload = {
           email: document.getElementById("dossier-email").value,
           nombre: document.getElementById("dossier-nombre").value,

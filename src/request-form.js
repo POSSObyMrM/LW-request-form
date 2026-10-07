@@ -4,6 +4,7 @@ import { DEFAULT_REQUEST_TYPES, mergeRequestTypes, renderTemplate } from './requ
 
 const LOG_PREFIX = '[RequestForm]';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const POSSO_URL_POR_DEFECTO = 'https://admin.posso.es/api/public/recursos/solicitar';
 
 console.log(LOG_PREFIX, 'script parsed, readyState =', document.readyState);
 
@@ -99,6 +100,29 @@ function detectCourse() {
   return { courseId, courseName };
 }
 
+// Campos extra (empresa/cargo) y texto de la casilla según el tipo: los
+// recursos de POSSO muestran su propio texto de consentimiento; el resto,
+// el texto de siempre (Términos y Política de Privacidad).
+let textoTerminosOriginal = null;
+function prepararCamposRecurso(typeConfig) {
+  const conEmpresa = !!(typeConfig.recurso && typeConfig.camposEmpresa);
+  document.getElementById('dossier-empresa-group').hidden = !conEmpresa;
+  document.getElementById('dossier-cargo-group').hidden = !conEmpresa;
+  const etiqueta = document.getElementById('dossier-terms-label');
+  if (textoTerminosOriginal === null) textoTerminosOriginal = etiqueta.innerHTML;
+  if (typeConfig.recurso && typeConfig.textoConsentimiento) {
+    etiqueta.textContent = typeConfig.textoConsentimiento + ' ';
+    const enlace = document.createElement('a');
+    enlace.href = '/privacy';
+    enlace.target = '_blank';
+    enlace.rel = 'noopener';
+    enlace.textContent = 'Política de Privacidad';
+    etiqueta.append('(', enlace, ') *');
+  } else {
+    etiqueta.innerHTML = textoTerminosOriginal;
+  }
+}
+
 function findRequestType(requestTypes, target) {
   const key = Object.keys(requestTypes).find((typeKey) =>
     target.classList.contains(requestTypes[typeKey].triggerClass)
@@ -192,6 +216,26 @@ function init() {
 
     console.log(LOG_PREFIX, 'logged in user?', loggedInUser);
 
+    if (typeConfig.recurso) {
+      // CASO C: Recurso de POSSO — siempre popup (consentimiento explícito),
+      // con nombre/email ya rellenos si hay sesión iniciada.
+      activeRequestKey = requestKey;
+      document.getElementById('modal-course-id').value = courseId;
+      document.getElementById('modal-course-name').value = courseName;
+      document.getElementById('modal-page-url').value = pageUrl;
+      if (loggedInUser && loggedInUser.email) {
+        document.getElementById('dossier-email').value = loggedInUser.email;
+        const nombreSesion = loggedInUser.name || [loggedInUser.first_name, loggedInUser.last_name].filter(Boolean).join(' ');
+        if (nombreSesion) document.getElementById('dossier-nombre').value = nombreSesion;
+      }
+      prepararCamposRecurso(typeConfig);
+      titleEl.textContent = typeConfig.modalTitle;
+      subtitleEl.innerText = renderTemplate(typeConfig.subtitleTemplate, courseName);
+      submitBtn.textContent = typeConfig.submitLabel;
+      modal.style.display = 'block';
+      return;
+    }
+
     if (loggedInUser && loggedInUser.email) {
       // CASO A: Usuario Logado
       const originalText = btn.innerText;
@@ -229,6 +273,7 @@ function init() {
       document.getElementById('modal-course-id').value = courseId;
       document.getElementById('modal-course-name').value = courseName;
       document.getElementById('modal-page-url').value = pageUrl;
+      prepararCamposRecurso(typeConfig);
       titleEl.textContent = typeConfig.modalTitle;
       subtitleEl.innerText = renderTemplate(typeConfig.subtitleTemplate, courseName);
       submitBtn.textContent = typeConfig.submitLabel;
@@ -263,6 +308,42 @@ function init() {
       submitBtn.textContent = typeConfig.sendingLabel;
       submitBtn.disabled = true;
       const utms = getUTMParams();
+
+      const alTerminar = function (esExitoso) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = typeConfig.submitLabel;
+        if (esExitoso) {
+          modal.style.display = 'none';
+          form.reset();
+          alert(typeConfig.successAlert);
+        } else {
+          alert(typeConfig.errorAlert);
+        }
+      };
+
+      if (typeConfig.recurso) {
+        const valor = (id) => document.getElementById(id).value.trim();
+        sendToWebhook(
+          config.possoUrl || POSSO_URL_POR_DEFECTO,
+          {
+            recurso: typeConfig.recurso,
+            nombre: valor('dossier-nombre'),
+            email: valor('dossier-email'),
+            empresa: typeConfig.camposEmpresa ? valor('dossier-empresa') : '',
+            cargo: typeConfig.camposEmpresa ? valor('dossier-cargo') : '',
+            consentimiento: document.getElementById('dossier-terms').checked,
+            website: document.getElementById('dossier-website').value,
+            url: valor('modal-page-url'),
+            utm_source: utms.utm_source || '',
+            utm_medium: utms.utm_medium || '',
+            utm_campaign: utms.utm_campaign || '',
+            utm_term: utms.utm_term || '',
+            utm_content: utms.utm_content || '',
+          },
+          alTerminar
+        );
+        return;
+      }
 
       const payload = {
         email: document.getElementById('dossier-email').value,

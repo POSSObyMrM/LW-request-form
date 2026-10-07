@@ -24,6 +24,25 @@ export const DEFAULT_REQUEST_TYPES = {
       errorAlert: 'Hubo un problema. Por favor, inténtalo de nuevo.',
     },
   },
+  // Recursos que gestiona POSSO Admin (no Make): el formulario llama a
+  // RequestFormConfig.possoUrl con el código "recurso" dado de alta en
+  // POSSO → Configuración → Recursos descargables. Siempre abre el popup
+  // (hace falta el consentimiento explícito, también con sesión iniciada).
+  // "textoConsentimiento" debe ser el MISMO texto configurado en POSSO.
+  incompany: {
+    triggerClass: 'btn-incompany-request',
+    recurso: 'dossier-incompany',
+    camposEmpresa: true,
+    textoConsentimiento:
+      'Acepto que POSSO trate mis datos para enviarme este recurso y contactarme con información sobre sus formaciones. Puedo darme de baja en cualquier momento.',
+    modalTitle: 'Descargar Dossier InCompany',
+    subtitleTemplate: 'Te enviaremos por email el dossier de formación InCompany.',
+    submitLabel: 'Solicitar Dossier',
+    sendingLabel: 'Enviando...',
+    successAlert: '¡Gracias! Revisa tu bandeja de entrada, el dossier va en camino.',
+    errorAlert: 'Ocurrió un error. Por favor inténtalo de nuevo.',
+    loggedIn: {},
+  },
   info: {
     triggerClass: 'btn-info-request',
     payloadType: 'info',
