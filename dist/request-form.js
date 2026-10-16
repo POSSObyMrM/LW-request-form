@@ -200,7 +200,29 @@
     document.body.appendChild(wrapper.firstElementChild);
     console.log(LOG_PREFIX, "modal injected:", !!document.getElementById("dossierModal"));
   }
+  function getCookie(name) {
+    const match = document.cookie.match(new RegExp("(?:^|;\\s*)" + name + "=([^;]*)"));
+    return match ? decodeURIComponent(match[1]) : "";
+  }
+  function generateEventId() {
+    if (window.crypto && typeof window.crypto.randomUUID === "function") {
+      return window.crypto.randomUUID();
+    }
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0;
+      return (c === "x" ? r : r & 3 | 8).toString(16);
+    });
+  }
+  function getTrackingFields() {
+    return {
+      event_id: generateEventId(),
+      user_agent: navigator.userAgent || "",
+      fbp: getCookie("_fbp"),
+      fbc: getCookie("_fbc")
+    };
+  }
   function sendToWebhook(webhookUrl, payload, callback) {
+    payload = Object.assign({}, payload, getTrackingFields());
     console.log(LOG_PREFIX, "sending to webhook", webhookUrl, payload);
     fetch(webhookUrl, {
       method: "POST",
