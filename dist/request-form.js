@@ -225,13 +225,28 @@
     hijos.push(el("span", { class: "dossier-field-error", id: campo.errorId }));
     return el("div", { class: "dossier-input-group" }, hijos);
   }
+  function conRequisitos(campo, nodo) {
+    if (campo.requisitosId) nodo.querySelector("label").after(el("div", { class: "dossier-requisitos", id: campo.requisitosId }));
+    return nodo;
+  }
   function pintarPregunta(p) {
     const id = "beca-q-" + p.clave;
-    const campo = { id, errorId: id + "-error", clave: p.clave, tipo: p.tipo, obligatorio: !!p.obligatorio, maxCaracteres: p.maxCaracteres || null, opciones: p.opciones || [], etiqueta: p.etiqueta, marcar: [id] };
+    const campo = {
+      requisitosId: p.mostrarRequisitosCurso ? id + "-requisitos" : null,
+      id,
+      errorId: id + "-error",
+      clave: p.clave,
+      tipo: p.tipo,
+      obligatorio: !!p.obligatorio,
+      maxCaracteres: p.maxCaracteres || null,
+      opciones: p.opciones || [],
+      etiqueta: p.etiqueta,
+      marcar: [id]
+    };
     if (p.tipo === "select") {
       const select = el("select", { id }, [el("option", { value: "", text: "Selecciona una opci\xF3n" })]);
       campo.opciones.forEach((o) => select.append(el("option", { value: o, text: o })));
-      return { campo, nodo: grupo(campo, p.etiqueta, select, p.ayuda) };
+      return { campo, nodo: conRequisitos(campo, grupo(campo, p.etiqueta, select, p.ayuda)) };
     }
     if (p.tipo === "radio") {
       const opciones = el("div", { class: "dossier-radio-group", id, role: "radiogroup" });
@@ -242,7 +257,7 @@
       campo.marcar = [];
       const g = grupo(campo, p.etiqueta, opciones, p.ayuda);
       g.querySelector("label").removeAttribute("for");
-      return { campo, nodo: g };
+      return { campo, nodo: conRequisitos(campo, g) };
     }
     if (p.tipo === "textarea") {
       const area = el("textarea", { id, rows: "4" });
@@ -255,11 +270,11 @@
         });
         g.insertBefore(contador, g.querySelector(".dossier-field-error"));
       }
-      return { campo, nodo: g };
+      return { campo, nodo: conRequisitos(campo, g) };
     }
     const input = el("input", { type: "text", id });
     if (campo.maxCaracteres) input.setAttribute("maxlength", String(campo.maxCaracteres));
-    return { campo, nodo: grupo(campo, p.etiqueta, input, p.ayuda) };
+    return { campo, nodo: conRequisitos(campo, grupo(campo, p.etiqueta, input, p.ayuda)) };
   }
   function valorCampo(campo) {
     if (campo.tipo === "radio") {
@@ -304,14 +319,19 @@
     grupoCurso.insertBefore(info, grupoCurso.querySelector(".dossier-field-error"));
     caja.append(grupoCurso);
     campos.push(curso);
+    const preguntasConRequisitos = becaConfig.preguntas.filter((p) => p.mostrarRequisitosCurso);
     select.addEventListener("change", () => {
       const c = becaConfig.cursos.find((x) => x.codigo === select.value);
       const partes = [];
       if (c) {
         partes.push("Cierre de solicitudes: " + fechaHoraCorta(c.cierre) + ". Resoluci\xF3n: " + fechaCorta(c.fechaResolucion) + ".");
-        if (c.requisitos) partes.push("Requisitos t\xE9cnicos: " + c.requisitos);
+        if (c.requisitos && preguntasConRequisitos.length === 0) partes.push("Requisitos t\xE9cnicos: " + c.requisitos);
       }
       info.textContent = partes.join(" ");
+      preguntasConRequisitos.forEach((p) => {
+        const caja3 = document.getElementById("beca-q-" + p.clave + "-requisitos");
+        if (caja3) caja3.textContent = c && c.requisitos ? "Requisitos t\xE9cnicos del curso: " + c.requisitos : "";
+      });
     });
     becaConfig.preguntas.forEach((p) => {
       const { campo, nodo } = pintarPregunta(p);
@@ -332,6 +352,17 @@
     const etiquetaTerminos = document.getElementById("dossier-terms-label");
     etiquetaTerminos.replaceChildren(...conEnlaces(becaConfig.textoConsentimiento), " *");
     campos.push({ id: "dossier-terms", errorId: "dossier-terms-error", clave: "consentimiento", tipo: "checkbox", obligatorio: true, marcar: [] });
+    quitarMarketing();
+    if (becaConfig.textoMarketing) {
+      const marketing = el("div", { class: "lead-form__optin-checkbox", id: "beca-marketing-wrapper" }, [
+        el("label", { for: "beca-marketing", class: "checkbox-label with-flexible-parts lw-checkbox learnworlds-align-left" }, [
+          el("input", { class: "checkbox flexible-part js-optin-checkbox", type: "checkbox", id: "beca-marketing" }),
+          el("div", { class: "checkbox-box lw-border-color-fadeout80 flexible-part" }, [el("span", { class: "learnworlds-icon learnworlds-heading3-small fas fa-check" })]),
+          el("div", { class: "flexible-part" }, conEnlaces(becaConfig.textoMarketing))
+        ])
+      ]);
+      document.getElementById("dossier-terms").closest(".lead-form__optin-checkbox").after(marketing);
+    }
     if (cursoPreseleccionado) {
       const c = becaConfig.cursos.find((x) => x.codigo === cursoPreseleccionado);
       if (c && c.abierto) {
@@ -341,7 +372,14 @@
     }
     estado = { config: becaConfig, campos };
   }
+  function quitarMarketing() {
+    const m = document.getElementById("beca-marketing-wrapper");
+    if (m) m.remove();
+  }
   function limpiarFormularioBeca() {
+    quitarMarketing();
+    const formulario = document.getElementById("dossierForm");
+    if (formulario) formulario.classList.remove("beca-form");
     const caja = document.getElementById("beca-extra-fields");
     if (caja) {
       caja.replaceChildren();
@@ -364,6 +402,7 @@
       return;
     }
     limpiarFormularioBeca();
+    document.getElementById("dossierForm").classList.add("beca-form");
     titleEl.textContent = typeConfig.modalTitle;
     subtitleEl.textContent = "Cargando el formulario\u2026";
     submitBtn.textContent = typeConfig.submitLabel;
@@ -452,6 +491,7 @@
         respuestas,
         declaracion: document.getElementById("beca-declaracion").checked,
         consentimiento: document.getElementById("dossier-terms").checked,
+        marketing: !!(document.getElementById("beca-marketing") && document.getElementById("beca-marketing").checked),
         website: document.getElementById("dossier-website").value,
         url: pageUrl,
         utm_source: utms.utm_source || "",

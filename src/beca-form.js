@@ -77,13 +77,21 @@ function grupo(campo, etiquetaTexto, control, ayuda) {
   return el('div', { class: 'dossier-input-group' }, hijos);
 }
 
+// Si la pregunta pide mostrar los requisitos técnicos del curso, se reserva un hueco justo bajo el enunciado, entre la
+// pregunta y sus opciones; se rellena al elegir el curso (vacío si el curso no tiene requisitos).
+function conRequisitos(campo, nodo) {
+  if (campo.requisitosId) nodo.querySelector('label').after(el('div', { class: 'dossier-requisitos', id: campo.requisitosId }));
+  return nodo;
+}
+
 function pintarPregunta(p) {
   const id = 'beca-q-' + p.clave;
-  const campo = { id, errorId: id + '-error', clave: p.clave, tipo: p.tipo, obligatorio: !!p.obligatorio, maxCaracteres: p.maxCaracteres || null, opciones: p.opciones || [], etiqueta: p.etiqueta, marcar: [id] };
+  const campo = {
+    requisitosId: p.mostrarRequisitosCurso ? id + '-requisitos' : null, id, errorId: id + '-error', clave: p.clave, tipo: p.tipo, obligatorio: !!p.obligatorio, maxCaracteres: p.maxCaracteres || null, opciones: p.opciones || [], etiqueta: p.etiqueta, marcar: [id] };
   if (p.tipo === 'select') {
     const select = el('select', { id }, [el('option', { value: '', text: 'Selecciona una opción' })]);
     campo.opciones.forEach((o) => select.append(el('option', { value: o, text: o })));
-    return { campo, nodo: grupo(campo, p.etiqueta, select, p.ayuda) };
+    return { campo, nodo: conRequisitos(campo, grupo(campo, p.etiqueta, select, p.ayuda)) };
   }
   if (p.tipo === 'radio') {
     const opciones = el('div', { class: 'dossier-radio-group', id, role: 'radiogroup' });
@@ -95,7 +103,7 @@ function pintarPregunta(p) {
     const g = grupo(campo, p.etiqueta, opciones, p.ayuda);
     // La etiqueta de un grupo de opciones no apunta a un control concreto.
     g.querySelector('label').removeAttribute('for');
-    return { campo, nodo: g };
+    return { campo, nodo: conRequisitos(campo, g) };
   }
   if (p.tipo === 'textarea') {
     const area = el('textarea', { id, rows: '4' });
@@ -108,11 +116,11 @@ function pintarPregunta(p) {
       });
       g.insertBefore(contador, g.querySelector('.dossier-field-error'));
     }
-    return { campo, nodo: g };
+    return { campo, nodo: conRequisitos(campo, g) };
   }
   const input = el('input', { type: 'text', id });
   if (campo.maxCaracteres) input.setAttribute('maxlength', String(campo.maxCaracteres));
-  return { campo, nodo: grupo(campo, p.etiqueta, input, p.ayuda) };
+  return { campo, nodo: conRequisitos(campo, grupo(campo, p.etiqueta, input, p.ayuda)) };
 }
 
 function valorCampo(campo) {
@@ -167,14 +175,20 @@ function pintar(config, becaConfig, cursoPreseleccionado) {
   grupoCurso.insertBefore(info, grupoCurso.querySelector('.dossier-field-error'));
   caja.append(grupoCurso);
   campos.push(curso);
+  const preguntasConRequisitos = becaConfig.preguntas.filter((p) => p.mostrarRequisitosCurso);
   select.addEventListener('change', () => {
     const c = becaConfig.cursos.find((x) => x.codigo === select.value);
     const partes = [];
     if (c) {
       partes.push('Cierre de solicitudes: ' + fechaHoraCorta(c.cierre) + '. Resolución: ' + fechaCorta(c.fechaResolucion) + '.');
-      if (c.requisitos) partes.push('Requisitos técnicos: ' + c.requisitos);
+      // Sin una pregunta que los muestre, los requisitos van aquí, bajo el curso.
+      if (c.requisitos && preguntasConRequisitos.length === 0) partes.push('Requisitos técnicos: ' + c.requisitos);
     }
     info.textContent = partes.join(' ');
+    preguntasConRequisitos.forEach((p) => {
+      const caja = document.getElementById('beca-q-' + p.clave + '-requisitos');
+      if (caja) caja.textContent = c && c.requisitos ? 'Requisitos técnicos del curso: ' + c.requisitos : '';
+    });
   });
 
   // Preguntas de la convocatoria.
@@ -202,6 +216,20 @@ function pintar(config, becaConfig, cursoPreseleccionado) {
   etiquetaTerminos.replaceChildren(...conEnlaces(becaConfig.textoConsentimiento), ' *');
   campos.push({ id: 'dossier-terms', errorId: 'dossier-terms-error', clave: 'consentimiento', tipo: 'checkbox', obligatorio: true, marcar: [] });
 
+  // Comunicaciones comerciales: casilla OPCIONAL, sin marcar, aparte de la protección de datos y sin asterisco. No
+  // condiciona el envío (ver validarBeca) y se manda como `marketing`.
+  quitarMarketing();
+  if (becaConfig.textoMarketing) {
+    const marketing = el('div', { class: 'lead-form__optin-checkbox', id: 'beca-marketing-wrapper' }, [
+      el('label', { for: 'beca-marketing', class: 'checkbox-label with-flexible-parts lw-checkbox learnworlds-align-left' }, [
+        el('input', { class: 'checkbox flexible-part js-optin-checkbox', type: 'checkbox', id: 'beca-marketing' }),
+        el('div', { class: 'checkbox-box lw-border-color-fadeout80 flexible-part' }, [el('span', { class: 'learnworlds-icon learnworlds-heading3-small fas fa-check' })]),
+        el('div', { class: 'flexible-part' }, conEnlaces(becaConfig.textoMarketing)),
+      ]),
+    ]);
+    document.getElementById('dossier-terms').closest('.lead-form__optin-checkbox').after(marketing);
+  }
+
   // Preselección del curso (data-curso del botón).
   if (cursoPreseleccionado) {
     const c = becaConfig.cursos.find((x) => x.codigo === cursoPreseleccionado);
@@ -214,8 +242,16 @@ function pintar(config, becaConfig, cursoPreseleccionado) {
   estado = { config: becaConfig, campos };
 }
 
+function quitarMarketing() {
+  const m = document.getElementById('beca-marketing-wrapper');
+  if (m) m.remove();
+}
+
 // Deja el modal como lo necesitan los demás tipos de solicitud.
 export function limpiarFormularioBeca() {
+  quitarMarketing();
+  const formulario = document.getElementById('dossierForm');
+  if (formulario) formulario.classList.remove('beca-form');
   const caja = document.getElementById('beca-extra-fields');
   if (caja) {
     caja.replaceChildren();
@@ -241,6 +277,8 @@ export function abrirBeca({ config, typeConfig, boton, modal, titleEl, subtitleE
   }
 
   limpiarFormularioBeca();
+  // Con esta clase el CSS pone nombre y email cada uno en su fila (en los demás formularios van de dos en dos).
+  document.getElementById('dossierForm').classList.add('beca-form');
   titleEl.textContent = typeConfig.modalTitle;
   subtitleEl.textContent = 'Cargando el formulario…';
   submitBtn.textContent = typeConfig.submitLabel;
@@ -342,6 +380,7 @@ export async function enviarBeca({ config, utms, pageUrl, tracking }) {
       respuestas,
       declaracion: document.getElementById('beca-declaracion').checked,
       consentimiento: document.getElementById('dossier-terms').checked,
+      marketing: !!(document.getElementById('beca-marketing') && document.getElementById('beca-marketing').checked),
       website: document.getElementById('dossier-website').value,
       url: pageUrl,
       utm_source: utms.utm_source || '',

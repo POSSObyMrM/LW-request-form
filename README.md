@@ -113,6 +113,11 @@ Botón (en cualquier página; funciona también si el clic cae en un hijo del bo
 - `RequestFormConfig.possoBaseUrl` — opcional, `https://admin.posso.es` por defecto (también se deduce del origen de
   `possoUrl` si está definido). Para probar en local, el origen de la página debe estar permitido por POSSO
   (`localhost` solo en dev/preview).
+- Los requisitos técnicos del curso elegido salen entre el enunciado de la pregunta que lo pida (opción «Mostrar aquí los
+  requisitos técnicos del curso» en POSSO Admin) y sus opciones; sin esa pregunta, bajo el selector del curso.
+- Si la convocatoria define `textoMarketing`, se añade una casilla **opcional** de comunicaciones comerciales (sin marcar,
+  sin asterisco, no condiciona el envío); se manda como `marketing: true|false`.
+- Nombre y email van cada uno en su fila (el script añade la clase `beca-form` al formulario mientras está abierto).
 - Siempre abre el popup (hace falta el consentimiento explícito), con nombre y email ya rellenos si hay sesión de
   LearnWorlds.
 
@@ -120,7 +125,7 @@ Lógica en `src/beca-form.js`; todo el contenido que viene del servidor se inser
 
 CSS que el proyecto de estilos debe cubrir además de lo anterior: `select` y `textarea` dentro de `.dossier-input-group`,
 `.dossier-char-count` (contador de caracteres de un texto largo), `.dossier-field-hint` (ayuda bajo un campo),
-`.dossier-radio-group` / `.dossier-radio-option` (opciones tipo radio) y `#beca-extra-fields` (contenedor de los campos
+`.dossier-radio-group` / `.dossier-radio-option` (opciones tipo radio), `.dossier-requisitos` (requisitos del curso bajo la pregunta), `form.beca-form` y `#beca-extra-fields` (contenedor de los campos
 de beca dentro del formulario). El resto reutiliza las clases del modal de siempre.
 
 ### Customizing texts, or adding new request types
