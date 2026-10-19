@@ -258,7 +258,7 @@ function init() {
       document.getElementById('modal-course-name').value = courseName;
       document.getElementById('modal-page-url').value = pageUrl;
       prepararCamposRecurso(typeConfig);
-      abrirBeca({ config, boton: btn, modal, titleEl, subtitleEl, submitBtn, loggedInUser });
+      abrirBeca({ config, typeConfig, boton: btn, modal, titleEl, subtitleEl, submitBtn, loggedInUser });
       return;
     }
 

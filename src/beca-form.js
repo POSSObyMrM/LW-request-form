@@ -231,7 +231,7 @@ export function limpiarFormularioBeca() {
 }
 
 // Abre el formulario de beca: muestra el modal en el acto y lo rellena cuando llega la configuración.
-export function abrirBeca({ config, boton, modal, titleEl, subtitleEl, submitBtn, loggedInUser }) {
+export function abrirBeca({ config, typeConfig, boton, modal, titleEl, subtitleEl, submitBtn, loggedInUser }) {
   const codigo = (boton.getAttribute('data-beca') || config.becaCodigo || '').trim();
   const cursoPre = (boton.getAttribute('data-curso') || '').trim();
   if (!codigo) {
@@ -241,8 +241,9 @@ export function abrirBeca({ config, boton, modal, titleEl, subtitleEl, submitBtn
   }
 
   limpiarFormularioBeca();
-  titleEl.textContent = 'Solicitud de beca';
+  titleEl.textContent = typeConfig.modalTitle;
   subtitleEl.textContent = 'Cargando el formulario…';
+  submitBtn.textContent = typeConfig.submitLabel;
   submitBtn.disabled = true;
   modal.style.display = 'block';
 

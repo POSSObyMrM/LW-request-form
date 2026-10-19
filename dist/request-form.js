@@ -355,7 +355,7 @@
     });
     estado = null;
   }
-  function abrirBeca({ config, boton, modal, titleEl, subtitleEl, submitBtn, loggedInUser }) {
+  function abrirBeca({ config, typeConfig, boton, modal, titleEl, subtitleEl, submitBtn, loggedInUser }) {
     const codigo = (boton.getAttribute("data-beca") || config.becaCodigo || "").trim();
     const cursoPre = (boton.getAttribute("data-curso") || "").trim();
     if (!codigo) {
@@ -364,8 +364,9 @@
       return;
     }
     limpiarFormularioBeca();
-    titleEl.textContent = "Solicitud de beca";
+    titleEl.textContent = typeConfig.modalTitle;
     subtitleEl.textContent = "Cargando el formulario\u2026";
+    submitBtn.textContent = typeConfig.submitLabel;
     submitBtn.disabled = true;
     modal.style.display = "block";
     fetch(possoBase(config) + "/api/public/becas/" + encodeURIComponent(codigo), { headers: { Accept: "application/json" } }).then((res) => res.json().then((cuerpo) => ({ ok: res.ok, cuerpo }))).then(({ ok, cuerpo }) => {
@@ -678,7 +679,7 @@
         document.getElementById("modal-course-name").value = courseName;
         document.getElementById("modal-page-url").value = pageUrl;
         prepararCamposRecurso(typeConfig);
-        abrirBeca({ config, boton: btn, modal, titleEl, subtitleEl, submitBtn, loggedInUser });
+        abrirBeca({ config, typeConfig, boton: btn, modal, titleEl, subtitleEl, submitBtn, loggedInUser });
         return;
       }
       limpiarFormularioBeca();
