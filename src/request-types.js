@@ -43,6 +43,20 @@ export const DEFAULT_REQUEST_TYPES = {
     errorAlert: 'Ocurrió un error. Por favor inténtalo de nuevo.',
     loggedIn: {},
   },
+  // Solicitud de beca (POSSO Admin → Becas). Los campos NO están aquí: se construyen con la configuración de la
+  // convocatoria que da POSSO (GET /api/public/becas/{codigo}). El botón indica la convocatoria con data-beca="codigo" (o
+  // RequestFormConfig.becaCodigo) y, si se quiere, un curso ya elegido con data-curso="codigo-del-curso".
+  beca: {
+    triggerClass: 'btn-beca-request',
+    beca: true,
+    modalTitle: 'Solicitud de beca',
+    subtitleTemplate: '',
+    submitLabel: 'Enviar solicitud',
+    sendingLabel: 'Enviando...',
+    successAlert: '¡Gracias! Hemos recibido tu solicitud. Te hemos enviado un email de confirmación con la fecha de resolución.',
+    errorAlert: 'Ocurrió un error. Por favor inténtalo de nuevo.',
+    loggedIn: {},
+  },
   info: {
     triggerClass: 'btn-info-request',
     payloadType: 'info',

@@ -1,6 +1,7 @@
 import { dossierModalTemplate } from './template.js';
 import { getUTMParams } from './utm.js';
 import { DEFAULT_REQUEST_TYPES, mergeRequestTypes, renderTemplate } from './request-types.js';
+import { abrirBeca, becaCargada, enviarBeca, limpiarFormularioBeca, validarBeca } from './beca-form.js';
 
 const LOG_PREFIX = '[RequestForm]';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -154,7 +155,14 @@ function findRequestType(requestTypes, target) {
   const key = Object.keys(requestTypes).find((typeKey) =>
     target.classList.contains(requestTypes[typeKey].triggerClass)
   );
-  return key ? { key, config: requestTypes[key] } : null;
+  if (key) return { key, config: requestTypes[key], element: target };
+  // Las solicitudes de beca también responden a un clic en un hijo del botón (icono, span...).
+  const keyBeca = Object.keys(requestTypes).find(
+    (typeKey) => requestTypes[typeKey].beca && target.closest('.' + requestTypes[typeKey].triggerClass)
+  );
+  return keyBeca
+    ? { key: keyBeca, config: requestTypes[keyBeca], element: target.closest('.' + requestTypes[keyBeca].triggerClass) }
+    : null;
 }
 
 function init() {
@@ -227,7 +235,7 @@ function init() {
       return;
     }
     e.preventDefault();
-    const btn = e.target;
+    const btn = match.element;
     const { key: requestKey, config: typeConfig } = match;
 
     console.log(LOG_PREFIX, 'matched request type', requestKey);
@@ -242,6 +250,20 @@ function init() {
     }
 
     console.log(LOG_PREFIX, 'logged in user?', loggedInUser);
+
+    if (typeConfig.beca) {
+      // CASO D: Solicitud de beca — el formulario se construye con la configuración de la convocatoria (ver beca-form.js).
+      activeRequestKey = requestKey;
+      document.getElementById('modal-course-id').value = courseId;
+      document.getElementById('modal-course-name').value = courseName;
+      document.getElementById('modal-page-url').value = pageUrl;
+      prepararCamposRecurso(typeConfig);
+      abrirBeca({ config, boton: btn, modal, titleEl, subtitleEl, submitBtn, loggedInUser });
+      return;
+    }
+
+    // Cualquier otro tipo: el modal vuelve a ser el de siempre (por si antes se abrió el de beca).
+    limpiarFormularioBeca();
 
     if (typeConfig.recurso) {
       // CASO C: Recurso de POSSO — siempre popup (consentimiento explícito),
@@ -326,6 +348,29 @@ function init() {
 
       const typeConfig = requestTypes[activeRequestKey];
       if (!typeConfig) return;
+
+      if (typeConfig.beca) {
+        if (!becaCargada()) return;
+        if (!validarBeca()) {
+          console.warn(LOG_PREFIX, 'submit blocked by validation (beca)');
+          return;
+        }
+        submitBtn.textContent = typeConfig.sendingLabel;
+        submitBtn.disabled = true;
+        enviarBeca({ config, utms: getUTMParams(), pageUrl: document.getElementById('modal-page-url').value, tracking: getTrackingFields() }).then((r) => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = typeConfig.submitLabel;
+          if (r.ok) {
+            modal.style.display = 'none';
+            form.reset();
+            limpiarFormularioBeca();
+            alert(typeConfig.successAlert);
+          } else {
+            alert(r.mensaje || typeConfig.errorAlert);
+          }
+        });
+        return;
+      }
 
       if (!validateDossierForm()) {
         console.warn(LOG_PREFIX, 'submit blocked by validation');

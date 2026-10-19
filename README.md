@@ -25,6 +25,8 @@ also needs to style the newer additions:
   - `btn-dossier-request` — "Descargar Dossier" flow.
   - `btn-info-request` — "avísame de novedades" flow, for courses that don't
     have a dossier yet.
+  - `btn-incompany-request` — recurso descargable de POSSO Admin (dossier InCompany).
+  - `btn-beca-request` — solicitud de beca (formulario construido con la configuración de POSSO, ver más abajo).
 - Clicking any element with one of those classes opens the (shared) modal
   with that type's title/subtitle/button copy, or — if a LearnWorlds user is
   logged in (`window.LearnWorlds.analytics.user`) — sends the request
@@ -47,6 +49,7 @@ also needs to style the newer additions:
 ## Project layout
 
 - `src/request-form.js` — main logic, auto-runs on load.
+- `src/beca-form.js` — formulario de solicitud de beca (se construye con la configuración que da POSSO).
 - `src/request-types.js` — per-flow copy/config (titles, labels, alerts) and
   the merge logic for overriding/extending it.
 - `src/template.js` — the modal's HTML markup (flavor-agnostic).
@@ -87,6 +90,38 @@ error to the console and the form/button flow will not be able to submit.
 On any page, add a button/link with class `btn-dossier-request` or
 `btn-info-request` to trigger the corresponding flow — no other markup or
 JS is required, the script injects the modal itself.
+
+### Solicitud de beca (`btn-beca-request`)
+
+A diferencia de los demás tipos, el formulario de beca **no tiene los campos escritos aquí**: se construye con la
+configuración de la convocatoria que da POSSO Admin (`GET /api/public/becas/{codigo}`): cursos con su plazo de solicitud
+(los ya cerrados salen deshabilitados), preguntas y textos legales. Una convocatoria nueva (otra beca, otras fechas, otras
+preguntas) se da de alta en POSSO Admin → Becas, sin tocar este repositorio. El formulario envía la solicitud a
+`POST /api/public/becas/solicitar`; POSSO registra a la persona, guarda la solicitud y le manda la confirmación desde
+`dinos@posso.es`.
+
+Botón (en cualquier página; funciona también si el clic cae en un hijo del botón, como un icono):
+
+```html
+<button class="btn-beca-request" data-beca="becas-50-2026">Solicitar beca</button>
+<!-- Con un curso ya elegido (código del curso en la configuración de la convocatoria): -->
+<button class="btn-beca-request" data-beca="becas-50-2026" data-curso="sistemas-de-diseno">Solicitar beca</button>
+```
+
+- `data-beca` — código de la convocatoria (si falta, se usa `RequestFormConfig.becaCodigo`).
+- `data-curso` — opcional: abre el formulario con ese curso seleccionado (si su plazo sigue abierto).
+- `RequestFormConfig.possoBaseUrl` — opcional, `https://admin.posso.es` por defecto (también se deduce del origen de
+  `possoUrl` si está definido). Para probar en local, el origen de la página debe estar permitido por POSSO
+  (`localhost` solo en dev/preview).
+- Siempre abre el popup (hace falta el consentimiento explícito), con nombre y email ya rellenos si hay sesión de
+  LearnWorlds.
+
+Lógica en `src/beca-form.js`; todo el contenido que viene del servidor se inserta con `textContent`, nunca como HTML.
+
+CSS que el proyecto de estilos debe cubrir además de lo anterior: `select` y `textarea` dentro de `.dossier-input-group`,
+`.dossier-char-count` (contador de caracteres de un texto largo), `.dossier-field-hint` (ayuda bajo un campo),
+`.dossier-radio-group` / `.dossier-radio-option` (opciones tipo radio) y `#beca-extra-fields` (contenedor de los campos
+de beca dentro del formulario). El resto reutiliza las clases del modal de siempre.
 
 ### Customizing texts, or adding new request types
 
