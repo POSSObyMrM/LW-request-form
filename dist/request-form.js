@@ -579,21 +579,41 @@
       return (c === "x" ? r : r & 3 | 8).toString(16);
     });
   }
-  function getTrackingFields() {
+  var IP_LOOKUP_URL = "https://api64.ipify.org?format=json";
+  var IP_TIMEOUT_MS = 2e3;
+  var clientIpPromise = null;
+  function getClientIp() {
+    if (!clientIpPromise) {
+      const timeout = new Promise((resolve) => setTimeout(() => resolve(""), IP_TIMEOUT_MS));
+      const lookup = fetch(IP_LOOKUP_URL).then((res) => res.ok ? res.json() : {}).then((data) => data && data.ip || "").catch((err) => {
+        console.warn(LOG_PREFIX2, "no se pudo obtener la IP:", err);
+        return "";
+      });
+      clientIpPromise = Promise.race([lookup, timeout]).then((ip) => {
+        if (!ip) clientIpPromise = null;
+        return ip;
+      });
+    }
+    return clientIpPromise;
+  }
+  function getTrackingFields(clientIp) {
     return {
       event_id: generateEventId(),
       user_agent: navigator.userAgent || "",
+      client_ip_address: clientIp,
       fbp: getCookie("_fbp"),
       fbc: getCookie("_fbc")
     };
   }
   function sendToWebhook(webhookUrl, payload, callback) {
-    payload = Object.assign({}, payload, getTrackingFields());
-    console.log(LOG_PREFIX2, "sending to webhook", webhookUrl, payload);
-    fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+    getClientIp().then((clientIp) => {
+      payload = Object.assign({}, payload, getTrackingFields(clientIp));
+      console.log(LOG_PREFIX2, "sending to webhook", webhookUrl, payload);
+      return fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
     }).then((res) => {
       console.log(LOG_PREFIX2, "webhook response", res.status, res.ok);
       callback(res.ok);
@@ -661,6 +681,7 @@
       console.error(LOG_PREFIX2, "Falta window.RequestFormConfig.webhookUrl antes de cargar este script. El formulario no podr\xE1 enviarse.");
     }
     injectModal();
+    getClientIp();
     const modal = document.getElementById("dossierModal");
     const closeBtn = modal ? modal.querySelector(".dossier-modal-close") : null;
     const form = document.getElementById("dossierForm");
@@ -802,7 +823,10 @@
           }
           submitBtn.textContent = typeConfig.sendingLabel;
           submitBtn.disabled = true;
-          enviarBeca({ config, utms: getUTMParams(), pageUrl: document.getElementById("modal-page-url").value, tracking: getTrackingFields() }).then((r) => {
+          const pageUrl = document.getElementById("modal-page-url").value;
+          getClientIp().then(
+            (clientIp) => enviarBeca({ config, utms: getUTMParams(), pageUrl, tracking: getTrackingFields(clientIp) })
+          ).then((r) => {
             submitBtn.disabled = false;
             submitBtn.textContent = typeConfig.submitLabel;
             if (r.ok) {

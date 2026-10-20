@@ -79,24 +79,53 @@ function generateEventId() {
   });
 }
 
+// IP pública del visitante (Meta CAPI la exige junto al user agent). El
+// navegador no la conoce, así que se pide a ipify (IPv6 si la hay) una sola
+// vez por página; si falla o tarda más de IP_TIMEOUT_MS, se envía vacía.
+const IP_LOOKUP_URL = 'https://api64.ipify.org?format=json';
+const IP_TIMEOUT_MS = 2000;
+let clientIpPromise = null;
+function getClientIp() {
+  if (!clientIpPromise) {
+    const timeout = new Promise((resolve) => setTimeout(() => resolve(''), IP_TIMEOUT_MS));
+    const lookup = fetch(IP_LOOKUP_URL)
+      .then((res) => (res.ok ? res.json() : {}))
+      .then((data) => (data && data.ip) || '')
+      .catch((err) => {
+        console.warn(LOG_PREFIX, 'no se pudo obtener la IP:', err);
+        return '';
+      });
+    clientIpPromise = Promise.race([lookup, timeout]).then((ip) => {
+      // Si ha caducado, se permite reintentar en el siguiente envío.
+      if (!ip) clientIpPromise = null;
+      return ip;
+    });
+  }
+  return clientIpPromise;
+}
+
 // Datos de seguimiento (Meta CAPI) que viajan en todos los envíos.
-function getTrackingFields() {
+function getTrackingFields(clientIp) {
   return {
     event_id: generateEventId(),
     user_agent: navigator.userAgent || '',
+    client_ip_address: clientIp,
     fbp: getCookie('_fbp'),
     fbc: getCookie('_fbc'),
   };
 }
 
 function sendToWebhook(webhookUrl, payload, callback) {
-  payload = Object.assign({}, payload, getTrackingFields());
-  console.log(LOG_PREFIX, 'sending to webhook', webhookUrl, payload);
-  fetch(webhookUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  })
+  getClientIp()
+    .then((clientIp) => {
+      payload = Object.assign({}, payload, getTrackingFields(clientIp));
+      console.log(LOG_PREFIX, 'sending to webhook', webhookUrl, payload);
+      return fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    })
     .then((res) => {
       console.log(LOG_PREFIX, 'webhook response', res.status, res.ok);
       callback(res.ok);
@@ -182,6 +211,8 @@ function init() {
   }
 
   injectModal();
+  // Se pide ya para que esté lista cuando se envíe el formulario.
+  getClientIp();
 
   const modal = document.getElementById('dossierModal');
   const closeBtn = modal ? modal.querySelector('.dossier-modal-close') : null;
@@ -357,7 +388,10 @@ function init() {
         }
         submitBtn.textContent = typeConfig.sendingLabel;
         submitBtn.disabled = true;
-        enviarBeca({ config, utms: getUTMParams(), pageUrl: document.getElementById('modal-page-url').value, tracking: getTrackingFields() }).then((r) => {
+        const pageUrl = document.getElementById('modal-page-url').value;
+        getClientIp().then((clientIp) =>
+          enviarBeca({ config, utms: getUTMParams(), pageUrl, tracking: getTrackingFields(clientIp) })
+        ).then((r) => {
           submitBtn.disabled = false;
           submitBtn.textContent = typeConfig.submitLabel;
           if (r.ok) {
