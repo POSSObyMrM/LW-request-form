@@ -184,7 +184,7 @@ del documento «Test Incompany» y recomienda un recurso.
   dos preguntas suman 2 o más sobre 4); estilos en LW-styles, `src/partials/dynamic/_autodiagnostico.less`.
 - Pantalla final: triángulo de áreas (posición calculada con las respuestas, ver `geometriaTriangulo`), retos, punto
   fuerte, recurso recomendado (portada A4 + email + Descargar), «Próximos pasos» (propuesta compuesta con `propuestaDe` +
-  invitación a llamada o a escribir con nombre, email y mensaje) y, al pie, «Ver respuestas» (editar y guardar) y
+  invitación a llamada o a escribir con nombre, email y mensaje) y, al pie, «Ver respuestas» (un desplegable por pregunta; guardar recalcula) y
   «Repetir el diagnóstico».
 - Opcional, antes del script: `window.AutodiagnosticoConfig = { calendlyUrl, contactoEmail, onLeadMagnet(datos),
   onContacto(datos) }` (los `on…` pueden devolver una promesa). Sin `calendlyUrl` no se muestra «Reservar una llamada»;

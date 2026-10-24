@@ -417,13 +417,13 @@
     actual = 0;
     pintarPregunta();
   }
-  function grupoOpciones(indice, elegida, alElegir, compacto) {
+  function grupoOpciones(indice, elegida, alElegir) {
     const p = PREGUNTAS[indice];
     const opciones = p.tipo === "escala" ? ESCALA : p.opciones.map((o) => o.texto);
     const grupo = el(
       "div",
       {
-        class: "autodiag-opciones autodiag-opciones-" + (p.tipo === "escala" ? "escala" : "lista") + (compacto ? " autodiag-opciones-compactas" : ""),
+        class: "autodiag-opciones autodiag-opciones-" + (p.tipo === "escala" ? "escala" : "lista"),
         role: "radiogroup",
         "aria-labelledby": "autodiag-pregunta-" + indice
       },
@@ -452,7 +452,7 @@
   function pintarPregunta() {
     const p = PREGUNTAS[actual];
     const total = PREGUNTAS.length;
-    const grupo = grupoOpciones(actual, respuestas[actual], responder, false);
+    const grupo = grupoOpciones(actual, respuestas[actual], responder);
     const foco = grupo.querySelectorAll(".autodiag-opcion")[respuestas[actual] ?? 0];
     if (foco) foco.setAttribute("data-foco", "");
     contenido.replaceChildren(
@@ -512,20 +512,21 @@
     } });
     const cambiado = () => borrador.some((r, i) => r !== guardado.respuestas[i]);
     const lista = el("ol", { class: "autodiag-respuestas" }, PREGUNTAS.map((p, i) => {
-      const li = el("li", { class: "autodiag-respuesta" });
-      const pintar = () => {
-        li.replaceChildren(
-          el("p", { id: "autodiag-pregunta-" + i, class: "autodiag-respuesta-pregunta", text: p.texto }),
-          grupoOpciones(i, borrador[i], (opcion) => {
-            borrador[i] = opcion;
-            pintar();
-            li.querySelectorAll(".autodiag-opcion")[opcion].focus();
-            botonGuardar.disabled = !cambiado();
-          }, true)
-        );
-      };
-      pintar();
-      return li;
+      const opciones = p.tipo === "escala" ? ESCALA : p.opciones.map((o) => o.texto);
+      const select = el(
+        "select",
+        { id: "autodiag-respuesta-" + i, class: "autodiag-select" },
+        opciones.map((texto, k) => el("option", { value: String(k), text: texto, selected: borrador[i] === k }))
+      );
+      select.addEventListener("change", () => {
+        borrador[i] = Number(select.value);
+        select.classList.toggle("is-cambiado", borrador[i] !== guardado.respuestas[i]);
+        botonGuardar.disabled = !cambiado();
+      });
+      return el("li", { class: "autodiag-respuesta" }, [
+        el("label", { for: "autodiag-respuesta-" + i, class: "autodiag-respuesta-pregunta", text: i + 1 + ". " + p.texto }),
+        select
+      ]);
     }));
     contenido.replaceChildren(
       el("div", { class: "autodiag-cabecera" }, [
@@ -583,7 +584,7 @@
     const degradados = orden.map((a, k) => ({ a, radio: distancia(VERTICES[a], g.fortalezas[k]) })).filter((d) => esReto(d.a) && d.radio > 0);
     const icono = (a) => {
       const { x, y } = VERTICES[a];
-      return esReto(a) ? svg("g", { class: "autodiag-tri-icono", transform: "translate(" + x + "," + y + ")" }, [
+      return esReto(a) ? svg("g", { class: "autodiag-tri-icono autodiag-tri-icono-reto", transform: "translate(" + x + "," + y + ")" }, [
         svg("line", { x1: 0, y1: -5.5, x2: 0, y2: 1.5 }),
         svg("circle", { class: "autodiag-tri-icono-punto", cx: 0, cy: 5.5, r: 1.6 })
       ]) : svg("path", { class: "autodiag-tri-icono", transform: "translate(" + x + "," + y + ")", d: "M -5 0.5 L -1.5 4 L 5.5 -3.5" });
@@ -608,7 +609,7 @@
       svg("polygon", { class: "autodiag-tri-base autodiag-tri-borde", points: contorno }),
       svg("polygon", { class: "autodiag-tri-fortalezas", points: pts(g.fortalezas) }),
       svg("circle", { class: "autodiag-tri-centro", cx: CENTRO.x, cy: CENTRO.y, r: 3 }),
-      ...["A", "B", "C"].map((a) => svg("circle", { class: "autodiag-tri-vertice", cx: VERTICES[a].x, cy: VERTICES[a].y, r: 12 })),
+      ...["A", "B", "C"].map((a) => svg("circle", { class: "autodiag-tri-vertice autodiag-tri-vertice-" + (esReto(a) ? "reto" : "fuerte"), cx: VERTICES[a].x, cy: VERTICES[a].y, r: 12 })),
       ...["A", "B", "C"].map(icono),
       ...etiquetas.map((e) => svg("text", { class: "autodiag-tri-etiqueta", x: e.x, y: e.y, "text-anchor": e.ancla, text: AREAS[e.a].etiqueta })),
       svg("circle", { class: "autodiag-tri-punto", cx: g.punto.x.toFixed(1), cy: g.punto.y.toFixed(1), r: 18 })
