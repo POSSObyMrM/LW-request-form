@@ -42,7 +42,10 @@
     proximosPasos: "Pr\xF3ximos pasos",
     invitacionTexto: "En 20 minutos repasamos tu diagn\xF3stico y te contamos c\xF3mo lo abordar\xEDamos con un equipo como el tuyo. Sin compromiso.",
     botonLlamada: "Reservar una llamada",
-    botonEscribir: "Escribirnos"
+    botonEscribir: "Escribirnos",
+    // Casillas del «Escríbenos»: el texto se guarda en POSSO como prueba de lo aceptado.
+    privacidadTexto: "He le\xEDdo la Pol\xEDtica de Privacidad y acepto que POSSO use estos datos para responder a mi solicitud.",
+    marketingTexto: "Quiero recibir comunicaciones de POSSO sobre formaci\xF3n y novedades."
   };
   var ESCALA = ["No me preocupa", "Me preocupa un poco", "Me preocupa mucho"];
   var PREGUNTAS = [
@@ -305,12 +308,34 @@
     return texto;
   }
 
+  // src/utm.js
+  var UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
+  var STORAGE_KEY = "posso_utms";
+  function getUTMParams() {
+    const params = new URLSearchParams(window.location.search);
+    const utms = {};
+    let foundAny = false;
+    UTM_KEYS.forEach((key) => {
+      const value = params.get(key);
+      if (value) {
+        utms[key] = value;
+        foundAny = true;
+      }
+    });
+    if (foundAny) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(utms));
+      return utms;
+    }
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return stored ? JSON.parse(stored) : {};
+  }
+
   // src/autodiagnostico/autodiagnostico.js
   var CLAVE_ALMACEN = "posso_autodiagnostico_incompany";
   var VERSION = 1;
   var CLASE_DISPARADOR = "btn-autodiagnostico";
   var ANCLA = "#autodiagnostico";
-  var EMAIL_CONTACTO_POR_DEFECTO = "incompany@posso.es";
+  var POSSO_URL_POR_DEFECTO = "https://admin.posso.es/api/public/leads/autodiagnostico";
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   var SVG = "http://www.w3.org/2000/svg";
   var modal = null;
@@ -631,7 +656,7 @@
     const boton = form.querySelector('button[type="submit"]');
     emitir(evento, datos);
     if (typeof manejador !== "function") {
-      sinManejador(mensaje);
+      if (sinManejador) sinManejador(mensaje);
       return;
     }
     boton.disabled = true;
@@ -643,6 +668,48 @@
       mensaje.textContent = "No se ha podido enviar. Int\xE9ntalo de nuevo en unos minutos.";
     }).finally(() => {
       boton.disabled = false;
+    });
+  }
+  function enviarAPosso(datos) {
+    const utm = getUTMParams();
+    const r = resultadoDe(datos.respuestas);
+    const cuerpo = {
+      nombre: datos.nombre,
+      email: datos.email,
+      empresa: datos.empresa,
+      cargo: datos.cargo,
+      mensaje: datos.mensaje,
+      privacidad: true,
+      privacidadTexto: TEXTOS_RESULTADO.privacidadTexto,
+      marketing: datos.marketing,
+      marketingTexto: datos.marketing ? TEXTOS_RESULTADO.marketingTexto : null,
+      website: datos.website,
+      url: window.location.href,
+      utm_source: utm.utm_source || null,
+      utm_medium: utm.utm_medium || null,
+      utm_campaign: utm.utm_campaign || null,
+      utm_content: utm.utm_content || null,
+      utm_term: utm.utm_term || null,
+      diagnostico: {
+        // Cada respuesta con su pregunta y su texto: así POSSO no depende de los textos de este script.
+        respuestas: datos.respuestas.map((v, i) => ({
+          pregunta: PREGUNTAS[i].texto,
+          respuesta: PREGUNTAS[i].tipo === "escala" ? ESCALA[v] : PREGUNTAS[i].opciones[v].texto,
+          valor: v
+        })),
+        puntuaciones: r.puntuaciones,
+        arquetipo: r.arquetipo,
+        arquetipoNombre: ARQUETIPOS[r.arquetipo].nombre,
+        tamano: r.tamano,
+        fecha: datos.fecha
+      }
+    };
+    return fetch(config().possoUrl || POSSO_URL_POR_DEFECTO, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(cuerpo)
+    }).then((res) => res.json().catch(() => ({})).then((j) => ({ ok: res.ok, j }))).then(({ ok, j }) => {
+      if (!ok || !j.ok) throw new Error(j && j.error || "Error al enviar");
     });
   }
   function validarEmail(form, input) {
@@ -676,37 +743,65 @@
         m.textContent = "El env\xEDo del recurso todav\xEDa no est\xE1 conectado.";
       });
     });
+    const campoTexto = (id, etiqueta, attrs) => el("div", { class: "autodiag-campo" }, [
+      el("label", { for: id, class: "autodiag-etiqueta-campo", text: etiqueta }),
+      el("input", { id, type: "text", class: "autodiag-input", maxlength: "160", ...attrs })
+    ]);
+    const casilla = (id, texto, obligatoria) => el("label", { class: "autodiag-casilla", for: id }, [
+      el("input", { id, type: "checkbox", required: obligatoria || null }),
+      el("span", {}, [document.createTextNode(texto + " "), obligatoria ? null : el("span", { class: "autodiag-opcional", text: "(opcional)" })])
+    ]);
     const formContacto = el("form", { class: "autodiag-form autodiag-form-contacto", novalidate: true, hidden: true }, [
-      el("div", { class: "autodiag-campo" }, [
-        el("label", { for: "autodiag-nombre", class: "autodiag-etiqueta-campo", text: "Tu nombre" }),
-        el("input", { id: "autodiag-nombre", type: "text", class: "autodiag-input", autocomplete: "name", maxlength: "120", required: true })
-      ]),
+      campoTexto("autodiag-nombre", "Tu nombre", { autocomplete: "name", maxlength: "120", required: true }),
       campoEmail("autodiag-email-contacto", "Tu email"),
-      el("div", { class: "autodiag-campo" }, [
+      campoTexto("autodiag-empresa", "Empresa", { autocomplete: "organization", required: true }),
+      campoTexto("autodiag-cargo", "Cargo (opcional)", { autocomplete: "organization-title", maxlength: "120" }),
+      el("div", { class: "autodiag-campo autodiag-campo-ancho" }, [
         el("label", { for: "autodiag-mensaje", class: "autodiag-etiqueta-campo", text: "Mensaje (opcional)" }),
         el("textarea", { id: "autodiag-mensaje", class: "autodiag-input", rows: "3", maxlength: "2000", placeholder: "Cu\xE9ntanos lo que quieras sobre tu equipo" })
       ]),
+      // Campo trampa para bots: invisible, no lo rellena una persona.
+      el("input", { type: "text", name: "website", class: "autodiag-trampa", tabindex: "-1", autocomplete: "off", "aria-hidden": "true" }),
+      casilla("autodiag-privacidad", TEXTOS_RESULTADO.privacidadTexto, true),
+      casilla("autodiag-marketing", TEXTOS_RESULTADO.marketingTexto, false),
       el("button", { type: "submit", class: "autodiag-boton", text: "Enviar" }),
       mensajeFormulario()
     ]);
     formContacto.addEventListener("submit", (e) => {
       e.preventDefault();
-      const inputNombre = formContacto.querySelector("#autodiag-nombre");
-      const nombre = inputNombre.value.trim();
-      inputNombre.classList.toggle("is-invalido", !nombre);
-      if (!nombre) {
-        formContacto.querySelector(".autodiag-form-mensaje").textContent = "Escribe tu nombre.";
-        inputNombre.focus();
-        return;
-      }
+      const aviso = formContacto.querySelector(".autodiag-form-mensaje");
+      const obligatorio = (id, texto) => {
+        const input = formContacto.querySelector("#" + id);
+        const vacio = !input.value.trim();
+        input.classList.toggle("is-invalido", vacio);
+        if (vacio) {
+          aviso.textContent = texto;
+          input.focus();
+        }
+        return vacio ? null : input.value.trim();
+      };
+      const nombre = obligatorio("autodiag-nombre", "Escribe tu nombre.");
+      if (!nombre) return;
       const email = validarEmail(formContacto, formContacto.querySelector('input[type="email"]'));
       if (!email) return;
-      const texto = formContacto.querySelector("textarea").value.trim();
-      enviarFormulario(formContacto, "contacto", { ...detalle, nombre, email, mensaje: texto }, config().onContacto, "Gracias. Te escribiremos muy pronto.", (m) => {
-        const cuerpo = (texto ? texto + "\n\n" : "") + "\u2014 Mi autodiagn\xF3stico In Company (" + fechaLarga(guardado.fecha) + "): " + a.nombre + "." + (n ? " Retos: " + r.retos.map((x) => AREAS[x].nombre).join(", ") + "." : "") + "\n\n" + nombre;
-        window.location.href = "mailto:" + (config().contactoEmail || EMAIL_CONTACTO_POR_DEFECTO) + "?subject=" + encodeURIComponent("Autodiagn\xF3stico In Company: " + a.nombre) + "&body=" + encodeURIComponent(cuerpo);
-        m.textContent = "Se ha abierto tu programa de correo con el mensaje preparado.";
-      });
+      const empresa = obligatorio("autodiag-empresa", "Escribe el nombre de tu empresa.");
+      if (!empresa) return;
+      if (!formContacto.querySelector("#autodiag-privacidad").checked) {
+        aviso.textContent = "Para poder responderte, acepta la Pol\xEDtica de Privacidad.";
+        formContacto.querySelector("#autodiag-privacidad").focus();
+        return;
+      }
+      const datos = {
+        ...detalle,
+        nombre,
+        email,
+        empresa,
+        cargo: formContacto.querySelector("#autodiag-cargo").value.trim(),
+        mensaje: formContacto.querySelector("textarea").value.trim(),
+        marketing: formContacto.querySelector("#autodiag-marketing").checked,
+        website: formContacto.querySelector(".autodiag-trampa").value
+      };
+      enviarFormulario(formContacto, "contacto", datos, config().onContacto || enviarAPosso, "Gracias. Te escribiremos muy pronto.");
     });
     const calendly = config().calendlyUrl;
     pintar(

@@ -55,6 +55,9 @@ export const TEXTOS_RESULTADO = {
     'En 20 minutos repasamos tu diagnóstico y te contamos cómo lo abordaríamos con un equipo como el tuyo. Sin compromiso.',
   botonLlamada: 'Reservar una llamada',
   botonEscribir: 'Escribirnos',
+  // Casillas del «Escríbenos»: el texto se guarda en POSSO como prueba de lo aceptado.
+  privacidadTexto: 'He leído la Política de Privacidad y acepto que POSSO use estos datos para responder a mi solicitud.',
+  marketingTexto: 'Quiero recibir comunicaciones de POSSO sobre formación y novedades.',
 };
 
 export const ESCALA = ['No me preocupa', 'Me preocupa un poco', 'Me preocupa mucho'];
