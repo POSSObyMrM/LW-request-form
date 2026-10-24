@@ -40,7 +40,6 @@
     recursoEyebrow: "\xBFQuieres entender mejor estos retos?",
     recursoBoton: "Descargar",
     proximosPasos: "Pr\xF3ximos pasos",
-    invitacionTitulo: "\xBFHablamos de tu equipo?",
     invitacionTexto: "En 20 minutos repasamos tu diagn\xF3stico y te contamos c\xF3mo lo abordar\xEDamos con un equipo como el tuyo. Sin compromiso.",
     botonLlamada: "Reservar una llamada",
     botonEscribir: "Escribirnos"
@@ -106,6 +105,7 @@
       ],
       mensaje: "Pagar perfiles de primer nivel t\xE9cnico para que operen como meros tomadores de pedidos es el desperdicio de talento m\xE1s costoso de una compa\xF1\xEDa. Si tu equipo t\xE9cnico no sabe influir ni hablar el idioma del negocio, siempre ir\xE9is a remolque de las decisiones de otros.",
       leadMagnet: {
+        activo: false,
         titulo: "Playbook: De la Ejecuci\xF3n al Criterio Compartido",
         descripcion: "Marco de 4 fases para que perfiles t\xE9cnicos y creativos traduzcan el valor de su oficio en m\xE9tricas, argumentos e impacto visibles para negocio."
       },
@@ -123,6 +123,7 @@
       ],
       mensaje: "La capacidad relacional y la facilitaci\xF3n abren puertas, pero sin sustancia t\xE9cnica pierden la credibilidad ante el negocio. Un liderazgo que no domina la vanguardia de su propio oficio no puede guiar la transformaci\xF3n de un equipo.",
       leadMagnet: {
+        activo: false,
         titulo: "Framework: Liderar la Evoluci\xF3n T\xE9cnica",
         descripcion: "C\xF3mo los managers y leads creativos pueden orquestar el upskilling t\xE9cnico del equipo ante la automatizaci\xF3n sin perder el criterio ni el rigor."
       },
@@ -140,6 +141,7 @@
       ],
       mensaje: "Una visi\xF3n inspiradora que no aterriza en el barro diario solo genera desgaste y desconfianza en tus equipos. No te faltan ideas ni prop\xF3sito: te falta la arquitectura pedag\xF3gica y el saber hacer para convertir la estrategia en entregables reales.",
       leadMagnet: {
+        activo: false,
         titulo: "Playbook: Aterrizar la Visi\xF3n en la Pr\xE1ctica Diaria",
         descripcion: "4 ceremonias y protocolos de trabajo para conectar los OKRs abstractos de la compa\xF1\xEDa con las decisiones operativas y entregables del d\xEDa a d\xEDa."
       },
@@ -157,6 +159,7 @@
       ],
       mensaje: "Tu equipo tiene el talento y la autonom\xEDa para transformar productos, pero pedalean en una direcci\xF3n distinta a la de la empresa. Si no conectas su empuje con las prioridades reales del negocio, perder\xE1s a tus mejores profesionales por puro desgaste.",
       leadMagnet: {
+        activo: false,
         titulo: "Canvas: Alineamiento T\xE1ctico-Estrat\xE9gico",
         descripcion: "Herramienta para conectar la autonom\xEDa de equipos de alto rendimiento con los objetivos de negocio de la direcci\xF3n general."
       },
@@ -174,6 +177,7 @@
       ],
       mensaje: "Tus l\xEDderes tienen el rumbo claro, pero la base t\xE9cnica del equipo no da el nivel necesario. Si no elevas el criterio de tus ejecutores, tus mejores mandos seguir\xE1n atrapados en el micromanagement apagando fuegos en lugar de liderar.",
       leadMagnet: {
+        activo: false,
         titulo: "Matriz de Diagn\xF3stico de Brecha T\xE9cnica (Upskilling Audit)",
         descripcion: "Checklist estructurado para identificar con precisi\xF3n qu\xE9 habilidades t\xE9cnicas y de criterio contempor\xE1neo necesita incorporar el equipo de ejecuci\xF3n hoy."
       },
@@ -191,6 +195,7 @@
       ],
       mensaje: "Tu equipo sabe exactamente qu\xE9 hacer y hacia d\xF3nde ir, pero no tiene voz en la mesa donde se decide el rumbo. El mejor criterio t\xE9cnico es invisible si no se acompa\xF1a de habilidades de facilitaci\xF3n e influencia para liderar a otras \xE1reas.",
       leadMagnet: {
+        activo: false,
         titulo: "Kit de Influencia sin Autoridad para Perfiles T\xE9cnicos",
         descripcion: "T\xE1cticas de facilitaci\xF3n, argumentaci\xF3n ejecutiva y resoluci\xF3n de bloqueos entre departamentos para perfiles que necesitan ganar peso en la toma de decisiones."
       },
@@ -208,6 +213,7 @@
       ],
       mensaje: "Cuando fallan a la vez el oficio, el liderazgo y la cultura, comprar cursos sueltos de cat\xE1logo es tirar el dinero. Lo que tu organizaci\xF3n necesita no es formaci\xF3n puntual, sino una intervenci\xF3n pedag\xF3gica transversal que reestructure la forma de trabajar desde la ra\xEDz.",
       leadMagnet: {
+        activo: false,
         titulo: "Whitepaper: Arquitectura de la Intenci\xF3n en Tiempos de Cambio",
         descripcion: "Marco metodol\xF3gico para directivos sobre c\xF3mo intervenir en equipos colapsados reconectando oficio, liderazgo y cultura en momentos de disrupci\xF3n."
       },
@@ -225,6 +231,7 @@
       ],
       mensaje: "El mayor riesgo de un equipo de alto rendimiento no es el error, sino la complacencia de acomodarse en su propio est\xE1ndar. Para liderar tu sector no basta con operar bien: necesitas exponer a tu talento a est\xEDmulos de vanguardia que desaf\xEDen su forma de pensar y abran nuevas fronteras.",
       leadMagnet: {
+        activo: false,
         titulo: "Radar: Se\xF1ales y Retos de Frontera en Dise\xF1o y Negocio",
         descripcion: "Selecci\xF3n curada de debates emergentes, implicaciones \xE9ticas y estrat\xE9gicas de la IA y pensamiento de futuros para organizaciones maduras."
       },
@@ -263,20 +270,13 @@
   }
   var VERTICES = { C: { x: 200, y: 45 }, A: { x: 60, y: 285 }, B: { x: 340, y: 285 } };
   var CENTRO = { x: 200, y: 205 };
-  var ACERCAMIENTO = 0.72;
   function geometriaTriangulo(p) {
     const fuerza = { A: 4 - p.A, B: 4 - p.B, C: 4 - p.C };
-    const total = fuerza.A + fuerza.B + fuerza.C;
-    const media = total === 0 ? { ...CENTRO } : {
-      x: (fuerza.A * VERTICES.A.x + fuerza.B * VERTICES.B.x + fuerza.C * VERTICES.C.x) / total,
-      y: (fuerza.A * VERTICES.A.y + fuerza.B * VERTICES.B.y + fuerza.C * VERTICES.C.y) / total
-    };
-    const punto = { x: CENTRO.x + (media.x - CENTRO.x) * ACERCAMIENTO, y: CENTRO.y + (media.y - CENTRO.y) * ACERCAMIENTO };
     const fortalezas = ["C", "A", "B"].map((a) => ({
       x: CENTRO.x + (VERTICES[a].x - CENTRO.x) * fuerza[a] / 4,
       y: CENTRO.y + (VERTICES[a].y - CENTRO.y) * fuerza[a] / 4
     }));
-    return { punto, fortalezas, fuerza };
+    return { fortalezas, fuerza };
   }
   var MAX_FOCOS = 3;
   function unirConY(partes) {
@@ -390,6 +390,9 @@
     });
     document.body.appendChild(modal);
   }
+  function pintar(...bloques) {
+    contenido.replaceChildren(...bloques.filter(Boolean));
+  }
   function estaAbierto() {
     return !!modal && modal.style.display === "block";
   }
@@ -455,7 +458,7 @@
     const grupo = grupoOpciones(actual, respuestas[actual], responder);
     const foco = grupo.querySelectorAll(".autodiag-opcion")[respuestas[actual] ?? 0];
     if (foco) foco.setAttribute("data-foco", "");
-    contenido.replaceChildren(
+    pintar(
       el("div", { class: "autodiag-cabecera" }, [
         el("p", { class: "autodiag-eyebrow", text: "POSSO In Company" }),
         el("h2", { id: "autodiag-titulo", class: "autodiag-titulo learnworlds-subheading learnworlds-subheading-small", text: INTRO.titulo }),
@@ -528,7 +531,7 @@
         select
       ]);
     }));
-    contenido.replaceChildren(
+    pintar(
       el("div", { class: "autodiag-cabecera" }, [
         el("p", { class: "autodiag-eyebrow", text: TEXTOS_RESULTADO.eyebrow }),
         el("h2", { id: "autodiag-titulo", class: "autodiag-titulo learnworlds-subheading learnworlds-subheading-small", "data-foco": true, tabindex: "-1", text: "Tus respuestas" }),
@@ -611,12 +614,8 @@
       svg("circle", { class: "autodiag-tri-centro", cx: CENTRO.x, cy: CENTRO.y, r: 3 }),
       ...["A", "B", "C"].map((a) => svg("circle", { class: "autodiag-tri-vertice autodiag-tri-vertice-" + (esReto(a) ? "reto" : "fuerte"), cx: VERTICES[a].x, cy: VERTICES[a].y, r: 12 })),
       ...["A", "B", "C"].map(icono),
-      ...etiquetas.map((e) => svg("text", { class: "autodiag-tri-etiqueta", x: e.x, y: e.y, "text-anchor": e.ancla, text: AREAS[e.a].etiqueta })),
-      svg("circle", { class: "autodiag-tri-punto", cx: g.punto.x.toFixed(1), cy: g.punto.y.toFixed(1), r: 18 })
+      ...etiquetas.map((e) => svg("text", { class: "autodiag-tri-etiqueta", x: e.x, y: e.y, "text-anchor": e.ancla, text: AREAS[e.a].etiqueta }))
     ]);
-  }
-  function leyendaTriangulo() {
-    return el("p", { class: "autodiag-leyenda" }, [el("span", { class: "autodiag-leyenda-marca autodiag-leyenda-punto" }), document.createTextNode("Tu equipo")]);
   }
   function mensajeFormulario() {
     return el("p", { class: "autodiag-form-mensaje", role: "status" });
@@ -710,7 +709,7 @@
       });
     });
     const calendly = config().calendlyUrl;
-    contenido.replaceChildren(
+    pintar(
       el("div", { class: "autodiag-cabecera" }, [
         el("p", { class: "autodiag-eyebrow", text: TEXTOS_RESULTADO.eyebrow }),
         el("h2", { id: "autodiag-titulo", class: "autodiag-titulo learnworlds-subheading learnworlds-subheading-small", "data-foco": true, tabindex: "-1", text: TEXTOS_RESULTADO.titulo }),
@@ -718,7 +717,7 @@
       ]),
       // Arquetipo + triángulo
       el("section", { class: "autodiag-arquetipo" }, [
-        el("figure", { class: "autodiag-figura" }, [triangulo(r), leyendaTriangulo()]),
+        el("figure", { class: "autodiag-figura" }, [triangulo(r)]),
         el("div", { class: "autodiag-arquetipo-texto" }, [
           el("p", { class: "autodiag-arquetipo-eyebrow", text: "Escenario actual de tu equipo" }),
           el("h3", { class: "autodiag-arquetipo-nombre", text: a.nombre }),
@@ -755,8 +754,8 @@
           el("ul", {}, fuertes.map((x) => el("li", {}, [el("strong", { text: AREAS[x].nombre + ". " }), document.createTextNode(AREAS[x].fortaleza)])))
         ]) : null
       ]),
-      // Recurso recomendado
-      el("section", { class: "autodiag-recurso" }, [
+      // Recurso recomendado (solo si está activo, ver leadMagnet.activo en datos.js)
+      !a.leadMagnet.activo ? null : el("section", { class: "autodiag-recurso" }, [
         el("div", { class: "autodiag-portada", "aria-hidden": "true" }, a.leadMagnet.portada ? [el("img", { src: a.leadMagnet.portada, alt: "" })] : [
           el("span", { class: "autodiag-portada-marca", text: "POSSO" }),
           el("span", { class: "autodiag-portada-titulo", text: a.leadMagnet.titulo }),
@@ -770,33 +769,31 @@
         ])
       ]),
       // Próximos pasos
-      el("section", { class: "autodiag-seccion" }, [
+      el("section", { class: "autodiag-seccion autodiag-seccion-proximos" }, [
         el("h3", { class: "autodiag-seccion-titulo", text: TEXTOS_RESULTADO.proximosPasos }),
         el("p", { class: "autodiag-texto", text: propuestaDe(guardado.respuestas) }),
-        el("div", { class: "autodiag-invitacion" }, [
-          el("p", { class: "autodiag-invitacion-titulo", text: TEXTOS_RESULTADO.invitacionTitulo }),
-          el("p", { class: "autodiag-texto", text: TEXTOS_RESULTADO.invitacionTexto }),
-          el("div", { class: "autodiag-acciones" }, [
-            calendly ? el("a", { class: "autodiag-boton", href: calendly, target: "_blank", rel: "noopener", text: TEXTOS_RESULTADO.botonLlamada, onclick: () => emitir("llamada", detalle) }) : null,
-            el("button", {
-              type: "button",
-              class: "autodiag-boton autodiag-boton-secundario",
-              "aria-expanded": "false",
-              "aria-controls": "autodiag-form-contacto",
-              text: TEXTOS_RESULTADO.botonEscribir,
-              onclick: (e) => {
-                formContacto.hidden = !formContacto.hidden;
-                e.currentTarget.setAttribute("aria-expanded", String(!formContacto.hidden));
-                if (!formContacto.hidden) {
-                  const input = formContacto.querySelector('input[type="email"]');
-                  if (!input.value) input.value = emailRecordado;
-                  formContacto.querySelector("#autodiag-nombre").focus();
-                }
+        el("p", { class: "autodiag-texto", text: TEXTOS_RESULTADO.invitacionTexto }),
+        el("div", { class: "autodiag-acciones autodiag-acciones-principales" }, [
+          calendly ? el("a", { class: "autodiag-boton autodiag-boton-grande", href: calendly, target: "_blank", rel: "noopener", text: TEXTOS_RESULTADO.botonLlamada, onclick: () => emitir("llamada", detalle) }) : null,
+          el("button", {
+            type: "button",
+            // Si es la única acción (sin Calendly), es la principal: fondo oscuro.
+            class: "autodiag-boton autodiag-boton-grande" + (calendly ? " autodiag-boton-secundario" : ""),
+            "aria-expanded": "false",
+            "aria-controls": "autodiag-form-contacto",
+            text: TEXTOS_RESULTADO.botonEscribir,
+            onclick: (e) => {
+              formContacto.hidden = !formContacto.hidden;
+              e.currentTarget.setAttribute("aria-expanded", String(!formContacto.hidden));
+              if (!formContacto.hidden) {
+                const input = formContacto.querySelector('input[type="email"]');
+                if (!input.value) input.value = emailRecordado;
+                formContacto.querySelector("#autodiag-nombre").focus();
               }
-            })
-          ]),
-          formContacto
-        ])
+            }
+          })
+        ]),
+        formContacto
       ]),
       // Discreto, al final
       el("div", { class: "autodiag-pie" }, [

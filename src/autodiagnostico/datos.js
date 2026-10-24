@@ -51,7 +51,6 @@ export const TEXTOS_RESULTADO = {
   recursoEyebrow: '¿Quieres entender mejor estos retos?',
   recursoBoton: 'Descargar',
   proximosPasos: 'Próximos pasos',
-  invitacionTitulo: '¿Hablamos de tu equipo?',
   invitacionTexto:
     'En 20 minutos repasamos tu diagnóstico y te contamos cómo lo abordaríamos con un equipo como el tuyo. Sin compromiso.',
   botonLlamada: 'Reservar una llamada',
@@ -112,6 +111,8 @@ export const PREGUNTAS = [
 
 // Ocho arquetipos: uno por cada combinación de áreas «fuerte» / «a mejorar» (ver calculo.js).
 //   fuertes: áreas que están bien (el resto necesitan mejorar).
+//   leadMagnet.activo: si se muestra en el resultado (false mientras el recurso no exista).
+//   leadMagnet.portada: URL de la imagen de portada (A4); sin ella se pinta una portada provisional.
 export const ARQUETIPOS = {
   1: {
     nombre: 'Silo de ejecución',
@@ -127,6 +128,7 @@ export const ARQUETIPOS = {
     mensaje:
       'Pagar perfiles de primer nivel técnico para que operen como meros tomadores de pedidos es el desperdicio de talento más costoso de una compañía. Si tu equipo técnico no sabe influir ni hablar el idioma del negocio, siempre iréis a remolque de las decisiones de otros.',
     leadMagnet: {
+      activo: false,
       titulo: 'Playbook: De la Ejecución al Criterio Compartido',
       descripcion:
         'Marco de 4 fases para que perfiles técnicos y creativos traduzcan el valor de su oficio en métricas, argumentos e impacto visibles para negocio.',
@@ -148,6 +150,7 @@ export const ARQUETIPOS = {
     mensaje:
       'La capacidad relacional y la facilitación abren puertas, pero sin sustancia técnica pierden la credibilidad ante el negocio. Un liderazgo que no domina la vanguardia de su propio oficio no puede guiar la transformación de un equipo.',
     leadMagnet: {
+      activo: false,
       titulo: 'Framework: Liderar la Evolución Técnica',
       descripcion:
         'Cómo los managers y leads creativos pueden orquestar el upskilling técnico del equipo ante la automatización sin perder el criterio ni el rigor.',
@@ -169,6 +172,7 @@ export const ARQUETIPOS = {
     mensaje:
       'Una visión inspiradora que no aterriza en el barro diario solo genera desgaste y desconfianza en tus equipos. No te faltan ideas ni propósito: te falta la arquitectura pedagógica y el saber hacer para convertir la estrategia en entregables reales.',
     leadMagnet: {
+      activo: false,
       titulo: 'Playbook: Aterrizar la Visión en la Práctica Diaria',
       descripcion:
         '4 ceremonias y protocolos de trabajo para conectar los OKRs abstractos de la compañía con las decisiones operativas y entregables del día a día.',
@@ -190,6 +194,7 @@ export const ARQUETIPOS = {
     mensaje:
       'Tu equipo tiene el talento y la autonomía para transformar productos, pero pedalean en una dirección distinta a la de la empresa. Si no conectas su empuje con las prioridades reales del negocio, perderás a tus mejores profesionales por puro desgaste.',
     leadMagnet: {
+      activo: false,
       titulo: 'Canvas: Alineamiento Táctico-Estratégico',
       descripcion:
         'Herramienta para conectar la autonomía de equipos de alto rendimiento con los objetivos de negocio de la dirección general.',
@@ -211,6 +216,7 @@ export const ARQUETIPOS = {
     mensaje:
       'Tus líderes tienen el rumbo claro, pero la base técnica del equipo no da el nivel necesario. Si no elevas el criterio de tus ejecutores, tus mejores mandos seguirán atrapados en el micromanagement apagando fuegos en lugar de liderar.',
     leadMagnet: {
+      activo: false,
       titulo: 'Matriz de Diagnóstico de Brecha Técnica (Upskilling Audit)',
       descripcion:
         'Checklist estructurado para identificar con precisión qué habilidades técnicas y de criterio contemporáneo necesita incorporar el equipo de ejecución hoy.',
@@ -232,6 +238,7 @@ export const ARQUETIPOS = {
     mensaje:
       'Tu equipo sabe exactamente qué hacer y hacia dónde ir, pero no tiene voz en la mesa donde se decide el rumbo. El mejor criterio técnico es invisible si no se acompaña de habilidades de facilitación e influencia para liderar a otras áreas.',
     leadMagnet: {
+      activo: false,
       titulo: 'Kit de Influencia sin Autoridad para Perfiles Técnicos',
       descripcion:
         'Tácticas de facilitación, argumentación ejecutiva y resolución de bloqueos entre departamentos para perfiles que necesitan ganar peso en la toma de decisiones.',
@@ -253,6 +260,7 @@ export const ARQUETIPOS = {
     mensaje:
       'Cuando fallan a la vez el oficio, el liderazgo y la cultura, comprar cursos sueltos de catálogo es tirar el dinero. Lo que tu organización necesita no es formación puntual, sino una intervención pedagógica transversal que reestructure la forma de trabajar desde la raíz.',
     leadMagnet: {
+      activo: false,
       titulo: 'Whitepaper: Arquitectura de la Intención en Tiempos de Cambio',
       descripcion:
         'Marco metodológico para directivos sobre cómo intervenir en equipos colapsados reconectando oficio, liderazgo y cultura en momentos de disrupción.',
@@ -274,6 +282,7 @@ export const ARQUETIPOS = {
     mensaje:
       'El mayor riesgo de un equipo de alto rendimiento no es el error, sino la complacencia de acomodarse en su propio estándar. Para liderar tu sector no basta con operar bien: necesitas exponer a tu talento a estímulos de vanguardia que desafíen su forma de pensar y abran nuevas fronteras.',
     leadMagnet: {
+      activo: false,
       titulo: 'Radar: Señales y Retos de Frontera en Diseño y Negocio',
       descripcion:
         'Selección curada de debates emergentes, implicaciones éticas y estratégicas de la IA y pensamiento de futuros para organizaciones maduras.',

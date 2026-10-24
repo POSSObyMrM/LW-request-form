@@ -124,6 +124,11 @@ function crearModal() {
   document.body.appendChild(modal);
 }
 
+// Sustituye el contenido del modal; los bloques opcionales que no tocan (null) se descartan.
+function pintar(...bloques) {
+  contenido.replaceChildren(...bloques.filter(Boolean));
+}
+
 function estaAbierto() {
   return !!modal && modal.style.display === 'block';
 }
@@ -200,7 +205,7 @@ function pintarPregunta() {
   const foco = grupo.querySelectorAll('.autodiag-opcion')[respuestas[actual] ?? 0];
   if (foco) foco.setAttribute('data-foco', '');
 
-  contenido.replaceChildren(
+  pintar(
     el('div', { class: 'autodiag-cabecera' }, [
       el('p', { class: 'autodiag-eyebrow', text: 'POSSO In Company' }),
       el('h2', { id: 'autodiag-titulo', class: 'autodiag-titulo learnworlds-subheading learnworlds-subheading-small', text: INTRO.titulo }),
@@ -279,7 +284,7 @@ function pintarRespuestas(guardado) {
     ]);
   }));
 
-  contenido.replaceChildren(
+  pintar(
     el('div', { class: 'autodiag-cabecera' }, [
       el('p', { class: 'autodiag-eyebrow', text: T.eyebrow }),
       el('h2', { id: 'autodiag-titulo', class: 'autodiag-titulo learnworlds-subheading learnworlds-subheading-small', 'data-foco': true, tabindex: '-1', text: 'Tus respuestas' }),
@@ -383,12 +388,7 @@ function triangulo(r) {
     ...['A', 'B', 'C'].map((a) => svg('circle', { class: 'autodiag-tri-vertice autodiag-tri-vertice-' + (esReto(a) ? 'reto' : 'fuerte'), cx: VERTICES[a].x, cy: VERTICES[a].y, r: 12 })),
     ...['A', 'B', 'C'].map(icono),
     ...etiquetas.map((e) => svg('text', { class: 'autodiag-tri-etiqueta', x: e.x, y: e.y, 'text-anchor': e.ancla, text: AREAS[e.a].etiqueta })),
-    svg('circle', { class: 'autodiag-tri-punto', cx: g.punto.x.toFixed(1), cy: g.punto.y.toFixed(1), r: 18 }),
   ]);
-}
-
-function leyendaTriangulo() {
-  return el('p', { class: 'autodiag-leyenda' }, [el('span', { class: 'autodiag-leyenda-marca autodiag-leyenda-punto' }), document.createTextNode('Tu equipo')]);
 }
 
 function mensajeFormulario() {
@@ -502,7 +502,7 @@ function pintarResultado(guardado) {
 
   const calendly = config().calendlyUrl;
 
-  contenido.replaceChildren(
+  pintar(
     el('div', { class: 'autodiag-cabecera' }, [
       el('p', { class: 'autodiag-eyebrow', text: T.eyebrow }),
       el('h2', { id: 'autodiag-titulo', class: 'autodiag-titulo learnworlds-subheading learnworlds-subheading-small', 'data-foco': true, tabindex: '-1', text: T.titulo }),
@@ -511,7 +511,7 @@ function pintarResultado(guardado) {
 
     // Arquetipo + triángulo
     el('section', { class: 'autodiag-arquetipo' }, [
-      el('figure', { class: 'autodiag-figura' }, [triangulo(r), leyendaTriangulo()]),
+      el('figure', { class: 'autodiag-figura' }, [triangulo(r)]),
       el('div', { class: 'autodiag-arquetipo-texto' }, [
         el('p', { class: 'autodiag-arquetipo-eyebrow', text: 'Escenario actual de tu equipo' }),
         el('h3', { class: 'autodiag-arquetipo-nombre', text: a.nombre }),
@@ -555,8 +555,8 @@ function pintarResultado(guardado) {
         : null,
     ]),
 
-    // Recurso recomendado
-    el('section', { class: 'autodiag-recurso' }, [
+    // Recurso recomendado (solo si está activo, ver leadMagnet.activo en datos.js)
+    !a.leadMagnet.activo ? null : el('section', { class: 'autodiag-recurso' }, [
       el('div', { class: 'autodiag-portada', 'aria-hidden': 'true' }, a.leadMagnet.portada
         ? [el('img', { src: a.leadMagnet.portada, alt: '' })]
         : [
@@ -573,35 +573,33 @@ function pintarResultado(guardado) {
     ]),
 
     // Próximos pasos
-    el('section', { class: 'autodiag-seccion' }, [
+    el('section', { class: 'autodiag-seccion autodiag-seccion-proximos' }, [
       el('h3', { class: 'autodiag-seccion-titulo', text: T.proximosPasos }),
       el('p', { class: 'autodiag-texto', text: propuestaDe(guardado.respuestas) }),
-      el('div', { class: 'autodiag-invitacion' }, [
-        el('p', { class: 'autodiag-invitacion-titulo', text: T.invitacionTitulo }),
-        el('p', { class: 'autodiag-texto', text: T.invitacionTexto }),
-        el('div', { class: 'autodiag-acciones' }, [
-          calendly
-            ? el('a', { class: 'autodiag-boton', href: calendly, target: '_blank', rel: 'noopener', text: T.botonLlamada, onclick: () => emitir('llamada', detalle) })
-            : null,
-          el('button', {
-            type: 'button',
-            class: 'autodiag-boton autodiag-boton-secundario',
-            'aria-expanded': 'false',
-            'aria-controls': 'autodiag-form-contacto',
-            text: T.botonEscribir,
-            onclick: (e) => {
-              formContacto.hidden = !formContacto.hidden;
-              e.currentTarget.setAttribute('aria-expanded', String(!formContacto.hidden));
-              if (!formContacto.hidden) {
-                const input = formContacto.querySelector('input[type="email"]');
-                if (!input.value) input.value = emailRecordado;
-                formContacto.querySelector('#autodiag-nombre').focus();
-              }
-            },
-          }),
-        ]),
-        formContacto,
+      el('p', { class: 'autodiag-texto', text: T.invitacionTexto }),
+      el('div', { class: 'autodiag-acciones autodiag-acciones-principales' }, [
+        calendly
+          ? el('a', { class: 'autodiag-boton autodiag-boton-grande', href: calendly, target: '_blank', rel: 'noopener', text: T.botonLlamada, onclick: () => emitir('llamada', detalle) })
+          : null,
+        el('button', {
+          type: 'button',
+          // Si es la única acción (sin Calendly), es la principal: fondo oscuro.
+          class: 'autodiag-boton autodiag-boton-grande' + (calendly ? ' autodiag-boton-secundario' : ''),
+          'aria-expanded': 'false',
+          'aria-controls': 'autodiag-form-contacto',
+          text: T.botonEscribir,
+          onclick: (e) => {
+            formContacto.hidden = !formContacto.hidden;
+            e.currentTarget.setAttribute('aria-expanded', String(!formContacto.hidden));
+            if (!formContacto.hidden) {
+              const input = formContacto.querySelector('input[type="email"]');
+              if (!input.value) input.value = emailRecordado;
+              formContacto.querySelector('#autodiag-nombre').focus();
+            }
+          },
+        }),
       ]),
+      formContacto,
     ]),
 
     // Discreto, al final
