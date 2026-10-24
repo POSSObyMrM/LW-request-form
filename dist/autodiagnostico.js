@@ -6,6 +6,7 @@
   };
   var AREAS = {
     A: {
+      etiqueta: "Criterio y ejecuci\xF3n",
       nombre: "Criterio y ejecuci\xF3n",
       reto: {
         titulo: "M\xE1s criterio, menos piloto autom\xE1tico",
@@ -14,6 +15,7 @@
       fortaleza: "Base t\xE9cnica s\xF3lida y criterio propio para resolver."
     },
     B: {
+      etiqueta: "Influencia y liderazgo",
       nombre: "Colaboraci\xF3n, influencia y liderazgo",
       reto: {
         titulo: "Muchas reuniones. Pocas decisiones.",
@@ -22,6 +24,7 @@
       fortaleza: "Saben coordinarse, decidir y defender sus ideas."
     },
     C: {
+      etiqueta: "Cultura y estrategia",
       nombre: "Cultura y estrategia",
       reto: {
         titulo: "Un equipo, no varias islas.",
@@ -30,37 +33,55 @@
       fortaleza: "El equipo entiende hacia d\xF3nde va la empresa."
     }
   };
+  var TEXTOS_RESULTADO = {
+    eyebrow: "Tu diagn\xF3stico POSSO",
+    titulo: "Ya sabemos qu\xE9 puede estar frenando a tu equipo",
+    retosTitulo: "Tus principales retos",
+    recursoEyebrow: "\xBFQuieres entender mejor estos retos?",
+    recursoBoton: "Descargar",
+    proximosPasos: "Pr\xF3ximos pasos",
+    invitacionTitulo: "\xBFHablamos de tu equipo?",
+    invitacionTexto: "En 20 minutos repasamos tu diagn\xF3stico y te contamos c\xF3mo lo abordar\xEDamos con un equipo como el tuyo. Sin compromiso.",
+    botonLlamada: "Reservar una llamada",
+    botonEscribir: "Escribirnos"
+  };
   var ESCALA = ["No me preocupa", "Me preocupa un poco", "Me preocupa mucho"];
   var PREGUNTAS = [
     {
       tipo: "escala",
       area: "A",
-      texto: "\xBFTe preocupa el nivel t\xE9cnico de tu equipo frente a las exigencias actuales y la adopci\xF3n de nuevas herramientas (como IA)?"
+      texto: "\xBFTe preocupa el nivel t\xE9cnico de tu equipo frente a las exigencias actuales y la adopci\xF3n de nuevas herramientas (como IA)?",
+      foco: "actualizar el nivel t\xE9cnico del equipo e incorporar la IA con criterio"
     },
     {
       tipo: "escala",
       area: "A",
-      texto: "\xBFTe preocupa que tu equipo se perciba como un mero ejecutor en vez de proponer soluciones y aportar ideas propias?"
+      texto: "\xBFTe preocupa que tu equipo se perciba como un mero ejecutor en vez de proponer soluciones y aportar ideas propias?",
+      foco: "que el equipo pase de ejecutar encargos a proponer soluciones e ideas propias"
     },
     {
       tipo: "escala",
       area: "B",
-      texto: "\xBFTe preocupa que los responsables de tu equipo no vayan al grano en las reuniones, les cueste tomar decisiones o no sepan defender sus ideas?"
+      texto: "\xBFTe preocupa que los responsables de tu equipo no vayan al grano en las reuniones, les cueste tomar decisiones o no sepan defender sus ideas?",
+      foco: "que los responsables vayan al grano, decidan y sepan defender sus ideas"
     },
     {
       tipo: "escala",
       area: "B",
-      texto: "\xBFTe preocupa la falta de autonom\xEDa y proactividad de tus equipos a la hora de aportar soluciones?"
+      texto: "\xBFTe preocupa la falta de autonom\xEDa y proactividad de tus equipos a la hora de aportar soluciones?",
+      foco: "ganar autonom\xEDa y proactividad a la hora de aportar soluciones"
     },
     {
       tipo: "escala",
       area: "C",
-      texto: "\xBFTe preocupa que tu equipo no tenga claro c\xF3mo contribuye su trabajo a los objetivos de la empresa?"
+      texto: "\xBFTe preocupa que tu equipo no tenga claro c\xF3mo contribuye su trabajo a los objetivos de la empresa?",
+      foco: "conectar el trabajo diario del equipo con los objetivos de la empresa"
     },
     {
       tipo: "escala",
       area: "C",
-      texto: "\xBFTe preocupa la falta de colaboraci\xF3n entre departamentos o la resistencia a los cambios dentro de los equipos?"
+      texto: "\xBFTe preocupa la falta de colaboraci\xF3n entre departamentos o la resistencia a los cambios dentro de los equipos?",
+      foco: "romper los silos entre departamentos y acompa\xF1ar el cambio"
     },
     {
       tipo: "tamano",
@@ -245,6 +266,49 @@
       tamano: PREGUNTAS[6].opciones[respuestas2[6]].valor
     };
   }
+  var VERTICES = { C: { x: 200, y: 45 }, A: { x: 60, y: 285 }, B: { x: 340, y: 285 } };
+  var CENTRO = { x: 200, y: 205 };
+  var ACERCAMIENTO = 0.82;
+  function geometriaTriangulo(p) {
+    const fuerza = { A: 4 - p.A, B: 4 - p.B, C: 4 - p.C };
+    const total = fuerza.A + fuerza.B + fuerza.C;
+    const media = total === 0 ? { ...CENTRO } : {
+      x: (fuerza.A * VERTICES.A.x + fuerza.B * VERTICES.B.x + fuerza.C * VERTICES.C.x) / total,
+      y: (fuerza.A * VERTICES.A.y + fuerza.B * VERTICES.B.y + fuerza.C * VERTICES.C.y) / total
+    };
+    const punto = { x: CENTRO.x + (media.x - CENTRO.x) * ACERCAMIENTO, y: CENTRO.y + (media.y - CENTRO.y) * ACERCAMIENTO };
+    const fortalezas = ["C", "A", "B"].map((a) => ({
+      x: CENTRO.x + (VERTICES[a].x - CENTRO.x) * fuerza[a] / 4,
+      y: CENTRO.y + (VERTICES[a].y - CENTRO.y) * fuerza[a] / 4
+    }));
+    return { punto, fortalezas, fuerza };
+  }
+  var MAX_FOCOS = 3;
+  function unirConY(partes) {
+    if (partes.length <= 1) return partes.join("");
+    return partes.slice(0, -1).join(", ") + " y " + partes[partes.length - 1];
+  }
+  function focosDe(respuestas2) {
+    const p = puntuaciones(respuestas2);
+    const ordenAreas = retosOrdenados(p).concat(["A", "B", "C"].filter((a) => p[a] < UMBRAL_MEJORAR));
+    const preguntasEscala = PREGUNTAS.map((q, i) => ({ q, i })).filter((x) => x.q.tipo === "escala");
+    for (const nivel of [2, 1]) {
+      const elegidas = ordenAreas.flatMap((a) => preguntasEscala.filter((x) => x.q.area === a && respuestas2[x.i] === nivel));
+      if (elegidas.length > 0) return { nivel, focos: elegidas.slice(0, MAX_FOCOS).map((x) => x.q.foco) };
+    }
+    return { nivel: 0, focos: [] };
+  }
+  function propuestaDe(respuestas2) {
+    const r = resultadoDe(respuestas2);
+    const a = ARQUETIPOS[r.arquetipo];
+    const solucion = a.solucion.charAt(0).toLowerCase() + a.solucion.slice(1).replace(/\.\s*$/, "");
+    const { nivel, focos } = focosDe(respuestas2);
+    let texto = "Para un equipo como el tuyo, te proponemos " + solucion + ".";
+    if (focos.length > 0) {
+      texto += (nivel === 2 ? " Seg\xFAn lo que m\xE1s te preocupa, pondr\xEDamos el foco en " : " Pondr\xEDamos el foco en ") + unirConY(focos.map((f, i) => i === 0 ? f : "en " + f)) + ".";
+    }
+    return texto;
+  }
 
   // src/autodiagnostico/autodiagnostico.js
   var CLAVE_ALMACEN = "posso_autodiagnostico_incompany";
@@ -252,11 +316,14 @@
   var CLASE_DISPARADOR = "btn-autodiagnostico";
   var ANCLA = "#autodiagnostico";
   var EMAIL_CONTACTO_POR_DEFECTO = "incompany@posso.es";
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  var SVG = "http://www.w3.org/2000/svg";
   var modal = null;
   var contenido = null;
   var disparador = null;
   var respuestas = [];
   var actual = 0;
+  var emailRecordado = "";
   function config() {
     return window.AutodiagnosticoConfig || {};
   }
@@ -269,6 +336,15 @@
       else if (k === "class") nodo.className = v;
       else if (k.startsWith("on")) nodo.addEventListener(k.slice(2), v);
       else nodo.setAttribute(k, v === true ? "" : v);
+    });
+    (hijos || []).forEach((h) => h && nodo.append(h));
+    return nodo;
+  }
+  function svg(tag, attrs, hijos) {
+    const nodo = document.createElementNS(SVG, tag);
+    Object.keys(attrs || {}).forEach((k) => {
+      if (k === "text") nodo.textContent = attrs[k];
+      else nodo.setAttribute(k, attrs[k]);
     });
     (hijos || []).forEach((h) => h && nodo.append(h));
     return nodo;
@@ -329,15 +405,15 @@
     if (guardado) pintarResultado(guardado);
     else empezar();
     modal.style.display = "block";
-    modal.scrollTop = 0;
-    enfocarInicio();
+    arriba();
   }
   function cerrar() {
     if (!modal) return;
     modal.style.display = "none";
     if (disparador && typeof disparador.focus === "function") disparador.focus();
   }
-  function enfocarInicio() {
+  function arriba() {
+    modal.scrollTop = 0;
     const destino = contenido.querySelector("[data-foco]") || modal.querySelector(".autodiag-cerrar");
     if (destino) destino.focus({ preventScroll: true });
   }
@@ -346,25 +422,44 @@
     actual = 0;
     pintarPregunta();
   }
-  function pintarPregunta() {
-    const p = PREGUNTAS[actual];
-    const total = PREGUNTAS.length;
-    const opciones = p.tipo === "escala" ? ESCALA.map((texto, i) => ({ texto, i })) : p.opciones.map((o, i) => ({ texto: o.texto, i }));
+  function grupoOpciones(indice, elegida, alElegir, compacto) {
+    const p = PREGUNTAS[indice];
+    const opciones = p.tipo === "escala" ? ESCALA : p.opciones.map((o) => o.texto);
     const grupo = el(
       "div",
-      { class: "autodiag-opciones autodiag-opciones-" + (p.tipo === "escala" ? "escala" : "lista"), role: "radiogroup", "aria-labelledby": "autodiag-pregunta" },
+      {
+        class: "autodiag-opciones autodiag-opciones-" + (p.tipo === "escala" ? "escala" : "lista") + (compacto ? " autodiag-opciones-compactas" : ""),
+        role: "radiogroup",
+        "aria-labelledby": "autodiag-pregunta-" + indice
+      },
       opciones.map(
-        (o) => el("button", {
+        (texto, i) => el("button", {
           type: "button",
-          class: "autodiag-opcion" + (respuestas[actual] === o.i ? " is-elegida" : ""),
+          class: "autodiag-opcion" + (elegida === i ? " is-elegida" : ""),
           role: "radio",
-          "aria-checked": respuestas[actual] === o.i ? "true" : "false",
-          "data-foco": o.i === (respuestas[actual] ?? 0) ? true : null,
-          text: o.texto,
-          onclick: () => responder(o.i)
+          "aria-checked": elegida === i ? "true" : "false",
+          "data-indice": String(i),
+          text: texto,
+          onclick: () => alElegir(i)
         })
       )
     );
+    grupo.addEventListener("keydown", (e) => {
+      const botones = Array.from(grupo.querySelectorAll(".autodiag-opcion"));
+      const i = botones.indexOf(document.activeElement);
+      const delta = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
+      if (i < 0 || !delta) return;
+      e.preventDefault();
+      botones[(i + delta + botones.length) % botones.length].focus();
+    });
+    return grupo;
+  }
+  function pintarPregunta() {
+    const p = PREGUNTAS[actual];
+    const total = PREGUNTAS.length;
+    const grupo = grupoOpciones(actual, respuestas[actual], responder, false);
+    const foco = grupo.querySelectorAll(".autodiag-opcion")[respuestas[actual] ?? 0];
+    if (foco) foco.setAttribute("data-foco", "");
     contenido.replaceChildren(
       el("div", { class: "autodiag-cabecera" }, [
         el("p", { class: "autodiag-eyebrow", text: "POSSO In Company" }),
@@ -377,40 +472,31 @@
           el("div", { class: "autodiag-progreso-relleno", style: "width:" + (actual + 1) / total * 100 + "%" })
         ])
       ]),
-      el("h3", { id: "autodiag-pregunta", class: "autodiag-pregunta", text: p.texto }),
+      el("h3", { id: "autodiag-pregunta-" + actual, class: "autodiag-pregunta", text: p.texto }),
       grupo,
       el("div", { class: "autodiag-navegacion" }, [
         actual > 0 ? el("button", { type: "button", class: "autodiag-boton-texto", text: "\u2190 Anterior", onclick: anterior }) : el("span")
       ])
     );
-    grupo.addEventListener("keydown", (e) => {
-      const botones = Array.from(grupo.querySelectorAll(".autodiag-opcion"));
-      const i = botones.indexOf(document.activeElement);
-      if (i < 0) return;
-      const delta = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
-      if (!delta) return;
-      e.preventDefault();
-      botones[(i + delta + botones.length) % botones.length].focus();
-    });
   }
   var avanzando = false;
   function responder(i) {
     if (avanzando) return;
+    const primera = respuestas.every((r) => r === null);
     respuestas[actual] = i;
     pintarPregunta();
-    if (actual === 0 && respuestas.filter((r) => r !== null).length === 1) emitir("inicio", null);
+    if (primera) emitir("inicio", null);
     avanzando = true;
     setTimeout(() => {
       avanzando = false;
       if (actual < PREGUNTAS.length - 1) {
         actual++;
         pintarPregunta();
-        enfocarInicio();
+        arriba();
       } else {
         const guardado = guardar(respuestas.slice());
         pintarResultado(guardado);
-        modal.scrollTop = 0;
-        enfocarInicio();
+        arriba();
         emitir("completado", detalleResultado(guardado));
       }
     }, 220);
@@ -419,7 +505,48 @@
     if (actual === 0) return;
     actual--;
     pintarPregunta();
-    enfocarInicio();
+    arriba();
+  }
+  function pintarRespuestas(guardado) {
+    const borrador = guardado.respuestas.slice();
+    const botonGuardar = el("button", { type: "button", class: "autodiag-boton", text: "Guardar cambios", disabled: true, onclick: () => {
+      const nuevo = guardar(borrador.slice());
+      pintarResultado(nuevo);
+      arriba();
+      emitir("actualizado", detalleResultado(nuevo));
+    } });
+    const cambiado = () => borrador.some((r, i) => r !== guardado.respuestas[i]);
+    const lista = el("ol", { class: "autodiag-respuestas" }, PREGUNTAS.map((p, i) => {
+      const li = el("li", { class: "autodiag-respuesta" });
+      const pintar = () => {
+        li.replaceChildren(
+          el("p", { id: "autodiag-pregunta-" + i, class: "autodiag-respuesta-pregunta", text: p.texto }),
+          grupoOpciones(i, borrador[i], (opcion) => {
+            borrador[i] = opcion;
+            pintar();
+            li.querySelectorAll(".autodiag-opcion")[opcion].focus();
+            botonGuardar.disabled = !cambiado();
+          }, true)
+        );
+      };
+      pintar();
+      return li;
+    }));
+    contenido.replaceChildren(
+      el("div", { class: "autodiag-cabecera" }, [
+        el("p", { class: "autodiag-eyebrow", text: TEXTOS_RESULTADO.eyebrow }),
+        el("h2", { id: "autodiag-titulo", class: "autodiag-titulo learnworlds-subheading learnworlds-subheading-small", "data-foco": true, tabindex: "-1", text: "Tus respuestas" }),
+        el("p", { class: "autodiag-subtitulo learnworlds-main-text", text: "Cambia las que quieras y guarda: el diagn\xF3stico se recalcula con tus nuevas respuestas." })
+      ]),
+      lista,
+      el("div", { class: "autodiag-acciones autodiag-acciones-respuestas" }, [
+        botonGuardar,
+        el("button", { type: "button", class: "autodiag-boton-texto", text: "Volver sin cambiar nada", onclick: () => {
+          pintarResultado(guardado);
+          arriba();
+        } })
+      ])
+    );
   }
   function detalleResultado(guardado) {
     const r = resultadoDe(guardado.respuestas);
@@ -440,86 +567,231 @@
       return "";
     }
   }
+  var NUMEROS = ["ning\xFAn", "un", "dos", "tres"];
+  function triangulo(r) {
+    const g = geometriaTriangulo(r.puntuaciones);
+    const pts = (lista) => lista.map((p) => p.x.toFixed(1) + "," + p.y.toFixed(1)).join(" ");
+    const estado = (a) => r.retos.indexOf(a) === -1 ? "fuerte" : "mejorar";
+    const etiquetas = [
+      { a: "C", x: 200, y: 26, ancla: "middle" },
+      { a: "A", x: 22, y: 316, ancla: "start" },
+      { a: "B", x: 378, y: 316, ancla: "end" }
+    ];
+    const descripcion = "Tri\xE1ngulo de las tres \xE1reas. " + ["A", "B", "C"].map((a) => AREAS[a].etiqueta + ": " + (estado(a) === "fuerte" ? "punto fuerte" : "a mejorar")).join(". ") + ".";
+    return svg("svg", { class: "autodiag-triangulo", viewBox: "0 0 400 340", role: "img", "aria-label": descripcion }, [
+      svg("polygon", { class: "autodiag-tri-base", points: pts([VERTICES.C, VERTICES.A, VERTICES.B]) }),
+      svg("line", { class: "autodiag-tri-guia", x1: VERTICES.C.x, y1: VERTICES.C.y, x2: 200, y2: 285 }),
+      svg("line", { class: "autodiag-tri-guia", x1: VERTICES.A.x, y1: VERTICES.A.y, x2: 270, y2: 165 }),
+      svg("line", { class: "autodiag-tri-guia", x1: VERTICES.B.x, y1: VERTICES.B.y, x2: 130, y2: 165 }),
+      // Halo en cada vértice: oscuro donde hay que mejorar (más cuanto más preocupa), claro donde es fuerte.
+      ...["A", "B", "C"].map(
+        (a) => svg("circle", {
+          class: "autodiag-tri-halo autodiag-tri-halo-" + estado(a),
+          cx: VERTICES[a].x,
+          cy: VERTICES[a].y,
+          r: 46,
+          style: "opacity:" + (estado(a) === "fuerte" ? 0.9 : r.puntuaciones[a] >= 3 ? 0.75 : 0.45)
+        })
+      ),
+      svg("polygon", { class: "autodiag-tri-fortalezas", points: pts(g.fortalezas) }),
+      svg("circle", { class: "autodiag-tri-centro", cx: CENTRO.x, cy: CENTRO.y, r: 3 }),
+      ...["A", "B", "C"].map((a) => svg("circle", { class: "autodiag-tri-vertice autodiag-tri-vertice-" + estado(a), cx: VERTICES[a].x, cy: VERTICES[a].y, r: 7 })),
+      ...etiquetas.map((e) => svg("text", { class: "autodiag-tri-etiqueta", x: e.x, y: e.y, "text-anchor": e.ancla, text: AREAS[e.a].etiqueta })),
+      svg("circle", { class: "autodiag-tri-punto", cx: g.punto.x.toFixed(1), cy: g.punto.y.toFixed(1), r: 9 })
+    ]);
+  }
+  function leyendaTriangulo() {
+    return el("ul", { class: "autodiag-leyenda" }, [
+      el("li", {}, [el("span", { class: "autodiag-leyenda-marca autodiag-leyenda-punto" }), document.createTextNode("Tu equipo")]),
+      el("li", {}, [el("span", { class: "autodiag-leyenda-marca autodiag-leyenda-fuerte" }), document.createTextNode("Punto fuerte")]),
+      el("li", {}, [el("span", { class: "autodiag-leyenda-marca autodiag-leyenda-mejorar" }), document.createTextNode("A mejorar")])
+    ]);
+  }
+  function mensajeFormulario() {
+    return el("p", { class: "autodiag-form-mensaje", role: "status" });
+  }
+  function campoEmail(id, etiqueta) {
+    return el("div", { class: "autodiag-campo" }, [
+      el("label", { for: id, class: "autodiag-etiqueta-campo", text: etiqueta }),
+      el("input", { id, type: "email", class: "autodiag-input", autocomplete: "email", placeholder: "tu.nombre@empresa.com", value: emailRecordado, required: true })
+    ]);
+  }
+  function enviarFormulario(form, evento, datos, manejador, textoOk, sinManejador) {
+    const mensaje = form.querySelector(".autodiag-form-mensaje");
+    const boton = form.querySelector('button[type="submit"]');
+    emitir(evento, datos);
+    if (typeof manejador !== "function") {
+      sinManejador(mensaje);
+      return;
+    }
+    boton.disabled = true;
+    mensaje.textContent = "Enviando\u2026";
+    Promise.resolve().then(() => manejador(datos)).then(() => {
+      mensaje.textContent = textoOk;
+      form.classList.add("is-enviado");
+    }).catch(() => {
+      mensaje.textContent = "No se ha podido enviar. Int\xE9ntalo de nuevo en unos minutos.";
+    }).finally(() => {
+      boton.disabled = false;
+    });
+  }
+  function validarEmail(form, input) {
+    const email = input.value.trim();
+    const ok = EMAIL_RE.test(email);
+    input.classList.toggle("is-invalido", !ok);
+    if (!ok) {
+      form.querySelector(".autodiag-form-mensaje").textContent = "Escribe un email v\xE1lido.";
+      input.focus();
+      return null;
+    }
+    emailRecordado = email;
+    return email;
+  }
   function pintarResultado(guardado) {
     const r = resultadoDe(guardado.respuestas);
     const a = ARQUETIPOS[r.arquetipo];
     const n = r.retos.length;
-    const intro = n === 0 ? "Seg\xFAn tus respuestas, ninguna de las tres \xE1reas te preocupa especialmente. Tu reto es otro: no acomodarse." : "Seg\xFAn tus respuestas, hay " + (n === 1 ? "un \xE1rea" : n === 2 ? "dos \xE1reas" : "tres \xE1reas") + " en " + (n === 1 ? "la" : "las") + " que pod\xE9is mejorar. Te contamos cu\xE1les son, por qu\xE9 importan y por d\xF3nde empezar.";
-    const retos = n > 0 ? el(
-      "ol",
-      { class: "autodiag-retos" },
-      r.retos.map(
-        (area, i) => el("li", { class: "autodiag-reto" }, [
-          el("span", { class: "autodiag-reto-numero", "aria-hidden": "true", text: String(i + 1) }),
-          el("div", {}, [
-            el("p", { class: "autodiag-reto-titulo" }, [
-              document.createTextNode(AREAS[area].reto.titulo),
-              i === 0 && n > 1 ? el("span", { class: "autodiag-etiqueta", text: "Prioritario" }) : null
-            ]),
-            el("p", { class: "autodiag-reto-area", text: AREAS[area].nombre }),
-            el("p", { class: "autodiag-reto-texto", text: AREAS[area].reto.texto })
-          ])
-        ])
-      )
-    ) : el("ul", { class: "autodiag-lista" }, a.oportunidades.map((t) => el("li", { text: t })));
+    const detalle = detalleResultado(guardado);
     const fuertes = ["A", "B", "C"].filter((x) => r.retos.indexOf(x) === -1);
+    const formRecurso = el("form", { class: "autodiag-form autodiag-form-recurso", novalidate: true }, [
+      campoEmail("autodiag-email-recurso", "Tu email"),
+      el("button", { type: "submit", class: "autodiag-boton autodiag-boton-claro", text: TEXTOS_RESULTADO.recursoBoton }),
+      mensajeFormulario()
+    ]);
+    formRecurso.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = validarEmail(formRecurso, formRecurso.querySelector("input"));
+      if (!email) return;
+      enviarFormulario(formRecurso, "lead-magnet", { ...detalle, email }, config().onLeadMagnet, "Listo. Te lo hemos enviado a " + email + ".", (m) => {
+        m.textContent = "El env\xEDo del recurso todav\xEDa no est\xE1 conectado.";
+      });
+    });
+    const formContacto = el("form", { class: "autodiag-form autodiag-form-contacto", novalidate: true, hidden: true }, [
+      campoEmail("autodiag-email-contacto", "Tu email"),
+      el("div", { class: "autodiag-campo" }, [
+        el("label", { for: "autodiag-mensaje", class: "autodiag-etiqueta-campo", text: "Mensaje (opcional)" }),
+        el("textarea", { id: "autodiag-mensaje", class: "autodiag-input", rows: "3", maxlength: "2000", placeholder: "Cu\xE9ntanos lo que quieras sobre tu equipo" })
+      ]),
+      el("button", { type: "submit", class: "autodiag-boton", text: "Enviar" }),
+      mensajeFormulario()
+    ]);
+    formContacto.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const email = validarEmail(formContacto, formContacto.querySelector("input"));
+      if (!email) return;
+      const texto = formContacto.querySelector("textarea").value.trim();
+      enviarFormulario(formContacto, "contacto", { ...detalle, email, mensaje: texto }, config().onContacto, "Gracias. Te escribiremos muy pronto.", (m) => {
+        const cuerpo = (texto ? texto + "\n\n" : "") + "\u2014 Mi autodiagn\xF3stico In Company (" + fechaLarga(guardado.fecha) + "): " + a.nombre + "." + (n ? " Retos: " + r.retos.map((x) => AREAS[x].nombre).join(", ") + "." : "");
+        window.location.href = "mailto:" + (config().contactoEmail || EMAIL_CONTACTO_POR_DEFECTO) + "?subject=" + encodeURIComponent("Autodiagn\xF3stico In Company: " + a.nombre) + "&body=" + encodeURIComponent(cuerpo);
+        m.textContent = "Se ha abierto tu programa de correo con el mensaje preparado.";
+      });
+    });
+    const calendly = config().calendlyUrl;
     contenido.replaceChildren(
       el("div", { class: "autodiag-cabecera" }, [
-        el("p", { class: "autodiag-eyebrow", text: "Tu diagn\xF3stico POSSO" }),
-        el("h2", { id: "autodiag-titulo", class: "autodiag-titulo learnworlds-subheading learnworlds-subheading-small", "data-foco": true, tabindex: "-1", text: a.nombre }),
-        el("p", { class: "autodiag-lema", text: a.lema }),
+        el("p", { class: "autodiag-eyebrow", text: TEXTOS_RESULTADO.eyebrow }),
+        el("h2", { id: "autodiag-titulo", class: "autodiag-titulo learnworlds-subheading learnworlds-subheading-small", "data-foco": true, tabindex: "-1", text: TEXTOS_RESULTADO.titulo }),
         el("p", { class: "autodiag-fecha", text: "Diagn\xF3stico del " + fechaLarga(guardado.fecha) })
       ]),
-      el("p", { class: "autodiag-texto learnworlds-main-text", text: a.radiografia }),
+      // Arquetipo + triángulo
+      el("section", { class: "autodiag-arquetipo" }, [
+        el("figure", { class: "autodiag-figura" }, [triangulo(r), leyendaTriangulo()]),
+        el("div", { class: "autodiag-arquetipo-texto" }, [
+          el("p", { class: "autodiag-arquetipo-eyebrow", text: "Tu equipo es" }),
+          el("h3", { class: "autodiag-arquetipo-nombre", text: a.nombre }),
+          el("p", { class: "autodiag-lema", text: a.lema }),
+          el("p", { class: "autodiag-texto", text: a.radiografia })
+        ])
+      ]),
+      // Retos
       el("section", { class: "autodiag-seccion" }, [
-        el("h3", { class: "autodiag-seccion-titulo", text: n > 0 ? "Tus principales retos" : "Tu reto" }),
-        el("p", { class: "autodiag-texto", text: intro }),
-        retos,
+        el("h3", { class: "autodiag-seccion-titulo", text: TEXTOS_RESULTADO.retosTitulo }),
+        el("p", {
+          class: "autodiag-texto",
+          text: n > 0 ? "Seg\xFAn tus respuestas hay " + NUMEROS[n] + (n === 1 ? " \xE1rea en la" : " \xE1reas en las") + " que pod\xE9is mejorar:" : "Seg\xFAn tus respuestas no hay ning\xFAn \xE1rea que necesite mejorar con urgencia. Vuestro reto es otro:"
+        }),
+        n > 0 ? el(
+          "ol",
+          { class: "autodiag-retos" },
+          r.retos.map(
+            (area, i) => el("li", { class: "autodiag-reto" }, [
+              el("span", { class: "autodiag-reto-numero", "aria-hidden": "true", text: String(i + 1) }),
+              el("div", {}, [
+                el("p", { class: "autodiag-reto-titulo" }, [
+                  document.createTextNode(AREAS[area].reto.titulo),
+                  i === 0 && n > 1 ? el("span", { class: "autodiag-etiqueta", text: "Prioritario" }) : null
+                ]),
+                el("p", { class: "autodiag-reto-area", text: AREAS[area].nombre }),
+                el("p", { class: "autodiag-reto-texto", text: AREAS[area].reto.texto })
+              ])
+            ])
+          )
+        ) : el("ul", { class: "autodiag-lista" }, a.oportunidades.map((t) => el("li", { text: t }))),
         fuertes.length > 0 && n > 0 ? el("div", { class: "autodiag-fortalezas" }, [
           el("p", { class: "autodiag-fortalezas-titulo", text: fuertes.length === 1 ? "Tu punto fuerte" : "Tus puntos fuertes" }),
           el("ul", {}, fuertes.map((x) => el("li", {}, [el("strong", { text: AREAS[x].nombre + ". " }), document.createTextNode(AREAS[x].fortaleza)])))
         ]) : null
       ]),
-      el("blockquote", { class: "autodiag-mensaje", text: "\xAB" + a.mensaje + "\xBB" }),
+      // Recurso recomendado
       el("section", { class: "autodiag-recurso" }, [
-        el("p", { class: "autodiag-eyebrow", text: "\xBFQuieres entender mejor estos retos?" }),
-        el("h3", { class: "autodiag-recurso-titulo", text: a.leadMagnet.titulo }),
-        el("p", { class: "autodiag-recurso-texto", text: a.leadMagnet.descripcion }),
-        el("button", {
-          type: "button",
-          class: "autodiag-boton autodiag-boton-claro",
-          text: "Desc\xE1rgalo aqu\xED \u2192",
-          onclick: () => {
-            const detalle = detalleResultado(guardado);
-            emitir("lead-magnet", detalle);
-            if (typeof config().onLeadMagnet === "function") config().onLeadMagnet(detalle);
-          }
-        })
-      ]),
-      el("section", { class: "autodiag-seccion autodiag-solucion" }, [
-        el("h3", { class: "autodiag-seccion-titulo", text: "C\xF3mo te ayudar\xEDamos" }),
-        el("p", { class: "autodiag-texto", text: a.solucion }),
-        el("p", { class: "autodiag-texto", text: FORMATO_POR_TAMANO[r.tamano] }),
-        el("div", { class: "autodiag-acciones" }, [
-          el("a", {
-            class: "autodiag-boton",
-            href: "mailto:" + (config().contactoEmail || EMAIL_CONTACTO_POR_DEFECTO) + "?subject=" + encodeURIComponent("Autodiagn\xF3stico In Company: " + a.nombre),
-            text: "Hablemos de tu equipo"
-          }),
-          el("button", {
-            type: "button",
-            class: "autodiag-boton-texto",
-            text: "Repetir el diagn\xF3stico",
-            onclick: () => {
-              borrarGuardado();
-              empezar();
-              modal.scrollTop = 0;
-              enfocarInicio();
-            }
-          })
+        el("div", { class: "autodiag-portada", "aria-hidden": "true" }, a.leadMagnet.portada ? [el("img", { src: a.leadMagnet.portada, alt: "" })] : [
+          el("span", { class: "autodiag-portada-marca", text: "POSSO" }),
+          el("span", { class: "autodiag-portada-titulo", text: a.leadMagnet.titulo }),
+          el("span", { class: "autodiag-portada-pie", text: "by Mr.Marcel" })
+        ]),
+        el("div", { class: "autodiag-recurso-cuerpo" }, [
+          el("p", { class: "autodiag-eyebrow", text: TEXTOS_RESULTADO.recursoEyebrow }),
+          el("h3", { class: "autodiag-recurso-titulo", text: a.leadMagnet.titulo }),
+          el("p", { class: "autodiag-recurso-texto", text: a.leadMagnet.descripcion }),
+          formRecurso
         ])
+      ]),
+      // Próximos pasos
+      el("section", { class: "autodiag-seccion" }, [
+        el("h3", { class: "autodiag-seccion-titulo", text: TEXTOS_RESULTADO.proximosPasos }),
+        el("p", { class: "autodiag-texto", text: FORMATO_POR_TAMANO[r.tamano] }),
+        el("p", { class: "autodiag-texto", text: propuestaDe(guardado.respuestas) }),
+        el("div", { class: "autodiag-invitacion" }, [
+          el("p", { class: "autodiag-invitacion-titulo", text: TEXTOS_RESULTADO.invitacionTitulo }),
+          el("p", { class: "autodiag-texto", text: TEXTOS_RESULTADO.invitacionTexto }),
+          el("div", { class: "autodiag-acciones" }, [
+            calendly ? el("a", { class: "autodiag-boton", href: calendly, target: "_blank", rel: "noopener", text: TEXTOS_RESULTADO.botonLlamada, onclick: () => emitir("llamada", detalle) }) : null,
+            el("button", {
+              type: "button",
+              class: "autodiag-boton autodiag-boton-secundario",
+              "aria-expanded": "false",
+              "aria-controls": "autodiag-form-contacto",
+              text: TEXTOS_RESULTADO.botonEscribir,
+              onclick: (e) => {
+                formContacto.hidden = !formContacto.hidden;
+                e.currentTarget.setAttribute("aria-expanded", String(!formContacto.hidden));
+                if (!formContacto.hidden) {
+                  const input = formContacto.querySelector("input");
+                  if (!input.value) input.value = emailRecordado;
+                  input.focus();
+                }
+              }
+            })
+          ]),
+          formContacto
+        ])
+      ]),
+      // Discreto, al final
+      el("div", { class: "autodiag-pie" }, [
+        el("button", { type: "button", class: "autodiag-enlace", text: "Ver respuestas", onclick: () => {
+          pintarRespuestas(guardado);
+          arriba();
+        } }),
+        el("span", { "aria-hidden": "true", text: "\xB7" }),
+        el("button", { type: "button", class: "autodiag-enlace", text: "Repetir el diagn\xF3stico", onclick: () => {
+          if (!window.confirm("\xBFEmpezar de nuevo? Se borrar\xE1n tus respuestas.")) return;
+          borrarGuardado();
+          empezar();
+          arriba();
+        } })
       ])
     );
+    formContacto.id = "autodiag-form-contacto";
   }
   function init() {
     document.addEventListener("click", (e) => {

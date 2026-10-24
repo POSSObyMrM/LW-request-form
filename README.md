@@ -182,5 +182,11 @@ del documento «Test Incompany» y recomienda un recurso.
   el resultado. «Repetir el diagnóstico» lo borra.
 - Contenidos en `src/autodiagnostico/datos.js`; cálculo en `src/autodiagnostico/calculo.js` (un área «a mejorar» si sus
   dos preguntas suman 2 o más sobre 4); estilos en LW-styles, `src/partials/dynamic/_autodiagnostico.less`.
-- Opcional: `window.AutodiagnosticoConfig = { contactoEmail, onLeadMagnet(resultado) }`. Eventos en `document`:
-  `posso:autodiagnostico:inicio`, `:completado` y `:lead-magnet` (también a `dataLayer` si existe).
+- Pantalla final: triángulo de áreas (posición calculada con las respuestas, ver `geometriaTriangulo`), retos, punto
+  fuerte, recurso recomendado (portada A4 + email + Descargar), «Próximos pasos» (formato por tamaño + propuesta
+  compuesta con `propuestaDe` + invitación a llamada/escribir) y, al pie, «Ver respuestas» (editar y guardar) y
+  «Repetir el diagnóstico».
+- Opcional, antes del script: `window.AutodiagnosticoConfig = { calendlyUrl, contactoEmail, onLeadMagnet(datos),
+  onContacto(datos) }` (los `on…` pueden devolver una promesa). Sin `calendlyUrl` no se muestra «Reservar una llamada»;
+  sin `onContacto`, «Enviar» abre el correo de la persona. Eventos en `document`: `posso:autodiagnostico:` + `inicio`,
+  `completado`, `actualizado`, `lead-magnet`, `contacto`, `llamada` (también a `dataLayer` si existe).

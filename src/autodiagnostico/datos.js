@@ -12,6 +12,7 @@ export const INTRO = {
 //   fortaleza: lo que se muestra si el área está bien.
 export const AREAS = {
   A: {
+    etiqueta: 'Criterio y ejecución',
     nombre: 'Criterio y ejecución',
     reto: {
       titulo: 'Más criterio, menos piloto automático',
@@ -21,6 +22,7 @@ export const AREAS = {
     fortaleza: 'Base técnica sólida y criterio propio para resolver.',
   },
   B: {
+    etiqueta: 'Influencia y liderazgo',
     nombre: 'Colaboración, influencia y liderazgo',
     reto: {
       titulo: 'Muchas reuniones. Pocas decisiones.',
@@ -30,6 +32,7 @@ export const AREAS = {
     fortaleza: 'Saben coordinarse, decidir y defender sus ideas.',
   },
   C: {
+    etiqueta: 'Cultura y estrategia',
     nombre: 'Cultura y estrategia',
     reto: {
       titulo: 'Un equipo, no varias islas.',
@@ -40,39 +43,61 @@ export const AREAS = {
   },
 };
 
+// Textos fijos de la pantalla final.
+export const TEXTOS_RESULTADO = {
+  eyebrow: 'Tu diagnóstico POSSO',
+  titulo: 'Ya sabemos qué puede estar frenando a tu equipo',
+  retosTitulo: 'Tus principales retos',
+  recursoEyebrow: '¿Quieres entender mejor estos retos?',
+  recursoBoton: 'Descargar',
+  proximosPasos: 'Próximos pasos',
+  invitacionTitulo: '¿Hablamos de tu equipo?',
+  invitacionTexto:
+    'En 20 minutos repasamos tu diagnóstico y te contamos cómo lo abordaríamos con un equipo como el tuyo. Sin compromiso.',
+  botonLlamada: 'Reservar una llamada',
+  botonEscribir: 'Escribirnos',
+};
+
 export const ESCALA = ['No me preocupa', 'Me preocupa un poco', 'Me preocupa mucho'];
 
 // Siempre en este orden. Las seis primeras puntúan su área (0, 1 o 2 según la escala); la séptima es el tamaño.
+// foco: cómo se nombra esa preocupación en la propuesta de «Próximos pasos» (ver propuestaDe en calculo.js).
 export const PREGUNTAS = [
   {
     tipo: 'escala',
     area: 'A',
     texto: '¿Te preocupa el nivel técnico de tu equipo frente a las exigencias actuales y la adopción de nuevas herramientas (como IA)?',
+    foco: 'actualizar el nivel técnico del equipo e incorporar la IA con criterio',
   },
   {
     tipo: 'escala',
     area: 'A',
     texto: '¿Te preocupa que tu equipo se perciba como un mero ejecutor en vez de proponer soluciones y aportar ideas propias?',
+    foco: 'que el equipo pase de ejecutar encargos a proponer soluciones e ideas propias',
   },
   {
     tipo: 'escala',
     area: 'B',
     texto: '¿Te preocupa que los responsables de tu equipo no vayan al grano en las reuniones, les cueste tomar decisiones o no sepan defender sus ideas?',
+    foco: 'que los responsables vayan al grano, decidan y sepan defender sus ideas',
   },
   {
     tipo: 'escala',
     area: 'B',
     texto: '¿Te preocupa la falta de autonomía y proactividad de tus equipos a la hora de aportar soluciones?',
+    foco: 'ganar autonomía y proactividad a la hora de aportar soluciones',
   },
   {
     tipo: 'escala',
     area: 'C',
     texto: '¿Te preocupa que tu equipo no tenga claro cómo contribuye su trabajo a los objetivos de la empresa?',
+    foco: 'conectar el trabajo diario del equipo con los objetivos de la empresa',
   },
   {
     tipo: 'escala',
     area: 'C',
     texto: '¿Te preocupa la falta de colaboración entre departamentos o la resistencia a los cambios dentro de los equipos?',
+    foco: 'romper los silos entre departamentos y acompañar el cambio',
   },
   {
     tipo: 'tamano',
