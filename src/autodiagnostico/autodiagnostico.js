@@ -1,4 +1,4 @@
-import { AREAS, ARQUETIPOS, ESCALA, FORMATO_POR_TAMANO, INTRO, PREGUNTAS, TEXTOS_RESULTADO as T } from './datos.js';
+import { AREAS, ARQUETIPOS, ESCALA, INTRO, PREGUNTAS, TEXTOS_RESULTADO as T } from './datos.js';
 import { CENTRO, VERTICES, geometriaTriangulo, propuestaDe, resultadoDe, respuestasValidas } from './calculo.js';
 
 // Autodiagnóstico InCompany. Script independiente de request-form.js: se enlaza aparte en LearnWorlds.
@@ -14,7 +14,7 @@ import { CENTRO, VERTICES, geometriaTriangulo, propuestaDe, resultadoDe, respues
 //     calendlyUrl: 'https://calendly.com/…',            // botón «Reservar una llamada» (sin él, no se muestra)
 //     contactoEmail: 'incompany@posso.es',              // destino del «Escribirnos» mientras no haya onContacto
 //     onLeadMagnet: function (datos) { return promesa },// envío del recurso (datos.email + resultado)
-//     onContacto: function (datos) { return promesa },  // envío del mensaje (datos.email, datos.mensaje + resultado)
+//     onContacto: function (datos) { return promesa },  // envío del mensaje (nombre, email, mensaje + resultado)
 //   };
 // Sin onLeadMagnet el formulario del recurso solo avisa de que aún no está conectado; sin onContacto, «Escribirnos»
 // abre el correo de la persona con el mensaje y el resumen del diagnóstico.
@@ -322,48 +322,74 @@ function fechaLarga(iso) {
 
 const NUMEROS = ['ningún', 'un', 'dos', 'tres'];
 
+let idsSvg = 0;
+
+// Distancia entre dos puntos.
+function distancia(p, q) {
+  return Math.hypot(p.x - q.x, p.y - q.y);
+}
+
 function triangulo(r) {
   const g = geometriaTriangulo(r.puntuaciones);
   const pts = (lista) => lista.map((p) => p.x.toFixed(1) + ',' + p.y.toFixed(1)).join(' ');
-  const estado = (a) => (r.retos.indexOf(a) === -1 ? 'fuerte' : 'mejorar');
+  const esReto = (a) => r.retos.indexOf(a) !== -1;
+  const orden = ['C', 'A', 'B']; // mismo orden que g.fortalezas
   const etiquetas = [
-    { a: 'C', x: 200, y: 26, ancla: 'middle' },
-    { a: 'A', x: 22, y: 316, ancla: 'start' },
-    { a: 'B', x: 378, y: 316, ancla: 'end' },
+    { a: 'C', x: 200, y: 22, ancla: 'middle' },
+    { a: 'A', x: 22, y: 318, ancla: 'start' },
+    { a: 'B', x: 378, y: 318, ancla: 'end' },
   ];
   const descripcion =
     'Triángulo de las tres áreas. ' +
-    ['A', 'B', 'C'].map((a) => AREAS[a].etiqueta + ': ' + (estado(a) === 'fuerte' ? 'punto fuerte' : 'a mejorar')).join('. ') + '.';
+    ['A', 'B', 'C'].map((a) => AREAS[a].etiqueta + ': ' + (esReto(a) ? 'reto' : 'fortaleza')).join('. ') + '.';
+  const id = 'autodiag-svg-' + ++idsSvg;
+  const contorno = pts([VERTICES.C, VERTICES.A, VERTICES.B]);
+
+  // Degradado solo en los vértices con reto, recortado al triángulo. Su radio llega justo hasta el vértice del
+  // triángulo interior de fortalezas: cuanto más preocupa el área, más se adentra.
+  const degradados = orden
+    .map((a, k) => ({ a, radio: distancia(VERTICES[a], g.fortalezas[k]) }))
+    .filter((d) => esReto(d.a) && d.radio > 0);
+
+  const icono = (a) => {
+    const { x, y } = VERTICES[a];
+    return esReto(a)
+      ? svg('g', { class: 'autodiag-tri-icono', transform: 'translate(' + x + ',' + y + ')' }, [
+          svg('line', { x1: 0, y1: -5.5, x2: 0, y2: 1.5 }),
+          svg('circle', { class: 'autodiag-tri-icono-punto', cx: 0, cy: 5.5, r: 1.6 }),
+        ])
+      : svg('path', { class: 'autodiag-tri-icono', transform: 'translate(' + x + ',' + y + ')', d: 'M -5 0.5 L -1.5 4 L 5.5 -3.5' });
+  };
 
   return svg('svg', { class: 'autodiag-triangulo', viewBox: '0 0 400 340', role: 'img', 'aria-label': descripcion }, [
-    svg('polygon', { class: 'autodiag-tri-base', points: pts([VERTICES.C, VERTICES.A, VERTICES.B]) }),
+    svg('defs', {}, [
+      svg('clipPath', { id: id + '-recorte' }, [svg('polygon', { points: contorno })]),
+      ...degradados.map((d) =>
+        svg('radialGradient', { id: id + '-' + d.a, gradientUnits: 'userSpaceOnUse', cx: VERTICES[d.a].x, cy: VERTICES[d.a].y, r: d.radio.toFixed(1) }, [
+          svg('stop', { offset: '0', class: 'autodiag-tri-degradado-inicio' }),
+          svg('stop', { offset: '1', class: 'autodiag-tri-degradado-fin' }),
+        ]),
+      ),
+    ]),
+    svg('polygon', { class: 'autodiag-tri-base', points: contorno }),
+    svg('g', { 'clip-path': 'url(#' + id + '-recorte)' }, degradados.map((d) =>
+      svg('circle', { cx: VERTICES[d.a].x, cy: VERTICES[d.a].y, r: d.radio.toFixed(1), fill: 'url(#' + id + '-' + d.a + ')' }),
+    )),
     svg('line', { class: 'autodiag-tri-guia', x1: VERTICES.C.x, y1: VERTICES.C.y, x2: 200, y2: 285 }),
     svg('line', { class: 'autodiag-tri-guia', x1: VERTICES.A.x, y1: VERTICES.A.y, x2: 270, y2: 165 }),
     svg('line', { class: 'autodiag-tri-guia', x1: VERTICES.B.x, y1: VERTICES.B.y, x2: 130, y2: 165 }),
-    // Halo en cada vértice: oscuro donde hay que mejorar (más cuanto más preocupa), claro donde es fuerte.
-    ...['A', 'B', 'C'].map((a) =>
-      svg('circle', {
-        class: 'autodiag-tri-halo autodiag-tri-halo-' + estado(a),
-        cx: VERTICES[a].x,
-        cy: VERTICES[a].y,
-        r: 46,
-        style: 'opacity:' + (estado(a) === 'fuerte' ? 0.9 : r.puntuaciones[a] >= 3 ? 0.75 : 0.45),
-      }),
-    ),
+    svg('polygon', { class: 'autodiag-tri-base autodiag-tri-borde', points: contorno }),
     svg('polygon', { class: 'autodiag-tri-fortalezas', points: pts(g.fortalezas) }),
     svg('circle', { class: 'autodiag-tri-centro', cx: CENTRO.x, cy: CENTRO.y, r: 3 }),
-    ...['A', 'B', 'C'].map((a) => svg('circle', { class: 'autodiag-tri-vertice autodiag-tri-vertice-' + estado(a), cx: VERTICES[a].x, cy: VERTICES[a].y, r: 7 })),
+    ...['A', 'B', 'C'].map((a) => svg('circle', { class: 'autodiag-tri-vertice', cx: VERTICES[a].x, cy: VERTICES[a].y, r: 12 })),
+    ...['A', 'B', 'C'].map(icono),
     ...etiquetas.map((e) => svg('text', { class: 'autodiag-tri-etiqueta', x: e.x, y: e.y, 'text-anchor': e.ancla, text: AREAS[e.a].etiqueta })),
-    svg('circle', { class: 'autodiag-tri-punto', cx: g.punto.x.toFixed(1), cy: g.punto.y.toFixed(1), r: 9 }),
+    svg('circle', { class: 'autodiag-tri-punto', cx: g.punto.x.toFixed(1), cy: g.punto.y.toFixed(1), r: 18 }),
   ]);
 }
 
 function leyendaTriangulo() {
-  return el('ul', { class: 'autodiag-leyenda' }, [
-    el('li', {}, [el('span', { class: 'autodiag-leyenda-marca autodiag-leyenda-punto' }), document.createTextNode('Tu equipo')]),
-    el('li', {}, [el('span', { class: 'autodiag-leyenda-marca autodiag-leyenda-fuerte' }), document.createTextNode('Punto fuerte')]),
-    el('li', {}, [el('span', { class: 'autodiag-leyenda-marca autodiag-leyenda-mejorar' }), document.createTextNode('A mejorar')]),
-  ]);
+  return el('p', { class: 'autodiag-leyenda' }, [el('span', { class: 'autodiag-leyenda-marca autodiag-leyenda-punto' }), document.createTextNode('Tu equipo')]);
 }
 
 function mensajeFormulario() {
@@ -439,6 +465,10 @@ function pintarResultado(guardado) {
 
   // Escribirnos: email + mensaje opcional.
   const formContacto = el('form', { class: 'autodiag-form autodiag-form-contacto', novalidate: true, hidden: true }, [
+    el('div', { class: 'autodiag-campo' }, [
+      el('label', { for: 'autodiag-nombre', class: 'autodiag-etiqueta-campo', text: 'Tu nombre' }),
+      el('input', { id: 'autodiag-nombre', type: 'text', class: 'autodiag-input', autocomplete: 'name', maxlength: '120', required: true }),
+    ]),
     campoEmail('autodiag-email-contacto', 'Tu email'),
     el('div', { class: 'autodiag-campo' }, [
       el('label', { for: 'autodiag-mensaje', class: 'autodiag-etiqueta-campo', text: 'Mensaje (opcional)' }),
@@ -449,14 +479,22 @@ function pintarResultado(guardado) {
   ]);
   formContacto.addEventListener('submit', (e) => {
     e.preventDefault();
-    const email = validarEmail(formContacto, formContacto.querySelector('input'));
+    const inputNombre = formContacto.querySelector('#autodiag-nombre');
+    const nombre = inputNombre.value.trim();
+    inputNombre.classList.toggle('is-invalido', !nombre);
+    if (!nombre) {
+      formContacto.querySelector('.autodiag-form-mensaje').textContent = 'Escribe tu nombre.';
+      inputNombre.focus();
+      return;
+    }
+    const email = validarEmail(formContacto, formContacto.querySelector('input[type="email"]'));
     if (!email) return;
     const texto = formContacto.querySelector('textarea').value.trim();
-    enviarFormulario(formContacto, 'contacto', { ...detalle, email, mensaje: texto }, config().onContacto, 'Gracias. Te escribiremos muy pronto.', (m) => {
+    enviarFormulario(formContacto, 'contacto', { ...detalle, nombre, email, mensaje: texto }, config().onContacto, 'Gracias. Te escribiremos muy pronto.', (m) => {
       // Mientras no haya envío a POSSO: el correo de la persona, con su mensaje y el resumen del diagnóstico.
       const cuerpo = (texto ? texto + '\n\n' : '') +
         '— Mi autodiagnóstico In Company (' + fechaLarga(guardado.fecha) + '): ' + a.nombre + '.' +
-        (n ? ' Retos: ' + r.retos.map((x) => AREAS[x].nombre).join(', ') + '.' : '');
+        (n ? ' Retos: ' + r.retos.map((x) => AREAS[x].nombre).join(', ') + '.' : '') + '\n\n' + nombre;
       window.location.href = 'mailto:' + (config().contactoEmail || EMAIL_CONTACTO_POR_DEFECTO) +
         '?subject=' + encodeURIComponent('Autodiagnóstico In Company: ' + a.nombre) + '&body=' + encodeURIComponent(cuerpo);
       m.textContent = 'Se ha abierto tu programa de correo con el mensaje preparado.';
@@ -476,7 +514,7 @@ function pintarResultado(guardado) {
     el('section', { class: 'autodiag-arquetipo' }, [
       el('figure', { class: 'autodiag-figura' }, [triangulo(r), leyendaTriangulo()]),
       el('div', { class: 'autodiag-arquetipo-texto' }, [
-        el('p', { class: 'autodiag-arquetipo-eyebrow', text: 'Tu equipo es' }),
+        el('p', { class: 'autodiag-arquetipo-eyebrow', text: 'Escenario actual de tu equipo' }),
         el('h3', { class: 'autodiag-arquetipo-nombre', text: a.nombre }),
         el('p', { class: 'autodiag-lema', text: a.lema }),
         el('p', { class: 'autodiag-texto', text: a.radiografia }),
@@ -538,7 +576,6 @@ function pintarResultado(guardado) {
     // Próximos pasos
     el('section', { class: 'autodiag-seccion' }, [
       el('h3', { class: 'autodiag-seccion-titulo', text: T.proximosPasos }),
-      el('p', { class: 'autodiag-texto', text: FORMATO_POR_TAMANO[r.tamano] }),
       el('p', { class: 'autodiag-texto', text: propuestaDe(guardado.respuestas) }),
       el('div', { class: 'autodiag-invitacion' }, [
         el('p', { class: 'autodiag-invitacion-titulo', text: T.invitacionTitulo }),
@@ -557,9 +594,9 @@ function pintarResultado(guardado) {
               formContacto.hidden = !formContacto.hidden;
               e.currentTarget.setAttribute('aria-expanded', String(!formContacto.hidden));
               if (!formContacto.hidden) {
-                const input = formContacto.querySelector('input');
+                const input = formContacto.querySelector('input[type="email"]');
                 if (!input.value) input.value = emailRecordado;
-                input.focus();
+                formContacto.querySelector('#autodiag-nombre').focus();
               }
             },
           }),

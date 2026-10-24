@@ -53,7 +53,7 @@ export function resultadoDe(respuestas) {
 // lo mismo (o ninguna es fuerte), queda en el centro.
 export const VERTICES = { C: { x: 200, y: 45 }, A: { x: 60, y: 285 }, B: { x: 340, y: 285 } };
 export const CENTRO = { x: 200, y: 205 };
-const ACERCAMIENTO = 0.82;
+const ACERCAMIENTO = 0.72;
 
 export function geometriaTriangulo(p) {
   const fuerza = { A: 4 - p.A, B: 4 - p.B, C: 4 - p.C };

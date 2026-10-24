@@ -110,16 +110,6 @@ export const PREGUNTAS = [
   },
 ];
 
-// Formato recomendado según el tamaño del equipo (pregunta 7).
-export const FORMATO_POR_TAMANO = {
-  pequeno:
-    'Con un equipo de menos de 10 personas, lo más ágil suele ser incorporar a los perfiles clave a nuestras formaciones abiertas o diseñar un itinerario individual.',
-  mediano:
-    'Para un equipo de entre 10 y 30 personas, el encaje natural es una edición In Company exclusiva, con casos prácticos sobre vuestros proyectos reales.',
-  grande:
-    'Con un área de más de 30 personas, lo que mejor funciona es una consultoría pedagógica y un plan formativo a medida, por fases.',
-};
-
 // Ocho arquetipos: uno por cada combinación de áreas «fuerte» / «a mejorar» (ver calculo.js).
 //   fuertes: áreas que están bien (el resto necesitan mejorar).
 export const ARQUETIPOS = {
