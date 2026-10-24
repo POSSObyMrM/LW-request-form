@@ -4,8 +4,8 @@
   "private": true,
   "description": "Injects and wires up the LearnWorlds request modal/form (dossier, notify-me, etc.) as a single embeddable script.",
   "scripts": {
-    "build": "esbuild src/request-form.js --bundle --format=iife --outfile=dist/request-form.js",
-    "build:min": "esbuild src/request-form.js --bundle --format=iife --minify --outfile=dist/request-form.min.js",
+    "build": "esbuild src/request-form.js --bundle --format=iife --outfile=dist/request-form.js && esbuild src/autodiagnostico/autodiagnostico.js --bundle --format=iife --outfile=dist/autodiagnostico.js",
+    "build:min": "esbuild src/request-form.js --bundle --format=iife --minify --outfile=dist/request-form.min.js && esbuild src/autodiagnostico/autodiagnostico.js --bundle --format=iife --minify --outfile=dist/autodiagnostico.min.js",
     "watch": "esbuild src/request-form.js --bundle --format=iife --outfile=dist/request-form.js --watch"
   },
   "devDependencies": {

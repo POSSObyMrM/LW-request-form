@@ -166,3 +166,21 @@ course name:
   };
 </script>
 ```
+
+## Autodiagnóstico InCompany (`dist/autodiagnostico.js`)
+
+Script independiente (no necesita `request-form.js`). Cuestionario de 7 preguntas que asigna uno de los 8 arquetipos
+del documento «Test Incompany» y recomienda un recurso.
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/POSSObyMrM/LW-request-form@main/dist/autodiagnostico.min.js"></script>
+```
+
+- Se abre con cualquier botón/enlace con la clase `btn-autodiagnostico`, con un enlace a `#autodiagnostico`, o con
+  `window.PossoAutodiagnostico.abrir()`.
+- Si el navegador ya lo respondió (localStorage `posso_autodiagnostico_incompany`: respuestas + fecha), abre directamente
+  el resultado. «Repetir el diagnóstico» lo borra.
+- Contenidos en `src/autodiagnostico/datos.js`; cálculo en `src/autodiagnostico/calculo.js` (un área «a mejorar» si sus
+  dos preguntas suman 2 o más sobre 4); estilos en LW-styles, `src/partials/dynamic/_autodiagnostico.less`.
+- Opcional: `window.AutodiagnosticoConfig = { contactoEmail, onLeadMagnet(resultado) }`. Eventos en `document`:
+  `posso:autodiagnostico:inicio`, `:completado` y `:lead-magnet` (también a `dataLayer` si existe).
