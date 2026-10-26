@@ -1,5 +1,5 @@
-import { AREAS, ARQUETIPOS, ESCALA, INTRO, PREGUNTAS, TEXTOS_RESULTADO as T } from './datos.js';
-import { CENTRO, VERTICES, geometriaTriangulo, propuestaDe, resultadoDe, respuestasValidas } from './calculo.js';
+import { AREAS, ARQUETIPOS, CASOS, ESCALA, INTRO, PREGUNTAS, TEXTOS_RESULTADO as T } from './datos.js';
+import { CENTRO, VERTICES, geometriaTriangulo, propuestaPartes, resultadoDe, respuestasValidas } from './calculo.js';
 import { getUTMParams } from '../utm.js';
 
 // Autodiagnóstico InCompany. Script independiente de request-form.js: se enlaza aparte en LearnWorlds.
@@ -31,6 +31,14 @@ const ANCLA = '#autodiagnostico';
 const POSSO_URL_POR_DEFECTO = 'https://admin.posso.es/api/public/leads/autodiagnostico';
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const SVG = 'http://www.w3.org/2000/svg';
+// Logos de los casos: public/casos/ del mismo sitio desde el que se sirve este script (GitHub Pages, jsDelivr o local).
+const LOGOS_CASOS = (() => {
+  try {
+    return new URL('../public/casos/', document.currentScript.src).href;
+  } catch (e) {
+    return 'https://possobymrm.github.io/LW-request-form/public/casos/';
+  }
+})();
 
 let modal = null;
 let contenido = null;
@@ -525,6 +533,7 @@ function validarEmail(form, input) {
 function pintarResultado(guardado) {
   const r = resultadoDe(guardado.respuestas);
   const a = ARQUETIPOS[r.arquetipo];
+  const caso = CASOS[r.arquetipo] || null;
   const n = r.retos.length;
   const detalle = detalleResultado(guardado);
   const fuertes = ['A', 'B', 'C'].filter((x) => r.retos.indexOf(x) === -1);
@@ -684,7 +693,6 @@ function pintarResultado(guardado) {
                     document.createTextNode(AREAS[area].reto.titulo),
                     i === 0 && n > 1 ? el('span', { class: 'autodiag-etiqueta', text: 'Prioritario' }) : null,
                   ]),
-                  el('p', { class: 'autodiag-reto-area', text: AREAS[area].nombre }),
                   el('p', { class: 'autodiag-reto-texto', text: AREAS[area].reto.texto }),
                 ]),
               ]),
@@ -698,6 +706,8 @@ function pintarResultado(guardado) {
           ])
         : null,
     ]),
+
+    caso ? tarjetaCaso(caso) : null,
 
     // Recurso recomendado (solo si está activo, ver leadMagnet.activo en datos.js)
     !a.leadMagnet.activo ? null : el('section', { class: 'autodiag-recurso' }, [
@@ -719,7 +729,7 @@ function pintarResultado(guardado) {
     // Próximos pasos
     el('section', { class: 'autodiag-seccion autodiag-seccion-proximos' }, [
       el('h3', { class: 'autodiag-seccion-titulo', text: T.proximosPasos }),
-      el('p', { class: 'autodiag-texto', text: propuestaDe(guardado.respuestas) }),
+      textoPropuesta(guardado.respuestas),
       // La invitación sobra una vez escrito (salvo que quede la llamada de Calendly, a la que acompaña).
       guardado.contacto && !calendly ? null : textoInvitacion,
       el('div', { class: 'autodiag-acciones autodiag-acciones-principales' }, [
@@ -747,6 +757,53 @@ function pintarResultado(guardado) {
     ]),
   );
   formContacto.id = 'autodiag-form-contacto';
+}
+
+// «Próximos pasos»: la propuesta con cada foco en negrita (sin las comas ni la «y en» que los unen).
+function textoPropuesta(respuestas) {
+  const { solucion, introFocos, focos, cierre } = propuestaPartes(respuestas);
+  const nodos = [document.createTextNode(solucion + ' ')];
+  if (focos.length > 0) {
+    nodos.push(document.createTextNode(introFocos));
+    focos.forEach((f, i) => {
+      if (i > 0) nodos.push(document.createTextNode(i === focos.length - 1 ? ' y en ' : ', en '));
+      nodos.push(el('strong', { text: f }));
+    });
+    nodos.push(document.createTextNode('. '));
+  }
+  nodos.push(document.createTextNode(cierre));
+  return el('p', { class: 'autodiag-texto' }, nodos);
+}
+
+// Caso real del arquetipo: título, personas formadas y logo; la descripción se despliega con «Ver detalles».
+function tarjetaCaso(caso) {
+  const idDetalle = 'autodiag-caso-detalle';
+  const detalle = el('p', { id: idDetalle, class: 'autodiag-caso-texto', hidden: true, text: caso.descripcion });
+  const logo = el('div', { class: 'autodiag-caso-logo' }, [el('span', { class: 'autodiag-caso-logo-nombre', text: caso.empresa })]);
+  if (caso.logo) {
+    const img = el('img', { src: LOGOS_CASOS + caso.logo, alt: caso.empresa });
+    // Hasta que el PNG exista, se queda el nombre de la empresa.
+    img.addEventListener('load', () => logo.replaceChildren(img));
+  }
+  return el('section', { class: 'autodiag-caso' }, [
+    el('div', { class: 'autodiag-caso-cabecera' }, [
+      el('div', { class: 'autodiag-caso-titular' }, [
+        el('p', { class: 'autodiag-eyebrow', text: T.casoEyebrow }),
+        el('h3', { class: 'autodiag-caso-titulo' }, [el('span', { class: 'autodiag-caso-empresa', text: caso.empresa + ' · ' }), document.createTextNode(caso.titulo)]),
+        el('span', { class: 'autodiag-caso-tag', text: caso.personas + ' personas formadas' }),
+      ]),
+      logo,
+    ]),
+    el('button', {
+      type: 'button', class: 'autodiag-caso-toggle', 'aria-expanded': 'false', 'aria-controls': idDetalle, text: 'Ver detalles',
+      onclick: (e) => {
+        detalle.hidden = !detalle.hidden;
+        e.currentTarget.setAttribute('aria-expanded', String(!detalle.hidden));
+        e.currentTarget.textContent = detalle.hidden ? 'Ver detalles' : 'Ocultar detalles';
+      },
+    }),
+    detalle,
+  ]);
 }
 
 // --- Arranque ------------------------------------------------------------------------------------------------------

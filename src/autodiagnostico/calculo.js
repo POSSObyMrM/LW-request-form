@@ -86,14 +86,21 @@ export function focosDe(respuestas) {
 
 export const CIERRE_PROPUESTA = 'Lo concretaríamos contigo, a partir de lo que de verdad necesita tu equipo.';
 
-export function propuestaDe(respuestas) {
+// Partes de la propuesta, para poder pintar los focos en negrita: solucion + introFocos + focos (unidos con «, en …»
+// y «y en …») + '.' + cierre. Sin focos, introFocos es '' y focos [].
+export function propuestaPartes(respuestas) {
   const r = resultadoDe(respuestas);
-  const a = ARQUETIPOS[r.arquetipo];
   const { nivel, focos } = focosDe(respuestas);
-  let texto = a.solucion;
-  if (focos.length > 0) {
-    texto += (nivel === 2 ? ' Por lo que más te preocupa, pondríamos el foco en ' : ' Por lo que nos cuentas, pondríamos el foco en ') +
-      unirConY(focos.map((f, i) => (i === 0 ? f : 'en ' + f))) + '.';
-  }
-  return texto + ' ' + CIERRE_PROPUESTA;
+  return {
+    solucion: ARQUETIPOS[r.arquetipo].solucion,
+    introFocos: focos.length === 0 ? '' : nivel === 2 ? 'Por lo que más te preocupa, pondríamos el foco en ' : 'Por lo que nos cuentas, pondríamos el foco en ',
+    focos,
+    cierre: CIERRE_PROPUESTA,
+  };
+}
+
+export function propuestaDe(respuestas) {
+  const { solucion, introFocos, focos, cierre } = propuestaPartes(respuestas);
+  const conFocos = focos.length > 0 ? ' ' + introFocos + unirConY(focos.map((f, i) => (i === 0 ? f : 'en ' + f))) + '.' : '';
+  return solucion + conFocos + ' ' + cierre;
 }

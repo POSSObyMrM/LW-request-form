@@ -50,6 +50,7 @@ export const TEXTOS_RESULTADO = {
   eyebrow: 'Tu diagnóstico POSSO',
   titulo: 'Ya sabemos qué puede estar frenando a tu equipo',
   retosTitulo: 'Tus principales retos',
+  casoEyebrow: 'Caso real',
   recursoEyebrow: '¿Quieres entender mejor estos retos?',
   recursoBoton: 'Descargar',
   proximosPasos: 'Próximos pasos',
@@ -304,5 +305,59 @@ export const ARQUETIPOS = {
     // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
     solucion:
       'Con equipos así solemos proponer estímulos de frontera, como masterclasses y programas avanzados (Beyond the Prompt, Diseño de Futuros, Economía Conductual), que abran nuevas preguntas.',
+  },
+};
+
+// Caso real con el que ilustrar cada arquetipo (card «Caso real», tras los retos). Sin caso, no hay card.
+//   logo: nombre del PNG en public/casos/ de este repositorio (versión clara, para fondo oscuro, con su margen incluido);
+//   si no está, se pinta el nombre de la empresa.
+export const CASOS = {
+  1: {
+    empresa: 'Telefónica',
+    titulo: 'Design Ops: personas, procesos y cultura',
+    personas: 18,
+    logo: 'logo-telefonica-dark-solo.png',
+    descripcion:
+      'El equipo de diseño UX/UI de la web de Movistar, 18 profesionales, trabajaba como una consultora interna («UX as a service»): recibía encargos de desarrollo, comercialización y tecnología, con roles poco claros y fricción entre departamentos. Diseñamos un programa presencial de 15 horas sobre Design Ops, construido en torno a personas, procesos y cultura, que termina con un roadmap de iniciativas propio del equipo para dejar de ser un proveedor reactivo.',
+  },
+  2: {
+    empresa: 'Mercadona IT',
+    titulo: 'Patrones móviles',
+    personas: 16,
+    logo: 'logo-mercadona-dark-solo.png',
+    descripcion:
+      'Los responsables del equipo de diseño estaban alineados entre sí y con el resto de equipos, pero eso no se notaba en las entregas: casi todas las aplicaciones habían nacido en web, y ni los product designers ni el equipo de Design System dominaban el diseño nativo para iOS y Android. Diseñamos un programa híbrido de 27 horas, con mentorías, para que los 16 profesionales construyeran juntos el criterio de plataforma, con ejercicios sobre sus propios casos y grupos estables.',
+  },
+  3: {
+    empresa: 'AstraZeneca',
+    titulo: 'Datos, decisiones y planes de acción',
+    personas: 73,
+    logo: 'logo-astrazeneca-dark-solo.png',
+    descripcion:
+      'La compañía quería que sus equipos decidieran con datos, pero la ambición se quedaba en la dirección. Diseñamos un itinerario de cinco meses para 73 personas en tres colectivos, cada uno con su propia adaptación: OBEX (18), el equipo que lidera la transformación, para acompañar el cambio; managers (20), para decidir y hacer seguimiento con datos; y oficina (35), para proponer y ejecutar planes de acción de forma autónoma. Un mismo objetivo, tres puentes distintos entre la estrategia y el día a día.',
+  },
+  5: {
+    empresa: 'Vichy Catalan',
+    titulo: 'IA generativa para la productividad',
+    personas: 20,
+    logo: 'logo-vichy-catalan-dark-solo.png',
+    descripcion:
+      'La dirección general, RRHH e IT impulsaban la transformación digital, pero los equipos no tenían base en IA: en marketing, cinco personas gestionaban veinte marcas. Antes de diseñar el taller nos reunimos con los directores y separamos dos perfiles, dirección y oficina por un lado y marketing por otro, para que cada uno practicara la IA con sus propias tareas.',
+  },
+  6: {
+    empresa: 'Keepler Data Tech',
+    titulo: 'Narrativa, diseño y datos: presentaciones que cuentan',
+    personas: 10,
+    logo: 'logo-keepler-dark-solo.png',
+    descripcion:
+      'Una consultora de datos y cloud con más de 350 proyectos en Europa: solvencia técnica de sobra, pero sus Project Managers no conseguían que los resultados calaran en los clientes en los momentos clave (arranques y cierres de proyecto, demos y revisiones). Propusimos un taller presencial de 8 horas para 10 PMs, con storytelling visual, diseño de presentaciones y técnicas para convertir datos técnicos en mensajes claros y persuasivos.',
+  },
+  8: {
+    empresa: 'Sanitas',
+    titulo: 'Creatividad y storytelling',
+    personas: 70,
+    logo: 'logo-sanitas-dark-solo.png',
+    descripcion:
+      'Los departamentos de cultura, people y corporativo querían seguir a la altura de lo que hoy pide el mercado. Trabajamos con ellos la creatividad y el storytelling, combinando masterclass para grupos grandes, talleres online y un taller presencial con Lego Serious Play, para que comunicaran mejor sus ideas y proyectos con herramientas y metodologías actualizadas.',
   },
 };

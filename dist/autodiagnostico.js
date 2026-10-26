@@ -37,6 +37,7 @@
     eyebrow: "Tu diagn\xF3stico POSSO",
     titulo: "Ya sabemos qu\xE9 puede estar frenando a tu equipo",
     retosTitulo: "Tus principales retos",
+    casoEyebrow: "Caso real",
     recursoEyebrow: "\xBFQuieres entender mejor estos retos?",
     recursoBoton: "Descargar",
     proximosPasos: "Pr\xF3ximos pasos",
@@ -249,6 +250,50 @@
       solucion: "Con equipos as\xED solemos proponer est\xEDmulos de frontera, como masterclasses y programas avanzados (Beyond the Prompt, Dise\xF1o de Futuros, Econom\xEDa Conductual), que abran nuevas preguntas."
     }
   };
+  var CASOS = {
+    1: {
+      empresa: "Telef\xF3nica",
+      titulo: "Design Ops: personas, procesos y cultura",
+      personas: 18,
+      logo: "logo-telefonica-dark-solo.png",
+      descripcion: "El equipo de dise\xF1o UX/UI de la web de Movistar, 18 profesionales, trabajaba como una consultora interna (\xABUX as a service\xBB): recib\xEDa encargos de desarrollo, comercializaci\xF3n y tecnolog\xEDa, con roles poco claros y fricci\xF3n entre departamentos. Dise\xF1amos un programa presencial de 15 horas sobre Design Ops, construido en torno a personas, procesos y cultura, que termina con un roadmap de iniciativas propio del equipo para dejar de ser un proveedor reactivo."
+    },
+    2: {
+      empresa: "Mercadona IT",
+      titulo: "Patrones m\xF3viles",
+      personas: 16,
+      logo: "logo-mercadona-dark-solo.png",
+      descripcion: "Los responsables del equipo de dise\xF1o estaban alineados entre s\xED y con el resto de equipos, pero eso no se notaba en las entregas: casi todas las aplicaciones hab\xEDan nacido en web, y ni los product designers ni el equipo de Design System dominaban el dise\xF1o nativo para iOS y Android. Dise\xF1amos un programa h\xEDbrido de 27 horas, con mentor\xEDas, para que los 16 profesionales construyeran juntos el criterio de plataforma, con ejercicios sobre sus propios casos y grupos estables."
+    },
+    3: {
+      empresa: "AstraZeneca",
+      titulo: "Datos, decisiones y planes de acci\xF3n",
+      personas: 73,
+      logo: "logo-astrazeneca-dark-solo.png",
+      descripcion: "La compa\xF1\xEDa quer\xEDa que sus equipos decidieran con datos, pero la ambici\xF3n se quedaba en la direcci\xF3n. Dise\xF1amos un itinerario de cinco meses para 73 personas en tres colectivos, cada uno con su propia adaptaci\xF3n: OBEX (18), el equipo que lidera la transformaci\xF3n, para acompa\xF1ar el cambio; managers (20), para decidir y hacer seguimiento con datos; y oficina (35), para proponer y ejecutar planes de acci\xF3n de forma aut\xF3noma. Un mismo objetivo, tres puentes distintos entre la estrategia y el d\xEDa a d\xEDa."
+    },
+    5: {
+      empresa: "Vichy Catalan",
+      titulo: "IA generativa para la productividad",
+      personas: 20,
+      logo: "logo-vichy-catalan-dark-solo.png",
+      descripcion: "La direcci\xF3n general, RRHH e IT impulsaban la transformaci\xF3n digital, pero los equipos no ten\xEDan base en IA: en marketing, cinco personas gestionaban veinte marcas. Antes de dise\xF1ar el taller nos reunimos con los directores y separamos dos perfiles, direcci\xF3n y oficina por un lado y marketing por otro, para que cada uno practicara la IA con sus propias tareas."
+    },
+    6: {
+      empresa: "Keepler Data Tech",
+      titulo: "Narrativa, dise\xF1o y datos: presentaciones que cuentan",
+      personas: 10,
+      logo: "logo-keepler-dark-solo.png",
+      descripcion: "Una consultora de datos y cloud con m\xE1s de 350 proyectos en Europa: solvencia t\xE9cnica de sobra, pero sus Project Managers no consegu\xEDan que los resultados calaran en los clientes en los momentos clave (arranques y cierres de proyecto, demos y revisiones). Propusimos un taller presencial de 8 horas para 10 PMs, con storytelling visual, dise\xF1o de presentaciones y t\xE9cnicas para convertir datos t\xE9cnicos en mensajes claros y persuasivos."
+    },
+    8: {
+      empresa: "Sanitas",
+      titulo: "Creatividad y storytelling",
+      personas: 70,
+      logo: "logo-sanitas-dark-solo.png",
+      descripcion: "Los departamentos de cultura, people y corporativo quer\xEDan seguir a la altura de lo que hoy pide el mercado. Trabajamos con ellos la creatividad y el storytelling, combinando masterclass para grupos grandes, talleres online y un taller presencial con Lego Serious Play, para que comunicaran mejor sus ideas y proyectos con herramientas y metodolog\xEDas actualizadas."
+    }
+  };
 
   // src/autodiagnostico/calculo.js
   var UMBRAL_MEJORAR = 2;
@@ -290,10 +335,6 @@
     return { fortalezas, fuerza };
   }
   var MAX_FOCOS = 3;
-  function unirConY(partes) {
-    if (partes.length <= 1) return partes.join("");
-    return partes.slice(0, -1).join(", ") + " y " + partes[partes.length - 1];
-  }
   function focosDe(respuestas2) {
     const p = puntuaciones(respuestas2);
     const ordenAreas = retosOrdenados(p).concat(["A", "B", "C"].filter((a) => p[a] < UMBRAL_MEJORAR));
@@ -305,15 +346,15 @@
     return { nivel: 0, focos: [] };
   }
   var CIERRE_PROPUESTA = "Lo concretar\xEDamos contigo, a partir de lo que de verdad necesita tu equipo.";
-  function propuestaDe(respuestas2) {
+  function propuestaPartes(respuestas2) {
     const r = resultadoDe(respuestas2);
-    const a = ARQUETIPOS[r.arquetipo];
     const { nivel, focos } = focosDe(respuestas2);
-    let texto = a.solucion;
-    if (focos.length > 0) {
-      texto += (nivel === 2 ? " Por lo que m\xE1s te preocupa, pondr\xEDamos el foco en " : " Por lo que nos cuentas, pondr\xEDamos el foco en ") + unirConY(focos.map((f, i) => i === 0 ? f : "en " + f)) + ".";
-    }
-    return texto + " " + CIERRE_PROPUESTA;
+    return {
+      solucion: ARQUETIPOS[r.arquetipo].solucion,
+      introFocos: focos.length === 0 ? "" : nivel === 2 ? "Por lo que m\xE1s te preocupa, pondr\xEDamos el foco en " : "Por lo que nos cuentas, pondr\xEDamos el foco en ",
+      focos,
+      cierre: CIERRE_PROPUESTA
+    };
   }
 
   // src/utm.js
@@ -346,6 +387,13 @@
   var POSSO_URL_POR_DEFECTO = "https://admin.posso.es/api/public/leads/autodiagnostico";
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   var SVG = "http://www.w3.org/2000/svg";
+  var LOGOS_CASOS = (() => {
+    try {
+      return new URL("../public/casos/", document.currentScript.src).href;
+    } catch (e) {
+      return "https://possobymrm.github.io/LW-request-form/public/casos/";
+    }
+  })();
   var modal = null;
   var contenido = null;
   var disparador = null;
@@ -762,6 +810,7 @@
   function pintarResultado(guardado) {
     const r = resultadoDe(guardado.respuestas);
     const a = ARQUETIPOS[r.arquetipo];
+    const caso = CASOS[r.arquetipo] || null;
     const n = r.retos.length;
     const detalle = detalleResultado(guardado);
     const fuertes = ["A", "B", "C"].filter((x) => r.retos.indexOf(x) === -1);
@@ -906,7 +955,6 @@
                   document.createTextNode(AREAS[area].reto.titulo),
                   i === 0 && n > 1 ? el("span", { class: "autodiag-etiqueta", text: "Prioritario" }) : null
                 ]),
-                el("p", { class: "autodiag-reto-area", text: AREAS[area].nombre }),
                 el("p", { class: "autodiag-reto-texto", text: AREAS[area].reto.texto })
               ])
             ])
@@ -917,6 +965,7 @@
           el("ul", {}, fuertes.map((x) => el("li", {}, [el("strong", { text: AREAS[x].nombre + ". " }), document.createTextNode(AREAS[x].fortaleza)])))
         ]) : null
       ]),
+      caso ? tarjetaCaso(caso) : null,
       // Recurso recomendado (solo si está activo, ver leadMagnet.activo en datos.js)
       !a.leadMagnet.activo ? null : el("section", { class: "autodiag-recurso" }, [
         el("div", { class: "autodiag-portada", "aria-hidden": "true" }, a.leadMagnet.portada ? [el("img", { src: a.leadMagnet.portada, alt: "" })] : [
@@ -934,7 +983,7 @@
       // Próximos pasos
       el("section", { class: "autodiag-seccion autodiag-seccion-proximos" }, [
         el("h3", { class: "autodiag-seccion-titulo", text: TEXTOS_RESULTADO.proximosPasos }),
-        el("p", { class: "autodiag-texto", text: propuestaDe(guardado.respuestas) }),
+        textoPropuesta(guardado.respuestas),
         // La invitación sobra una vez escrito (salvo que quede la llamada de Calendly, a la que acompaña).
         guardado.contacto && !calendly ? null : textoInvitacion,
         el("div", { class: "autodiag-acciones autodiag-acciones-principales" }, [
@@ -959,6 +1008,52 @@
       ])
     );
     formContacto.id = "autodiag-form-contacto";
+  }
+  function textoPropuesta(respuestas2) {
+    const { solucion, introFocos, focos, cierre } = propuestaPartes(respuestas2);
+    const nodos = [document.createTextNode(solucion + " ")];
+    if (focos.length > 0) {
+      nodos.push(document.createTextNode(introFocos));
+      focos.forEach((f, i) => {
+        if (i > 0) nodos.push(document.createTextNode(i === focos.length - 1 ? " y en " : ", en "));
+        nodos.push(el("strong", { text: f }));
+      });
+      nodos.push(document.createTextNode(". "));
+    }
+    nodos.push(document.createTextNode(cierre));
+    return el("p", { class: "autodiag-texto" }, nodos);
+  }
+  function tarjetaCaso(caso) {
+    const idDetalle = "autodiag-caso-detalle";
+    const detalle = el("p", { id: idDetalle, class: "autodiag-caso-texto", hidden: true, text: caso.descripcion });
+    const logo = el("div", { class: "autodiag-caso-logo" }, [el("span", { class: "autodiag-caso-logo-nombre", text: caso.empresa })]);
+    if (caso.logo) {
+      const img = el("img", { src: LOGOS_CASOS + caso.logo, alt: caso.empresa });
+      img.addEventListener("load", () => logo.replaceChildren(img));
+    }
+    return el("section", { class: "autodiag-caso" }, [
+      el("div", { class: "autodiag-caso-cabecera" }, [
+        el("div", { class: "autodiag-caso-titular" }, [
+          el("p", { class: "autodiag-eyebrow", text: TEXTOS_RESULTADO.casoEyebrow }),
+          el("h3", { class: "autodiag-caso-titulo" }, [el("span", { class: "autodiag-caso-empresa", text: caso.empresa + " \xB7 " }), document.createTextNode(caso.titulo)]),
+          el("span", { class: "autodiag-caso-tag", text: caso.personas + " personas formadas" })
+        ]),
+        logo
+      ]),
+      el("button", {
+        type: "button",
+        class: "autodiag-caso-toggle",
+        "aria-expanded": "false",
+        "aria-controls": idDetalle,
+        text: "Ver detalles",
+        onclick: (e) => {
+          detalle.hidden = !detalle.hidden;
+          e.currentTarget.setAttribute("aria-expanded", String(!detalle.hidden));
+          e.currentTarget.textContent = detalle.hidden ? "Ver detalles" : "Ocultar detalles";
+        }
+      }),
+      detalle
+    ]);
   }
   function init() {
     document.addEventListener("click", (e) => {
