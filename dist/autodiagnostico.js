@@ -53,37 +53,37 @@
       tipo: "escala",
       area: "A",
       texto: "\xBFTe preocupa el nivel t\xE9cnico de tu equipo frente a las exigencias actuales y la adopci\xF3n de nuevas herramientas (como IA)?",
-      foco: "actualizar el nivel t\xE9cnico del equipo e incorporar la IA con criterio"
+      foco: "poner al d\xEDa el oficio, con la IA como aliada"
     },
     {
       tipo: "escala",
       area: "A",
       texto: "\xBFTe preocupa que tu equipo se perciba como un mero ejecutor en vez de proponer soluciones y aportar ideas propias?",
-      foco: "que el equipo pase de ejecutar encargos a proponer soluciones e ideas propias"
+      foco: "que el equipo proponga m\xE1s ideas y soluciones propias"
     },
     {
       tipo: "escala",
       area: "B",
       texto: "\xBFTe preocupa que los responsables de tu equipo no vayan al grano en las reuniones, les cueste tomar decisiones o no sepan defender sus ideas?",
-      foco: "que los responsables vayan al grano, decidan y sepan defender sus ideas"
+      foco: "reforzar la capacidad de decisi\xF3n de los responsables"
     },
     {
       tipo: "escala",
       area: "B",
       texto: "\xBFTe preocupa la falta de autonom\xEDa y proactividad de tus equipos a la hora de aportar soluciones?",
-      foco: "ganar autonom\xEDa y proactividad a la hora de aportar soluciones"
+      foco: "ganar autonom\xEDa y proactividad"
     },
     {
       tipo: "escala",
       area: "C",
       texto: "\xBFTe preocupa que tu equipo no tenga claro c\xF3mo contribuye su trabajo a los objetivos de la empresa?",
-      foco: "conectar el trabajo diario del equipo con los objetivos de la empresa"
+      foco: "conectar el trabajo diario con los objetivos de la empresa"
     },
     {
       tipo: "escala",
       area: "C",
       texto: "\xBFTe preocupa la falta de colaboraci\xF3n entre departamentos o la resistencia a los cambios dentro de los equipos?",
-      foco: "romper los silos entre departamentos y acompa\xF1ar el cambio"
+      foco: "reforzar la colaboraci\xF3n entre departamentos ante el cambio"
     },
     {
       tipo: "tamano",
@@ -112,7 +112,8 @@
         titulo: "Playbook: De la Ejecuci\xF3n al Criterio Compartido",
         descripcion: "Marco de 4 fases para que perfiles t\xE9cnicos y creativos traduzcan el valor de su oficio en m\xE9tricas, argumentos e impacto visibles para negocio."
       },
-      solucion: "Programas In Company de comunicaci\xF3n estrat\xE9gica, facilitaci\xF3n y stakeholder management, capacitando a perfiles t\xE9cnicos para intervenir activamente en las fases iniciales de los proyectos."
+      // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
+      solucion: "Con equipos as\xED solemos trabajar la comunicaci\xF3n estrat\xE9gica, la facilitaci\xF3n y la relaci\xF3n con negocio, para que los perfiles t\xE9cnicos participen desde el inicio de los proyectos."
     },
     2: {
       nombre: "Coordinaci\xF3n sin oficio",
@@ -130,7 +131,8 @@
         titulo: "Framework: Liderar la Evoluci\xF3n T\xE9cnica",
         descripcion: "C\xF3mo los managers y leads creativos pueden orquestar el upskilling t\xE9cnico del equipo ante la automatizaci\xF3n sin perder el criterio ni el rigor."
       },
-      solucion: "Programas intensivos de upskilling t\xE9cnico avanzado y criterio contempor\xE1neo (dise\xF1o de producto, IA con intenci\xF3n, datos aplicados) para dotar de profundidad al equipo."
+      // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
+      solucion: "Con equipos as\xED solemos plantear un programa pr\xE1ctico para poner al d\xEDa el oficio (dise\xF1o de producto, IA con intenci\xF3n, datos aplicados) y dar m\xE1s profundidad al trabajo diario."
     },
     3: {
       nombre: "Visi\xF3n sin tracci\xF3n",
@@ -148,7 +150,8 @@
         titulo: "Playbook: Aterrizar la Visi\xF3n en la Pr\xE1ctica Diaria",
         descripcion: "4 ceremonias y protocolos de trabajo para conectar los OKRs abstractos de la compa\xF1\xEDa con las decisiones operativas y entregables del d\xEDa a d\xEDa."
       },
-      solucion: "Consultor\xEDa pedag\xF3gica ad hoc para dise\xF1ar puentes formativos que capaciten a los equipos en las competencias t\xE9cnicas y relacionales requeridas para ejecutar la estrategia."
+      // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
+      solucion: "Con equipos as\xED solemos dise\xF1ar un itinerario a medida que conecte la estrategia con las capacidades t\xE9cnicas y relacionales necesarias para llevarla a la pr\xE1ctica."
     },
     4: {
       nombre: "Esfuerzo disperso",
@@ -166,7 +169,8 @@
         titulo: "Canvas: Alineamiento T\xE1ctico-Estrat\xE9gico",
         descripcion: "Herramienta para conectar la autonom\xEDa de equipos de alto rendimiento con los objetivos de negocio de la direcci\xF3n general."
       },
-      solucion: "Sesiones de co-dise\xF1o estrat\xE9gico, facilitaci\xF3n directiva y programas de gesti\xF3n del cambio para sincronizar la velocidad del equipo con el rumbo global de la empresa."
+      // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
+      solucion: "Con equipos as\xED solemos empezar con sesiones de co-dise\xF1o junto a la direcci\xF3n, para alinear prioridades, y despu\xE9s reforzar lo necesario para avanzar en la misma direcci\xF3n."
     },
     5: {
       nombre: "Brecha t\xE9cnica",
@@ -184,7 +188,8 @@
         titulo: "Matriz de Diagn\xF3stico de Brecha T\xE9cnica (Upskilling Audit)",
         descripcion: "Checklist estructurado para identificar con precisi\xF3n qu\xE9 habilidades t\xE9cnicas y de criterio contempor\xE1neo necesita incorporar el equipo de ejecuci\xF3n hoy."
       },
-      solucion: "Planes de capacitaci\xF3n modular e itinerarios combinados (formaciones abiertas para perfiles clave y ediciones ad hoc) enfocados en elevar el oficio t\xE9cnico y el criterio con IA de la base operativa."
+      // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
+      solucion: "Con equipos as\xED solemos combinar formaci\xF3n modular a medida y plazas en nuestras formaciones abiertas para elevar el oficio y el criterio con IA de quienes ejecutan."
     },
     6: {
       nombre: "Falta de influencia",
@@ -202,7 +207,8 @@
         titulo: "Kit de Influencia sin Autoridad para Perfiles T\xE9cnicos",
         descripcion: "T\xE1cticas de facilitaci\xF3n, argumentaci\xF3n ejecutiva y resoluci\xF3n de bloqueos entre departamentos para perfiles que necesitan ganar peso en la toma de decisiones."
       },
-      solucion: "Programas In Company de liderazgo informal, facilitaci\xF3n de din\xE1micas complejas y persuasi\xF3n \xE9tica orientada a proyectos multidisciplinares."
+      // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
+      solucion: "Con equipos as\xED solemos trabajar el liderazgo sin autoridad formal, la facilitaci\xF3n y la argumentaci\xF3n, para que su criterio pese m\xE1s en las decisiones compartidas."
     },
     7: {
       nombre: "Bloqueo sist\xE9mico",
@@ -220,7 +226,8 @@
         titulo: "Whitepaper: Arquitectura de la Intenci\xF3n en Tiempos de Cambio",
         descripcion: "Marco metodol\xF3gico para directivos sobre c\xF3mo intervenir en equipos colapsados reconectando oficio, liderazgo y cultura en momentos de disrupci\xF3n."
       },
-      solucion: "Consultor\xEDa pedag\xF3gica integral ad hoc: auditor\xEDa cualitativa en profundidad, redise\xF1o de din\xE1micas de trabajo, capacitaci\xF3n modular por fases y acompa\xF1amiento continuado en la facilitaci\xF3n del cambio."
+      // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
+      solucion: "Con equipos as\xED no solemos empezar por un curso: primero conversamos con los distintos niveles para entender bien la situaci\xF3n y, a partir de ah\xED, proponemos una intervenci\xF3n por fases."
     },
     8: {
       nombre: "Salto de nivel",
@@ -238,7 +245,8 @@
         titulo: "Radar: Se\xF1ales y Retos de Frontera en Dise\xF1o y Negocio",
         descripcion: "Selecci\xF3n curada de debates emergentes, implicaciones \xE9ticas y estrat\xE9gicas de la IA y pensamiento de futuros para organizaciones maduras."
       },
-      solucion: "Chutes de inspiraci\xF3n, masterclasses retadoras y programas avanzados de vanguardia (Beyond the Prompt, Dise\xF1o de Futuros, Econom\xEDa Conductual) para inyectar disrupci\xF3n e impulsar al equipo a un nuevo nivel."
+      // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
+      solucion: "Con equipos as\xED solemos proponer est\xEDmulos de frontera, como masterclasses y programas avanzados (Beyond the Prompt, Dise\xF1o de Futuros, Econom\xEDa Conductual), que abran nuevas preguntas."
     }
   };
 
@@ -296,16 +304,16 @@
     }
     return { nivel: 0, focos: [] };
   }
+  var CIERRE_PROPUESTA = "Lo concretar\xEDamos contigo, a partir de lo que de verdad necesita tu equipo.";
   function propuestaDe(respuestas2) {
     const r = resultadoDe(respuestas2);
     const a = ARQUETIPOS[r.arquetipo];
-    const solucion = a.solucion.charAt(0).toLowerCase() + a.solucion.slice(1).replace(/\.\s*$/, "");
     const { nivel, focos } = focosDe(respuestas2);
-    let texto = "Para un equipo como el tuyo, te proponemos " + solucion + ".";
+    let texto = a.solucion;
     if (focos.length > 0) {
-      texto += (nivel === 2 ? " Seg\xFAn lo que m\xE1s te preocupa, pondr\xEDamos el foco en " : " Pondr\xEDamos el foco en ") + unirConY(focos.map((f, i) => i === 0 ? f : "en " + f)) + ".";
+      texto += (nivel === 2 ? " Por lo que m\xE1s te preocupa, pondr\xEDamos el foco en " : " Por lo que nos cuentas, pondr\xEDamos el foco en ") + unirConY(focos.map((f, i) => i === 0 ? f : "en " + f)) + ".";
     }
-    return texto;
+    return texto + " " + CIERRE_PROPUESTA;
   }
 
   // src/utm.js

@@ -63,8 +63,9 @@ export function geometriaTriangulo(p) {
 }
 
 // --- Propuesta de «Próximos pasos» -------------------------------------------------------------------------------------
-// Se compone con: la solución del arquetipo + hasta tres focos sacados de las preguntas que más preocupan
-// («mucho»; si no hay ninguna, las de «un poco»), empezando por el área prioritaria.
+// Cómo solemos trabajar con equipos de ese arquetipo (su «solucion», ya redactada como frase) + hasta tres focos
+// sacados de las preguntas que más preocupan («mucho»; si no hay ninguna, las de «un poco»), empezando por el área
+// prioritaria + un cierre que invita a concretarlo juntos. Tono de partner: nunca afirma cómo es su equipo.
 export const MAX_FOCOS = 3;
 
 function unirConY(partes) {
@@ -83,15 +84,16 @@ export function focosDe(respuestas) {
   return { nivel: 0, focos: [] };
 }
 
+export const CIERRE_PROPUESTA = 'Lo concretaríamos contigo, a partir de lo que de verdad necesita tu equipo.';
+
 export function propuestaDe(respuestas) {
   const r = resultadoDe(respuestas);
   const a = ARQUETIPOS[r.arquetipo];
-  const solucion = a.solucion.charAt(0).toLowerCase() + a.solucion.slice(1).replace(/\.\s*$/, '');
   const { nivel, focos } = focosDe(respuestas);
-  let texto = 'Para un equipo como el tuyo, te proponemos ' + solucion + '.';
+  let texto = a.solucion;
   if (focos.length > 0) {
-    texto += (nivel === 2 ? ' Según lo que más te preocupa, pondríamos el foco en ' : ' Pondríamos el foco en ') +
+    texto += (nivel === 2 ? ' Por lo que más te preocupa, pondríamos el foco en ' : ' Por lo que nos cuentas, pondríamos el foco en ') +
       unirConY(focos.map((f, i) => (i === 0 ? f : 'en ' + f))) + '.';
   }
-  return texto;
+  return texto + ' ' + CIERRE_PROPUESTA;
 }

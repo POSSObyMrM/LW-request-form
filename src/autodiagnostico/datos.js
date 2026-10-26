@@ -71,37 +71,37 @@ export const PREGUNTAS = [
     tipo: 'escala',
     area: 'A',
     texto: '¿Te preocupa el nivel técnico de tu equipo frente a las exigencias actuales y la adopción de nuevas herramientas (como IA)?',
-    foco: 'actualizar el nivel técnico del equipo e incorporar la IA con criterio',
+    foco: 'poner al día el oficio, con la IA como aliada',
   },
   {
     tipo: 'escala',
     area: 'A',
     texto: '¿Te preocupa que tu equipo se perciba como un mero ejecutor en vez de proponer soluciones y aportar ideas propias?',
-    foco: 'que el equipo pase de ejecutar encargos a proponer soluciones e ideas propias',
+    foco: 'que el equipo proponga más ideas y soluciones propias',
   },
   {
     tipo: 'escala',
     area: 'B',
     texto: '¿Te preocupa que los responsables de tu equipo no vayan al grano en las reuniones, les cueste tomar decisiones o no sepan defender sus ideas?',
-    foco: 'que los responsables vayan al grano, decidan y sepan defender sus ideas',
+    foco: 'reforzar la capacidad de decisión de los responsables',
   },
   {
     tipo: 'escala',
     area: 'B',
     texto: '¿Te preocupa la falta de autonomía y proactividad de tus equipos a la hora de aportar soluciones?',
-    foco: 'ganar autonomía y proactividad a la hora de aportar soluciones',
+    foco: 'ganar autonomía y proactividad',
   },
   {
     tipo: 'escala',
     area: 'C',
     texto: '¿Te preocupa que tu equipo no tenga claro cómo contribuye su trabajo a los objetivos de la empresa?',
-    foco: 'conectar el trabajo diario del equipo con los objetivos de la empresa',
+    foco: 'conectar el trabajo diario con los objetivos de la empresa',
   },
   {
     tipo: 'escala',
     area: 'C',
     texto: '¿Te preocupa la falta de colaboración entre departamentos o la resistencia a los cambios dentro de los equipos?',
-    foco: 'romper los silos entre departamentos y acompañar el cambio',
+    foco: 'reforzar la colaboración entre departamentos ante el cambio',
   },
   {
     tipo: 'tamano',
@@ -140,8 +140,9 @@ export const ARQUETIPOS = {
       descripcion:
         'Marco de 4 fases para que perfiles técnicos y creativos traduzcan el valor de su oficio en métricas, argumentos e impacto visibles para negocio.',
     },
+    // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
     solucion:
-      'Programas In Company de comunicación estratégica, facilitación y stakeholder management, capacitando a perfiles técnicos para intervenir activamente en las fases iniciales de los proyectos.',
+      'Con equipos así solemos trabajar la comunicación estratégica, la facilitación y la relación con negocio, para que los perfiles técnicos participen desde el inicio de los proyectos.',
   },
   2: {
     nombre: 'Coordinación sin oficio',
@@ -162,8 +163,9 @@ export const ARQUETIPOS = {
       descripcion:
         'Cómo los managers y leads creativos pueden orquestar el upskilling técnico del equipo ante la automatización sin perder el criterio ni el rigor.',
     },
+    // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
     solucion:
-      'Programas intensivos de upskilling técnico avanzado y criterio contemporáneo (diseño de producto, IA con intención, datos aplicados) para dotar de profundidad al equipo.',
+      'Con equipos así solemos plantear un programa práctico para poner al día el oficio (diseño de producto, IA con intención, datos aplicados) y dar más profundidad al trabajo diario.',
   },
   3: {
     nombre: 'Visión sin tracción',
@@ -184,8 +186,9 @@ export const ARQUETIPOS = {
       descripcion:
         '4 ceremonias y protocolos de trabajo para conectar los OKRs abstractos de la compañía con las decisiones operativas y entregables del día a día.',
     },
+    // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
     solucion:
-      'Consultoría pedagógica ad hoc para diseñar puentes formativos que capaciten a los equipos en las competencias técnicas y relacionales requeridas para ejecutar la estrategia.',
+      'Con equipos así solemos diseñar un itinerario a medida que conecte la estrategia con las capacidades técnicas y relacionales necesarias para llevarla a la práctica.',
   },
   4: {
     nombre: 'Esfuerzo disperso',
@@ -206,8 +209,9 @@ export const ARQUETIPOS = {
       descripcion:
         'Herramienta para conectar la autonomía de equipos de alto rendimiento con los objetivos de negocio de la dirección general.',
     },
+    // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
     solucion:
-      'Sesiones de co-diseño estratégico, facilitación directiva y programas de gestión del cambio para sincronizar la velocidad del equipo con el rumbo global de la empresa.',
+      'Con equipos así solemos empezar con sesiones de co-diseño junto a la dirección, para alinear prioridades, y después reforzar lo necesario para avanzar en la misma dirección.',
   },
   5: {
     nombre: 'Brecha técnica',
@@ -228,8 +232,9 @@ export const ARQUETIPOS = {
       descripcion:
         'Checklist estructurado para identificar con precisión qué habilidades técnicas y de criterio contemporáneo necesita incorporar el equipo de ejecución hoy.',
     },
+    // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
     solucion:
-      'Planes de capacitación modular e itinerarios combinados (formaciones abiertas para perfiles clave y ediciones ad hoc) enfocados en elevar el oficio técnico y el criterio con IA de la base operativa.',
+      'Con equipos así solemos combinar formación modular a medida y plazas en nuestras formaciones abiertas para elevar el oficio y el criterio con IA de quienes ejecutan.',
   },
   6: {
     nombre: 'Falta de influencia',
@@ -250,8 +255,9 @@ export const ARQUETIPOS = {
       descripcion:
         'Tácticas de facilitación, argumentación ejecutiva y resolución de bloqueos entre departamentos para perfiles que necesitan ganar peso en la toma de decisiones.',
     },
+    // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
     solucion:
-      'Programas In Company de liderazgo informal, facilitación de dinámicas complejas y persuasión ética orientada a proyectos multidisciplinares.',
+      'Con equipos así solemos trabajar el liderazgo sin autoridad formal, la facilitación y la argumentación, para que su criterio pese más en las decisiones compartidas.',
   },
   7: {
     nombre: 'Bloqueo sistémico',
@@ -272,8 +278,9 @@ export const ARQUETIPOS = {
       descripcion:
         'Marco metodológico para directivos sobre cómo intervenir en equipos colapsados reconectando oficio, liderazgo y cultura en momentos de disrupción.',
     },
+    // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
     solucion:
-      'Consultoría pedagógica integral ad hoc: auditoría cualitativa en profundidad, rediseño de dinámicas de trabajo, capacitación modular por fases y acompañamiento continuado en la facilitación del cambio.',
+      'Con equipos así no solemos empezar por un curso: primero conversamos con los distintos niveles para entender bien la situación y, a partir de ahí, proponemos una intervención por fases.',
   },
   8: {
     nombre: 'Salto de nivel',
@@ -294,7 +301,8 @@ export const ARQUETIPOS = {
       descripcion:
         'Selección curada de debates emergentes, implicaciones éticas y estratégicas de la IA y pensamiento de futuros para organizaciones maduras.',
     },
+    // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
     solucion:
-      'Chutes de inspiración, masterclasses retadoras y programas avanzados de vanguardia (Beyond the Prompt, Diseño de Futuros, Economía Conductual) para inyectar disrupción e impulsar al equipo a un nuevo nivel.',
+      'Con equipos así solemos proponer estímulos de frontera, como masterclasses y programas avanzados (Beyond the Prompt, Diseño de Futuros, Economía Conductual), que abran nuevas preguntas.',
   },
 };
