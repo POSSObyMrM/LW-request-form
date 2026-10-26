@@ -79,15 +79,21 @@ function leerGuardado() {
   return null;
 }
 
-function guardar(resps) {
+// «previo»: lo ya guardado (al cambiar respuestas se conserva que ya escribió por «Escríbenos»).
+function guardar(resps, previo) {
   const r = resultadoDe(resps);
   const g = { version: VERSION, fecha: new Date().toISOString(), respuestas: resps, arquetipo: r.arquetipo, puntuaciones: r.puntuaciones };
+  if (previo && previo.contacto) g.contacto = previo.contacto;
+  escribirGuardado(g);
+  return g;
+}
+
+function escribirGuardado(g) {
   try {
     window.localStorage.setItem(CLAVE_ALMACEN, JSON.stringify(g));
   } catch (e) {
     /* sin almacenamiento: el resultado se ve igual, solo no se recordará */
   }
-  return g;
 }
 
 function borrarGuardado() {
@@ -262,7 +268,7 @@ function anterior() {
 function pintarRespuestas(guardado) {
   const borrador = guardado.respuestas.slice();
   const botonGuardar = el('button', { type: 'button', class: 'autodiag-boton', text: 'Guardar cambios', disabled: true, onclick: () => {
-    const nuevo = guardar(borrador.slice());
+    const nuevo = guardar(borrador.slice(), guardado);
     pintarResultado(nuevo);
     arriba();
     emitir('actualizado', detalleResultado(nuevo));
@@ -404,7 +410,8 @@ function campoEmail(id, etiqueta) {
 }
 
 // Envío de un formulario del resultado (recurso o mensaje). manejador: la función de AutodiagnosticoConfig (si hay).
-function enviarFormulario(form, evento, datos, manejador, textoOk, sinManejador) {
+// alExito: en lugar de dejar el texto de éxito bajo el formulario, qué hacer cuando se envía bien.
+function enviarFormulario(form, evento, datos, manejador, textoOk, sinManejador, alExito) {
   const mensaje = form.querySelector('.autodiag-form-mensaje');
   const boton = form.querySelector('button[type="submit"]');
   emitir(evento, datos);
@@ -417,8 +424,11 @@ function enviarFormulario(form, evento, datos, manejador, textoOk, sinManejador)
   Promise.resolve()
     .then(() => manejador(datos))
     .then(() => {
-      mensaje.textContent = textoOk;
-      form.classList.add('is-enviado');
+      if (alExito) alExito();
+      else {
+        mensaje.textContent = textoOk;
+        form.classList.add('is-enviado');
+      }
     })
     .catch(() => {
       mensaje.textContent = 'No se ha podido enviar. Inténtalo de nuevo en unos minutos.';
@@ -473,6 +483,19 @@ function enviarAPosso(datos) {
     .then(({ ok, j }) => {
       if (!ok || !j.ok) throw new Error((j && j.error) || 'Error al enviar');
     });
+}
+
+// Confirmación del «Escríbenos» (sustituye al formulario una vez enviado).
+function confirmacionContacto(c) {
+  const nombre = (c.nombre || '').split(' ')[0];
+  return el('div', { class: 'autodiag-confirmacion', role: 'status', tabindex: '-1' }, [
+    el('span', { class: 'autodiag-confirmacion-icono', 'aria-hidden': 'true', text: '✓' }),
+    el('div', {}, [
+      el('p', { class: 'autodiag-confirmacion-titulo', text: nombre ? '¡Gracias, ' + nombre + '!' : '¡Gracias!' }),
+      el('p', { class: 'autodiag-confirmacion-texto', text: 'Hemos recibido tu mensaje y tu diagnóstico. Te escribiremos muy pronto' + (c.email ? ' a ' + c.email : '') + '.' }),
+      c.fecha ? el('p', { class: 'autodiag-confirmacion-fecha', text: 'Enviado el ' + fechaLarga(c.fecha) }) : null,
+    ]),
+  ]);
 }
 
 // «Política de Privacidad» dentro de un texto, como enlace a la página de privacidad del sitio.
@@ -591,10 +614,37 @@ function pintarResultado(guardado) {
       marketing: formContacto.querySelector('#autodiag-marketing').checked,
       website: formContacto.querySelector('.autodiag-trampa').value,
     };
-    enviarFormulario(formContacto, 'contacto', datos, config().onContacto || enviarAPosso, 'Gracias. Te escribiremos muy pronto.');
+    enviarFormulario(formContacto, 'contacto', datos, config().onContacto || enviarAPosso, '', null, () => {
+      // Enviado: fuera el formulario y el botón, y la confirmación en su lugar (y recordada para la próxima vez).
+      guardado.contacto = { fecha: new Date().toISOString(), nombre, email };
+      escribirGuardado(guardado);
+      const confirmacion = confirmacionContacto(guardado.contacto);
+      formContacto.replaceWith(confirmacion);
+      botonEscribir.remove();
+      if (!calendly) textoInvitacion.remove();
+      confirmacion.focus();
+    });
   });
 
   const calendly = config().calendlyUrl;
+  const textoInvitacion = el('p', { class: 'autodiag-texto', text: T.invitacionTexto });
+  const botonEscribir = el('button', {
+    type: 'button',
+    // Si es la única acción (sin Calendly), es la principal: fondo oscuro.
+    class: 'autodiag-boton autodiag-boton-grande' + (calendly ? ' autodiag-boton-secundario' : ''),
+    'aria-expanded': 'false',
+    'aria-controls': 'autodiag-form-contacto',
+    text: T.botonEscribir,
+    onclick: (e) => {
+      formContacto.hidden = !formContacto.hidden;
+      e.currentTarget.setAttribute('aria-expanded', String(!formContacto.hidden));
+      if (!formContacto.hidden) {
+        const input = formContacto.querySelector('input[type="email"]');
+        if (!input.value) input.value = emailRecordado;
+        formContacto.querySelector('#autodiag-nombre').focus();
+      }
+    },
+  });
 
   pintar(
     el('div', { class: 'autodiag-cabecera' }, [
@@ -670,30 +720,15 @@ function pintarResultado(guardado) {
     el('section', { class: 'autodiag-seccion autodiag-seccion-proximos' }, [
       el('h3', { class: 'autodiag-seccion-titulo', text: T.proximosPasos }),
       el('p', { class: 'autodiag-texto', text: propuestaDe(guardado.respuestas) }),
-      el('p', { class: 'autodiag-texto', text: T.invitacionTexto }),
+      // La invitación sobra una vez escrito (salvo que quede la llamada de Calendly, a la que acompaña).
+      guardado.contacto && !calendly ? null : textoInvitacion,
       el('div', { class: 'autodiag-acciones autodiag-acciones-principales' }, [
         calendly
           ? el('a', { class: 'autodiag-boton autodiag-boton-grande', href: calendly, target: '_blank', rel: 'noopener', text: T.botonLlamada, onclick: () => emitir('llamada', detalle) })
           : null,
-        el('button', {
-          type: 'button',
-          // Si es la única acción (sin Calendly), es la principal: fondo oscuro.
-          class: 'autodiag-boton autodiag-boton-grande' + (calendly ? ' autodiag-boton-secundario' : ''),
-          'aria-expanded': 'false',
-          'aria-controls': 'autodiag-form-contacto',
-          text: T.botonEscribir,
-          onclick: (e) => {
-            formContacto.hidden = !formContacto.hidden;
-            e.currentTarget.setAttribute('aria-expanded', String(!formContacto.hidden));
-            if (!formContacto.hidden) {
-              const input = formContacto.querySelector('input[type="email"]');
-              if (!input.value) input.value = emailRecordado;
-              formContacto.querySelector('#autodiag-nombre').focus();
-            }
-          },
-        }),
+        guardado.contacto ? null : botonEscribir,
       ]),
-      formContacto,
+      guardado.contacto ? confirmacionContacto(guardado.contacto) : formContacto,
     ]),
 
     // Discreto, al final
