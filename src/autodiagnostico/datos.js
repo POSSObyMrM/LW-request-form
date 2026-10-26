@@ -113,6 +113,8 @@ export const PREGUNTAS = [
 ];
 
 // Ocho arquetipos: uno por cada combinación de áreas «fuerte» / «a mejorar» (ver calculo.js).
+//   radiografia: desde la experiencia y en condicional (lo que solemos encontrar en equipos con este perfil): el
+//   diagnóstico sale de seis preguntas, no permite afirmar nada de forma absoluta.
 //   fuertes: áreas que están bien (el resto necesitan mejorar).
 //   leadMagnet.activo: si se muestra en el resultado (false mientras el recurso no exista).
 //   leadMagnet.portada: URL de la imagen de portada (A4); sin ella se pinta una portada provisional.
@@ -122,7 +124,7 @@ export const ARQUETIPOS = {
     lema: 'Mucho talento técnico, cero peso en negocio ni visión.',
     fuertes: ['A'],
     radiografia:
-      'El equipo cuenta con un talento técnico y un dominio del craft destacables, pero trabaja encerrado en su propia disciplina. Operan como un proveedor interno reactivo que recibe pedidos o resuelve tickets sin entender las prioridades del negocio ni tener presencia en los foros donde se toman las decisiones estratégicas.',
+      'En equipos con este perfil solemos encontrar mucho talento técnico trabajando algo encerrado en su disciplina: resuelven bien los encargos, pero les cuesta conectar con las prioridades del negocio.',
     oportunidades: [
       'Desconexión entre el esfuerzo técnico y los objetivos de negocio: invierten energía en detalles que no mueven las métricas de la compañía.',
       'Rol pasivo de tomador de encargos que limita la proactividad del profesional y reduce su compromiso con el proyecto global.',
@@ -144,7 +146,7 @@ export const ARQUETIPOS = {
     lema: 'Mucha reunión y facilitación, pero técnica desactualizada.',
     fuertes: ['B'],
     radiografia:
-      'Los mandos intermedios y perfiles senior son articulados, facilitan bien y gestionan dinámicas de trabajo fluidas, pero el oficio de base ha quedado desfasado. Hay temor o adopción puramente cosmética de herramientas contemporáneas (como la IA generativa) y falta criterio técnico para juzgar la calidad de lo que se entrega.',
+      'Con este perfil solemos ver mandos que coordinan y facilitan bien, mientras el oficio de base se ha quedado atrás y la IA se usa más por inercia que con criterio.',
     oportunidades: [
       'Pérdida de credibilidad técnica ante la organización al proponer soluciones desactualizadas o superficiales.',
       'Incapacidad para dirigir la automatización y las nuevas tecnologías con criterio, recurriendo a ellas solo para producir bulto y no para pensar mejor.',
@@ -166,7 +168,7 @@ export const ARQUETIPOS = {
     lema: 'Mucho propósito y estrategia, nada aterriza en el barro.',
     fuertes: ['C'],
     radiografia:
-      'La dirección comunica un propósito inspirador, una narrativa de cambio clara y objetivos ambiciosos, pero las iniciativas encallan en la operativa. En el barro del día a día no existe la capacidad técnica ni el liderazgo horizontal necesarios para traducir los discursos estratégicos en entregables tangibles.',
+      'Es habitual encontrar un propósito claro y objetivos ambiciosos que luego encallan en el día a día, por falta de oficio y de liderazgo horizontal para aterrizarlos.',
     oportunidades: [
       'Cinismo y desgaste en la plantilla ante discursos de all-hands que nunca se traducen en mejoras tangibles para su trabajo diario.',
       'Brecha entre la ambición declarada por el comité de dirección y el know-how real disponible en los equipos de ejecución.',
@@ -188,7 +190,7 @@ export const ARQUETIPOS = {
     lema: 'Autónomos y resolutivos, pero van por libre respecto al negocio.',
     fuertes: ['A', 'B'],
     radiografia:
-      'Profesionales autónomos, de alto rendimiento técnico y con excelente iniciativa para desbloquear proyectos internamente, pero que van por libre. Operan al margen de la estrategia de la compañía, invirtiendo tiempo en perfeccionismos técnicos o iniciativas paralelas que no responden a las prioridades reales del negocio.',
+      'Solemos ver profesionales autónomos y resolutivos que desbloquean proyectos con facilidad, pero que avanzan por libre, a veces lejos de lo que el negocio prioriza.',
     oportunidades: [
       'Desperdicio de recursos en proyectos de alta calidad técnica que terminan descartados por no encajar en la agenda corporativa.',
       'Fricción política recurrente entre el equipo y la dirección general por falta de alineamiento en prioridades y tiempos.',
@@ -210,7 +212,7 @@ export const ARQUETIPOS = {
     lema: 'Líderes y rumbo claros, pero la base no da el nivel requerido.',
     fuertes: ['B', 'C'],
     radiografia:
-      'Los líderes y la estrategia están perfectamente alineados con el negocio y la cultura es sana, pero los perfiles que ejecutan no dan la talla técnica contemporánea. La dirección se ve obligada al micromanagement constante o a conformarse con resultados mediocres por falta de solvencia técnica en la base.',
+      'En equipos así suele haber líderes con el rumbo claro y una cultura sana, pero una base que aún no llega al nivel técnico necesario y obliga a supervisar de cerca.',
     oportunidades: [
       'Sobrecarga y cuello de botella en los mandos intermedios por tener que rehacer entregables y supervisar tareas básicas.',
       'Uso torpe o inercial de herramientas modernas (como IA), perdiendo velocidad y competitividad frente al mercado.',
@@ -232,7 +234,7 @@ export const ARQUETIPOS = {
     lema: 'Tienen el nivel y entienden la visión, pero no tienen voz ni peso.',
     fuertes: ['A', 'C'],
     radiografia:
-      'El equipo cuenta con un nivel técnico envidiable y comprende hacia dónde debe ir el negocio, pero carece de voz y peso político en la organización. En las mesas compartidas con Producto, Ventas o Dirección sus argumentos no calan, quedando relegados a acatar decisiones ajenas que perjudican el producto.',
+      'Con este perfil es frecuente encontrar buen nivel técnico y visión compartida, pero poca voz: en las mesas con Producto, Ventas o Dirección sus argumentos no siempre calan.',
     oportunidades: [
       'Subordinación constante a decisiones de otras áreas por incapacidad de articular y defender el criterio técnico con asertividad.',
       'Sensación de frustración e invisibilidad profesional: el equipo sabe qué hay que hacer, pero no logra convencer a los stakeholders.',
@@ -254,7 +256,7 @@ export const ARQUETIPOS = {
     lema: 'Todo preocupa. Saturación, desafección y falta de rumbo simultánea.',
     fuertes: [],
     radiografia:
-      'El departamento atraviesa un colapso en los tres frentes a la vez: la base técnica está desactualizada, no hay liderazgo para coordinar al equipo y la cultura sufre de fatiga o desconexión estratégica. Es el escenario habitual tras reorganizaciones bruscas, fusiones o procesos de transformación digital fallidos.',
+      'Cuando todo preocupa a la vez, solemos ver equipos tensionados en varios frentes. Es habitual tras reorganizaciones, fusiones o transformaciones que no han terminado de cuajar.',
     oportunidades: [
       'Desafección generalizada, resistencia pasiva y riesgo de burnout ante la acumulación de cambios sin un propósito claro.',
       'Fricción constante en la operativa diaria con entregas deficientes, retrasos y reprocesos continuos.',
@@ -276,7 +278,7 @@ export const ARQUETIPOS = {
     lema: 'Todo bajo control. Equipo sólido listo para romper su techo.',
     fuertes: ['A', 'B', 'C'],
     radiografia:
-      'El equipo opera de forma cohesionada, cuenta con solvencia técnica, liderazgo maduro y alineamiento estratégico con la compañía. No experimentan dolores operativos urgentes, pero afrontan el riesgo de la complacencia: han tocado su techo actual y corren peligro de acomodarse mientras el sector evoluciona.',
+      'Solemos encontrar equipos cohesionados, solventes y bien alineados. El reto suele ser no acomodarse: cuando todo funciona, es fácil dejar de mirar hacia dónde va el sector.',
     oportunidades: [
       'Riesgo de complacencia operativa: cumplir con corrección los objetivos del presente pero perder la capacidad de anticiparse a cambios disruptivos.',
       'Techo de innovación: tendencia a optimizar lo conocido mediante soluciones incrementales en lugar de plantear propuestas transformadoras.',

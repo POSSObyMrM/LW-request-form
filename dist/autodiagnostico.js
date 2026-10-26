@@ -100,7 +100,7 @@
       nombre: "Silo de ejecuci\xF3n",
       lema: "Mucho talento t\xE9cnico, cero peso en negocio ni visi\xF3n.",
       fuertes: ["A"],
-      radiografia: "El equipo cuenta con un talento t\xE9cnico y un dominio del craft destacables, pero trabaja encerrado en su propia disciplina. Operan como un proveedor interno reactivo que recibe pedidos o resuelve tickets sin entender las prioridades del negocio ni tener presencia en los foros donde se toman las decisiones estrat\xE9gicas.",
+      radiografia: "En equipos con este perfil solemos encontrar mucho talento t\xE9cnico trabajando algo encerrado en su disciplina: resuelven bien los encargos, pero les cuesta conectar con las prioridades del negocio.",
       oportunidades: [
         "Desconexi\xF3n entre el esfuerzo t\xE9cnico y los objetivos de negocio: invierten energ\xEDa en detalles que no mueven las m\xE9tricas de la compa\xF1\xEDa.",
         "Rol pasivo de tomador de encargos que limita la proactividad del profesional y reduce su compromiso con el proyecto global.",
@@ -118,7 +118,7 @@
       nombre: "Coordinaci\xF3n sin oficio",
       lema: "Mucha reuni\xF3n y facilitaci\xF3n, pero t\xE9cnica desactualizada.",
       fuertes: ["B"],
-      radiografia: "Los mandos intermedios y perfiles senior son articulados, facilitan bien y gestionan din\xE1micas de trabajo fluidas, pero el oficio de base ha quedado desfasado. Hay temor o adopci\xF3n puramente cosm\xE9tica de herramientas contempor\xE1neas (como la IA generativa) y falta criterio t\xE9cnico para juzgar la calidad de lo que se entrega.",
+      radiografia: "Con este perfil solemos ver mandos que coordinan y facilitan bien, mientras el oficio de base se ha quedado atr\xE1s y la IA se usa m\xE1s por inercia que con criterio.",
       oportunidades: [
         "P\xE9rdida de credibilidad t\xE9cnica ante la organizaci\xF3n al proponer soluciones desactualizadas o superficiales.",
         "Incapacidad para dirigir la automatizaci\xF3n y las nuevas tecnolog\xEDas con criterio, recurriendo a ellas solo para producir bulto y no para pensar mejor.",
@@ -136,7 +136,7 @@
       nombre: "Visi\xF3n sin tracci\xF3n",
       lema: "Mucho prop\xF3sito y estrategia, nada aterriza en el barro.",
       fuertes: ["C"],
-      radiografia: "La direcci\xF3n comunica un prop\xF3sito inspirador, una narrativa de cambio clara y objetivos ambiciosos, pero las iniciativas encallan en la operativa. En el barro del d\xEDa a d\xEDa no existe la capacidad t\xE9cnica ni el liderazgo horizontal necesarios para traducir los discursos estrat\xE9gicos en entregables tangibles.",
+      radiografia: "Es habitual encontrar un prop\xF3sito claro y objetivos ambiciosos que luego encallan en el d\xEDa a d\xEDa, por falta de oficio y de liderazgo horizontal para aterrizarlos.",
       oportunidades: [
         "Cinismo y desgaste en la plantilla ante discursos de all-hands que nunca se traducen en mejoras tangibles para su trabajo diario.",
         "Brecha entre la ambici\xF3n declarada por el comit\xE9 de direcci\xF3n y el know-how real disponible en los equipos de ejecuci\xF3n.",
@@ -154,7 +154,7 @@
       nombre: "Esfuerzo disperso",
       lema: "Aut\xF3nomos y resolutivos, pero van por libre respecto al negocio.",
       fuertes: ["A", "B"],
-      radiografia: "Profesionales aut\xF3nomos, de alto rendimiento t\xE9cnico y con excelente iniciativa para desbloquear proyectos internamente, pero que van por libre. Operan al margen de la estrategia de la compa\xF1\xEDa, invirtiendo tiempo en perfeccionismos t\xE9cnicos o iniciativas paralelas que no responden a las prioridades reales del negocio.",
+      radiografia: "Solemos ver profesionales aut\xF3nomos y resolutivos que desbloquean proyectos con facilidad, pero que avanzan por libre, a veces lejos de lo que el negocio prioriza.",
       oportunidades: [
         "Desperdicio de recursos en proyectos de alta calidad t\xE9cnica que terminan descartados por no encajar en la agenda corporativa.",
         "Fricci\xF3n pol\xEDtica recurrente entre el equipo y la direcci\xF3n general por falta de alineamiento en prioridades y tiempos.",
@@ -172,7 +172,7 @@
       nombre: "Brecha t\xE9cnica",
       lema: "L\xEDderes y rumbo claros, pero la base no da el nivel requerido.",
       fuertes: ["B", "C"],
-      radiografia: "Los l\xEDderes y la estrategia est\xE1n perfectamente alineados con el negocio y la cultura es sana, pero los perfiles que ejecutan no dan la talla t\xE9cnica contempor\xE1nea. La direcci\xF3n se ve obligada al micromanagement constante o a conformarse con resultados mediocres por falta de solvencia t\xE9cnica en la base.",
+      radiografia: "En equipos as\xED suele haber l\xEDderes con el rumbo claro y una cultura sana, pero una base que a\xFAn no llega al nivel t\xE9cnico necesario y obliga a supervisar de cerca.",
       oportunidades: [
         "Sobrecarga y cuello de botella en los mandos intermedios por tener que rehacer entregables y supervisar tareas b\xE1sicas.",
         "Uso torpe o inercial de herramientas modernas (como IA), perdiendo velocidad y competitividad frente al mercado.",
@@ -190,7 +190,7 @@
       nombre: "Falta de influencia",
       lema: "Tienen el nivel y entienden la visi\xF3n, pero no tienen voz ni peso.",
       fuertes: ["A", "C"],
-      radiografia: "El equipo cuenta con un nivel t\xE9cnico envidiable y comprende hacia d\xF3nde debe ir el negocio, pero carece de voz y peso pol\xEDtico en la organizaci\xF3n. En las mesas compartidas con Producto, Ventas o Direcci\xF3n sus argumentos no calan, quedando relegados a acatar decisiones ajenas que perjudican el producto.",
+      radiografia: "Con este perfil es frecuente encontrar buen nivel t\xE9cnico y visi\xF3n compartida, pero poca voz: en las mesas con Producto, Ventas o Direcci\xF3n sus argumentos no siempre calan.",
       oportunidades: [
         "Subordinaci\xF3n constante a decisiones de otras \xE1reas por incapacidad de articular y defender el criterio t\xE9cnico con asertividad.",
         "Sensaci\xF3n de frustraci\xF3n e invisibilidad profesional: el equipo sabe qu\xE9 hay que hacer, pero no logra convencer a los stakeholders.",
@@ -208,7 +208,7 @@
       nombre: "Bloqueo sist\xE9mico",
       lema: "Todo preocupa. Saturaci\xF3n, desafecci\xF3n y falta de rumbo simult\xE1nea.",
       fuertes: [],
-      radiografia: "El departamento atraviesa un colapso en los tres frentes a la vez: la base t\xE9cnica est\xE1 desactualizada, no hay liderazgo para coordinar al equipo y la cultura sufre de fatiga o desconexi\xF3n estrat\xE9gica. Es el escenario habitual tras reorganizaciones bruscas, fusiones o procesos de transformaci\xF3n digital fallidos.",
+      radiografia: "Cuando todo preocupa a la vez, solemos ver equipos tensionados en varios frentes. Es habitual tras reorganizaciones, fusiones o transformaciones que no han terminado de cuajar.",
       oportunidades: [
         "Desafecci\xF3n generalizada, resistencia pasiva y riesgo de burnout ante la acumulaci\xF3n de cambios sin un prop\xF3sito claro.",
         "Fricci\xF3n constante en la operativa diaria con entregas deficientes, retrasos y reprocesos continuos.",
@@ -226,7 +226,7 @@
       nombre: "Salto de nivel",
       lema: "Todo bajo control. Equipo s\xF3lido listo para romper su techo.",
       fuertes: ["A", "B", "C"],
-      radiografia: "El equipo opera de forma cohesionada, cuenta con solvencia t\xE9cnica, liderazgo maduro y alineamiento estrat\xE9gico con la compa\xF1\xEDa. No experimentan dolores operativos urgentes, pero afrontan el riesgo de la complacencia: han tocado su techo actual y corren peligro de acomodarse mientras el sector evoluciona.",
+      radiografia: "Solemos encontrar equipos cohesionados, solventes y bien alineados. El reto suele ser no acomodarse: cuando todo funciona, es f\xE1cil dejar de mirar hacia d\xF3nde va el sector.",
       oportunidades: [
         "Riesgo de complacencia operativa: cumplir con correcci\xF3n los objetivos del presente pero perder la capacidad de anticiparse a cambios disruptivos.",
         "Techo de innovaci\xF3n: tendencia a optimizar lo conocido mediante soluciones incrementales en lugar de plantear propuestas transformadoras.",
