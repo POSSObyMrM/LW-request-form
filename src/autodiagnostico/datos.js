@@ -10,6 +10,8 @@ export const INTRO = {
 // Áreas («territorios»). Cada una se mide con dos preguntas de escala.
 //   reto: lo que se muestra si el área necesita mejorar.
 //   fortaleza: lo que se muestra si el área está bien.
+// Tono (también lemas y radiografías): desde lo que apuntan sus respuestas y lo que solemos ver, nunca afirmando
+// cómo es su equipo — el diagnóstico sale de seis preguntas —, y como quien conoce el reto y sabe acompañarlo.
 export const AREAS = {
   A: {
     etiqueta: 'Criterio y ejecución',
@@ -17,19 +19,19 @@ export const AREAS = {
     reto: {
       titulo: 'Más criterio, menos piloto automático',
       texto:
-        'Tu equipo ejecuta, pero ¿también cuestiona, propone y toma decisiones? Aquí hay margen para desarrollar un pensamiento más estratégico.',
+        'Pasar de ejecutar a cuestionar, proponer y decidir, también al incorporar la IA, es uno de los retos que más vemos hoy. Lo trabajamos a menudo con equipos técnicos y creativos.',
     },
-    fortaleza: 'Base técnica sólida y criterio propio para resolver.',
+    fortaleza: 'Tus respuestas apuntan a una base técnica sólida y criterio propio.',
   },
   B: {
     etiqueta: 'Influencia y liderazgo',
     nombre: 'Colaboración, influencia y liderazgo',
     reto: {
-      titulo: 'Muchas reuniones. Pocas decisiones.',
+      titulo: 'Decidir y avanzar juntos.',
       texto:
-        'A veces los proyectos no avanzan por falta de liderazgo, comunicación o capacidad para ponerse de acuerdo.',
+        'Cuando a los proyectos les cuesta avanzar, suele haber margen en liderazgo, comunicación y capacidad para ponerse de acuerdo. Es un terreno en el que acompañamos a muchos equipos.',
     },
-    fortaleza: 'Saben coordinarse, decidir y defender sus ideas.',
+    fortaleza: 'Tus respuestas apuntan a un equipo que sabe coordinarse, decidir y defender sus ideas.',
   },
   C: {
     etiqueta: 'Cultura y estrategia',
@@ -37,9 +39,9 @@ export const AREAS = {
     reto: {
       titulo: 'Un equipo, no varias islas.',
       texto:
-        'Cuando cada departamento va por su cuenta, cuesta compartir objetivos, coordinarse y avanzar juntos.',
+        'Conectar el trabajo diario con los objetivos de la empresa, y a los departamentos entre sí, es clave para avanzar juntos. Es un reto muy habitual y sabemos cómo abordarlo.',
     },
-    fortaleza: 'El equipo entiende hacia dónde va la empresa.',
+    fortaleza: 'Tus respuestas apuntan a un equipo que tiene claro hacia dónde va la empresa.',
   },
 };
 
@@ -121,7 +123,7 @@ export const PREGUNTAS = [
 export const ARQUETIPOS = {
   1: {
     nombre: 'Silo de ejecución',
-    lema: 'Mucho talento técnico, cero peso en negocio ni visión.',
+    lema: 'Mucho talento técnico que podría pesar más en el negocio.',
     fuertes: ['A'],
     radiografia:
       'En equipos con este perfil solemos encontrar mucho talento técnico trabajando algo encerrado en su disciplina: resuelven bien los encargos, pero les cuesta conectar con las prioridades del negocio.',
@@ -143,7 +145,7 @@ export const ARQUETIPOS = {
   },
   2: {
     nombre: 'Coordinación sin oficio',
-    lema: 'Mucha reunión y facilitación, pero técnica desactualizada.',
+    lema: 'Buena coordinación, con un oficio que pide ponerse al día.',
     fuertes: ['B'],
     radiografia:
       'Con este perfil solemos ver mandos que coordinan y facilitan bien, mientras el oficio de base se ha quedado atrás y la IA se usa más por inercia que con criterio.',
@@ -165,7 +167,7 @@ export const ARQUETIPOS = {
   },
   3: {
     nombre: 'Visión sin tracción',
-    lema: 'Mucho propósito y estrategia, nada aterriza en el barro.',
+    lema: 'Un rumbo claro que cuesta llevar al día a día.',
     fuertes: ['C'],
     radiografia:
       'Es habitual encontrar un propósito claro y objetivos ambiciosos que luego encallan en el día a día, por falta de oficio y de liderazgo horizontal para aterrizarlos.',
@@ -187,7 +189,7 @@ export const ARQUETIPOS = {
   },
   4: {
     nombre: 'Esfuerzo disperso',
-    lema: 'Autónomos y resolutivos, pero van por libre respecto al negocio.',
+    lema: 'Autonomía y empuje que piden más alineamiento con el negocio.',
     fuertes: ['A', 'B'],
     radiografia:
       'Solemos ver profesionales autónomos y resolutivos que desbloquean proyectos con facilidad, pero que avanzan por libre, a veces lejos de lo que el negocio prioriza.',
@@ -209,7 +211,7 @@ export const ARQUETIPOS = {
   },
   5: {
     nombre: 'Brecha técnica',
-    lema: 'Líderes y rumbo claros, pero la base no da el nivel requerido.',
+    lema: 'Líderes y rumbo claros, con una base que necesita crecer en oficio.',
     fuertes: ['B', 'C'],
     radiografia:
       'En equipos así suele haber líderes con el rumbo claro y una cultura sana, pero una base que aún no llega al nivel técnico necesario y obliga a supervisar de cerca.',
@@ -231,7 +233,7 @@ export const ARQUETIPOS = {
   },
   6: {
     nombre: 'Falta de influencia',
-    lema: 'Tienen el nivel y entienden la visión, pero no tienen voz ni peso.',
+    lema: 'Nivel y visión que todavía no se traducen en voz e influencia.',
     fuertes: ['A', 'C'],
     radiografia:
       'Con este perfil es frecuente encontrar buen nivel técnico y visión compartida, pero poca voz: en las mesas con Producto, Ventas o Dirección sus argumentos no siempre calan.',
@@ -253,7 +255,7 @@ export const ARQUETIPOS = {
   },
   7: {
     nombre: 'Bloqueo sistémico',
-    lema: 'Todo preocupa. Saturación, desafección y falta de rumbo simultánea.',
+    lema: 'Varios frentes abiertos a la vez, que conviene abordar juntos.',
     fuertes: [],
     radiografia:
       'Cuando todo preocupa a la vez, solemos ver equipos tensionados en varios frentes. Es habitual tras reorganizaciones, fusiones o transformaciones que no han terminado de cuajar.',
@@ -275,14 +277,14 @@ export const ARQUETIPOS = {
   },
   8: {
     nombre: 'Salto de nivel',
-    lema: 'Todo bajo control. Equipo sólido listo para romper su techo.',
+    lema: 'Un equipo sólido, listo para dar el siguiente paso.',
     fuertes: ['A', 'B', 'C'],
     radiografia:
       'Solemos encontrar equipos cohesionados, solventes y bien alineados. El reto suele ser no acomodarse: cuando todo funciona, es fácil dejar de mirar hacia dónde va el sector.',
     oportunidades: [
-      'Riesgo de complacencia operativa: cumplir con corrección los objetivos del presente pero perder la capacidad de anticiparse a cambios disruptivos.',
-      'Techo de innovación: tendencia a optimizar lo conocido mediante soluciones incrementales en lugar de plantear propuestas transformadoras.',
-      'Endogamia metodológica: desconexión de las conversaciones y tendencias de vanguardia del sector por centrarse exclusivamente en la inercia diaria.',
+      'Mantener la capacidad de anticiparse cuando el día a día ya funciona bien.',
+      'Pasar de las mejoras incrementales a propuestas que transformen.',
+      'Seguir conectados con las conversaciones y tendencias de frontera del sector.',
     ],
     mensaje:
       'El mayor riesgo de un equipo de alto rendimiento no es el error, sino la complacencia de acomodarse en su propio estándar. Para liderar tu sector no basta con operar bien: necesitas exponer a tu talento a estímulos de vanguardia que desafíen su forma de pensar y abran nuevas fronteras.',

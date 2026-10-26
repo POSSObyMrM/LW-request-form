@@ -10,27 +10,27 @@
       nombre: "Criterio y ejecuci\xF3n",
       reto: {
         titulo: "M\xE1s criterio, menos piloto autom\xE1tico",
-        texto: "Tu equipo ejecuta, pero \xBFtambi\xE9n cuestiona, propone y toma decisiones? Aqu\xED hay margen para desarrollar un pensamiento m\xE1s estrat\xE9gico."
+        texto: "Pasar de ejecutar a cuestionar, proponer y decidir, tambi\xE9n al incorporar la IA, es uno de los retos que m\xE1s vemos hoy. Lo trabajamos a menudo con equipos t\xE9cnicos y creativos."
       },
-      fortaleza: "Base t\xE9cnica s\xF3lida y criterio propio para resolver."
+      fortaleza: "Tus respuestas apuntan a una base t\xE9cnica s\xF3lida y criterio propio."
     },
     B: {
       etiqueta: "Influencia y liderazgo",
       nombre: "Colaboraci\xF3n, influencia y liderazgo",
       reto: {
-        titulo: "Muchas reuniones. Pocas decisiones.",
-        texto: "A veces los proyectos no avanzan por falta de liderazgo, comunicaci\xF3n o capacidad para ponerse de acuerdo."
+        titulo: "Decidir y avanzar juntos.",
+        texto: "Cuando a los proyectos les cuesta avanzar, suele haber margen en liderazgo, comunicaci\xF3n y capacidad para ponerse de acuerdo. Es un terreno en el que acompa\xF1amos a muchos equipos."
       },
-      fortaleza: "Saben coordinarse, decidir y defender sus ideas."
+      fortaleza: "Tus respuestas apuntan a un equipo que sabe coordinarse, decidir y defender sus ideas."
     },
     C: {
       etiqueta: "Cultura y estrategia",
       nombre: "Cultura y estrategia",
       reto: {
         titulo: "Un equipo, no varias islas.",
-        texto: "Cuando cada departamento va por su cuenta, cuesta compartir objetivos, coordinarse y avanzar juntos."
+        texto: "Conectar el trabajo diario con los objetivos de la empresa, y a los departamentos entre s\xED, es clave para avanzar juntos. Es un reto muy habitual y sabemos c\xF3mo abordarlo."
       },
-      fortaleza: "El equipo entiende hacia d\xF3nde va la empresa."
+      fortaleza: "Tus respuestas apuntan a un equipo que tiene claro hacia d\xF3nde va la empresa."
     }
   };
   var TEXTOS_RESULTADO = {
@@ -98,7 +98,7 @@
   var ARQUETIPOS = {
     1: {
       nombre: "Silo de ejecuci\xF3n",
-      lema: "Mucho talento t\xE9cnico, cero peso en negocio ni visi\xF3n.",
+      lema: "Mucho talento t\xE9cnico que podr\xEDa pesar m\xE1s en el negocio.",
       fuertes: ["A"],
       radiografia: "En equipos con este perfil solemos encontrar mucho talento t\xE9cnico trabajando algo encerrado en su disciplina: resuelven bien los encargos, pero les cuesta conectar con las prioridades del negocio.",
       oportunidades: [
@@ -116,7 +116,7 @@
     },
     2: {
       nombre: "Coordinaci\xF3n sin oficio",
-      lema: "Mucha reuni\xF3n y facilitaci\xF3n, pero t\xE9cnica desactualizada.",
+      lema: "Buena coordinaci\xF3n, con un oficio que pide ponerse al d\xEDa.",
       fuertes: ["B"],
       radiografia: "Con este perfil solemos ver mandos que coordinan y facilitan bien, mientras el oficio de base se ha quedado atr\xE1s y la IA se usa m\xE1s por inercia que con criterio.",
       oportunidades: [
@@ -134,7 +134,7 @@
     },
     3: {
       nombre: "Visi\xF3n sin tracci\xF3n",
-      lema: "Mucho prop\xF3sito y estrategia, nada aterriza en el barro.",
+      lema: "Un rumbo claro que cuesta llevar al d\xEDa a d\xEDa.",
       fuertes: ["C"],
       radiografia: "Es habitual encontrar un prop\xF3sito claro y objetivos ambiciosos que luego encallan en el d\xEDa a d\xEDa, por falta de oficio y de liderazgo horizontal para aterrizarlos.",
       oportunidades: [
@@ -152,7 +152,7 @@
     },
     4: {
       nombre: "Esfuerzo disperso",
-      lema: "Aut\xF3nomos y resolutivos, pero van por libre respecto al negocio.",
+      lema: "Autonom\xEDa y empuje que piden m\xE1s alineamiento con el negocio.",
       fuertes: ["A", "B"],
       radiografia: "Solemos ver profesionales aut\xF3nomos y resolutivos que desbloquean proyectos con facilidad, pero que avanzan por libre, a veces lejos de lo que el negocio prioriza.",
       oportunidades: [
@@ -170,7 +170,7 @@
     },
     5: {
       nombre: "Brecha t\xE9cnica",
-      lema: "L\xEDderes y rumbo claros, pero la base no da el nivel requerido.",
+      lema: "L\xEDderes y rumbo claros, con una base que necesita crecer en oficio.",
       fuertes: ["B", "C"],
       radiografia: "En equipos as\xED suele haber l\xEDderes con el rumbo claro y una cultura sana, pero una base que a\xFAn no llega al nivel t\xE9cnico necesario y obliga a supervisar de cerca.",
       oportunidades: [
@@ -188,7 +188,7 @@
     },
     6: {
       nombre: "Falta de influencia",
-      lema: "Tienen el nivel y entienden la visi\xF3n, pero no tienen voz ni peso.",
+      lema: "Nivel y visi\xF3n que todav\xEDa no se traducen en voz e influencia.",
       fuertes: ["A", "C"],
       radiografia: "Con este perfil es frecuente encontrar buen nivel t\xE9cnico y visi\xF3n compartida, pero poca voz: en las mesas con Producto, Ventas o Direcci\xF3n sus argumentos no siempre calan.",
       oportunidades: [
@@ -206,7 +206,7 @@
     },
     7: {
       nombre: "Bloqueo sist\xE9mico",
-      lema: "Todo preocupa. Saturaci\xF3n, desafecci\xF3n y falta de rumbo simult\xE1nea.",
+      lema: "Varios frentes abiertos a la vez, que conviene abordar juntos.",
       fuertes: [],
       radiografia: "Cuando todo preocupa a la vez, solemos ver equipos tensionados en varios frentes. Es habitual tras reorganizaciones, fusiones o transformaciones que no han terminado de cuajar.",
       oportunidades: [
@@ -224,13 +224,13 @@
     },
     8: {
       nombre: "Salto de nivel",
-      lema: "Todo bajo control. Equipo s\xF3lido listo para romper su techo.",
+      lema: "Un equipo s\xF3lido, listo para dar el siguiente paso.",
       fuertes: ["A", "B", "C"],
       radiografia: "Solemos encontrar equipos cohesionados, solventes y bien alineados. El reto suele ser no acomodarse: cuando todo funciona, es f\xE1cil dejar de mirar hacia d\xF3nde va el sector.",
       oportunidades: [
-        "Riesgo de complacencia operativa: cumplir con correcci\xF3n los objetivos del presente pero perder la capacidad de anticiparse a cambios disruptivos.",
-        "Techo de innovaci\xF3n: tendencia a optimizar lo conocido mediante soluciones incrementales en lugar de plantear propuestas transformadoras.",
-        "Endogamia metodol\xF3gica: desconexi\xF3n de las conversaciones y tendencias de vanguardia del sector por centrarse exclusivamente en la inercia diaria."
+        "Mantener la capacidad de anticiparse cuando el d\xEDa a d\xEDa ya funciona bien.",
+        "Pasar de las mejoras incrementales a propuestas que transformen.",
+        "Seguir conectados con las conversaciones y tendencias de frontera del sector."
       ],
       mensaje: "El mayor riesgo de un equipo de alto rendimiento no es el error, sino la complacencia de acomodarse en su propio est\xE1ndar. Para liderar tu sector no basta con operar bien: necesitas exponer a tu talento a est\xEDmulos de vanguardia que desaf\xEDen su forma de pensar y abran nuevas fronteras.",
       leadMagnet: {
