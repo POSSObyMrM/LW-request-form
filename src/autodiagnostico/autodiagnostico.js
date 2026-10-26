@@ -527,10 +527,18 @@ function pintarResultado(guardado) {
       el('label', { for: id, class: 'autodiag-etiqueta-campo', text: etiqueta }),
       el('input', { id, type: 'text', class: 'autodiag-input', maxlength: '160', ...attrs }),
     ]);
+  // Mismo marcado que la casilla del formulario del dossier (template.js): LearnWorlds oculta el checkbox nativo y
+  // pinta el suyo (.checkbox-box con el icono de check), así que se ve igual que en el resto de la web.
   const casilla = (id, texto, obligatoria) =>
-    el('label', { class: 'autodiag-casilla', for: id }, [
-      el('input', { id, type: 'checkbox', required: obligatoria || null }),
-      el('span', {}, [...textoConPrivacidad(texto), document.createTextNode(' '), obligatoria ? null : el('span', { class: 'autodiag-opcional', text: '(opcional)' })]),
+    el('div', { class: 'lead-form__optin-checkbox autodiag-casilla' }, [
+      el('label', { for: id, class: 'checkbox-label with-flexible-parts lw-checkbox learnworlds-align-left' }, [
+        el('input', { id, type: 'checkbox', class: 'checkbox flexible-part js-optin-checkbox', required: obligatoria || null }),
+        el('div', { class: 'checkbox-box lw-border-color-fadeout80 flexible-part' }, [el('span', { class: 'learnworlds-icon learnworlds-heading3-small fas fa-check' })]),
+        el('div', { class: 'flexible-part' }, [
+          ...textoConPrivacidad(texto),
+          obligatoria ? document.createTextNode(' *') : el('span', { class: 'autodiag-opcional', text: ' (opcional)' }),
+        ]),
+      ]),
     ]);
   const formContacto = el('form', { class: 'autodiag-form autodiag-form-contacto', novalidate: true, hidden: true }, [
     campoTexto('autodiag-nombre', 'Tu nombre', { autocomplete: 'name', maxlength: '120', required: true }),
@@ -568,7 +576,6 @@ function pintarResultado(guardado) {
     const empresa = obligatorio('autodiag-empresa', 'Escribe el nombre de tu empresa.');
     if (!empresa) return;
     const privacidad = formContacto.querySelector('#autodiag-privacidad');
-    privacidad.classList.toggle('is-invalido', !privacidad.checked);
     if (!privacidad.checked) {
       aviso.textContent = 'Para poder responderte, acepta la Política de Privacidad.';
       privacidad.focus();
