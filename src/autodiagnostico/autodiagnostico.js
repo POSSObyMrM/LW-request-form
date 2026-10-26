@@ -1,5 +1,5 @@
 import { AREAS, ARQUETIPOS, CASOS, ESCALA, INTRO, PREGUNTAS, TEXTOS_RESULTADO as T } from './datos.js';
-import { CENTRO, VERTICES, geometriaTriangulo, propuestaPartes, resultadoDe, respuestasValidas } from './calculo.js';
+import { ARQUETIPO_TODO_UN_POCO, CENTRO, VERTICES, geometriaTriangulo, propuestaPartes, resultadoDe, respuestasValidas } from './calculo.js';
 import { getUTMParams } from '../utm.js';
 
 // Autodiagnóstico InCompany. Script independiente de request-form.js: se enlaza aparte en LearnWorlds.
@@ -658,7 +658,7 @@ function pintarResultado(guardado) {
   pintar(
     el('div', { class: 'autodiag-cabecera' }, [
       el('p', { class: 'autodiag-eyebrow', text: T.eyebrow }),
-      el('h2', { id: 'autodiag-titulo', class: 'autodiag-titulo learnworlds-subheading learnworlds-subheading-small', 'data-foco': true, tabindex: '-1', text: T.titulo }),
+      el('h2', { id: 'autodiag-titulo', class: 'autodiag-titulo learnworlds-subheading learnworlds-subheading-small', 'data-foco': true, tabindex: '-1', text: a.tituloResultado || T.titulo }),
       el('p', { class: 'autodiag-fecha', text: 'Diagnóstico del ' + fechaLarga(guardado.fecha) }),
     ]),
 
@@ -679,7 +679,9 @@ function pintarResultado(guardado) {
       el('p', {
         class: 'autodiag-texto',
         text:
-          n > 0
+          r.arquetipo === ARQUETIPO_TODO_UN_POCO
+            ? 'Según tus respuestas, las tres áreas tienen margen de mejora, sin que ninguna destaque sobre las demás:'
+            : n > 0
             ? 'Según tus respuestas hay ' + NUMEROS[n] + (n === 1 ? ' área en la' : ' áreas en las') + ' que podéis mejorar:'
             : 'Según tus respuestas no hay ningún área que necesite mejorar con urgencia. Vuestro reto es otro:',
       }),
@@ -691,7 +693,7 @@ function pintarResultado(guardado) {
                 el('div', {}, [
                   el('p', { class: 'autodiag-reto-titulo' }, [
                     document.createTextNode(AREAS[area].reto.titulo),
-                    i === 0 && n > 1 ? el('span', { class: 'autodiag-etiqueta', text: 'Prioritario' }) : null,
+                    i === 0 && n > 1 && r.arquetipo !== ARQUETIPO_TODO_UN_POCO ? el('span', { class: 'autodiag-etiqueta', text: 'Prioritario' }) : null,
                   ]),
                   el('p', { class: 'autodiag-reto-texto', text: AREAS[area].reto.texto }),
                 ]),

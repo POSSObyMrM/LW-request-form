@@ -248,6 +248,30 @@
       },
       // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
       solucion: "Con equipos as\xED solemos proponer est\xEDmulos de frontera, como masterclasses y programas avanzados (Beyond the Prompt, Dise\xF1o de Futuros, Econom\xEDa Conductual), que abran nuevas preguntas."
+    },
+    // Caso especial: las seis preguntas en «Me preocupa un poco» (ver ARQUETIPO_TODO_UN_POCO en calculo.js). Las tres
+    // áreas quedan «a mejorar», como en Bloqueo sistémico, pero sin ninguna preocupación fuerte: no es una crisis, es
+    // no tener claro todavía dónde está el problema.
+    9: {
+      nombre: "Foco por definir",
+      // Título propio de la pantalla final (el general, «Ya sabemos qué puede estar frenando…», choca con este perfil).
+      tituloResultado: "Ya sabemos por d\xF3nde empezar a mirar",
+      lema: "Muchas cosas mejorables, ninguna urgente: el reto es decidir por d\xF3nde empezar.",
+      fuertes: [],
+      radiografia: "Cuando todo preocupa un poco y nada destaca, solemos encontrar equipos que funcionan, pero con la sensaci\xF3n de que podr\xEDan rendir m\xE1s. Muchas veces el primer paso es poner nombre a lo que de verdad pesa.",
+      oportunidades: [
+        "Pasar de una inquietud general a dos o tres prioridades claras.",
+        "Evitar repartir el esfuerzo entre muchos frentes sin avanzar en ninguno.",
+        "Contar con una mirada externa que ayude a separar lo urgente de lo importante."
+      ],
+      mensaje: "Cuando todo parece mejorable, lo dif\xEDcil no es encontrar qu\xE9 trabajar, sino elegir. Empezar por el foco adecuado ahorra tiempo, presupuesto y formaci\xF3n que no responde a lo que el equipo necesita.",
+      leadMagnet: {
+        activo: false,
+        titulo: "Gu\xEDa: C\xF3mo priorizar el desarrollo de tu equipo",
+        descripcion: "Preguntas y criterios para pasar de una inquietud general a un plan de formaci\xF3n con foco."
+      },
+      // «Próximos pasos» sin focos: con todo empatado, cualquier orden sería arbitrario (ver propuestaPartes).
+      solucion: "Con equipos as\xED solemos empezar por una conversaci\xF3n con quienes lo lideran, para ordenar prioridades y elegir uno o dos focos con los que arrancar."
     }
   };
   var CASOS = {
@@ -304,9 +328,13 @@
     });
     return p;
   }
+  var ARQUETIPO_TODO_UN_POCO = 9;
+  function todoUnPoco(respuestas2) {
+    return PREGUNTAS.every((q, i) => q.tipo !== "escala" || respuestas2[i] === 1);
+  }
   function arquetipoDe(p) {
     const fuertes = ["A", "B", "C"].filter((a) => p[a] < UMBRAL_MEJORAR).join("");
-    const clave = Object.keys(ARQUETIPOS).find((k) => ARQUETIPOS[k].fuertes.join("") === fuertes);
+    const clave = Object.keys(ARQUETIPOS).find((k) => Number(k) !== ARQUETIPO_TODO_UN_POCO && ARQUETIPOS[k].fuertes.join("") === fuertes);
     return Number(clave);
   }
   function retosOrdenados(p) {
@@ -319,7 +347,7 @@
     const p = puntuaciones(respuestas2);
     return {
       puntuaciones: p,
-      arquetipo: arquetipoDe(p),
+      arquetipo: todoUnPoco(respuestas2) ? ARQUETIPO_TODO_UN_POCO : arquetipoDe(p),
       retos: retosOrdenados(p),
       tamano: PREGUNTAS[6].opciones[respuestas2[6]].valor
     };
@@ -348,7 +376,7 @@
   var CIERRE_PROPUESTA = "Lo concretar\xEDamos contigo, a partir de lo que de verdad necesita tu equipo.";
   function propuestaPartes(respuestas2) {
     const r = resultadoDe(respuestas2);
-    const { nivel, focos } = focosDe(respuestas2);
+    const { nivel, focos } = r.arquetipo === ARQUETIPO_TODO_UN_POCO ? { nivel: 0, focos: [] } : focosDe(respuestas2);
     return {
       solucion: ARQUETIPOS[r.arquetipo].solucion,
       introFocos: focos.length === 0 ? "" : nivel === 2 ? "Por lo que m\xE1s te preocupa, pondr\xEDamos el foco en " : "Por lo que nos cuentas, pondr\xEDamos el foco en ",
@@ -924,7 +952,7 @@
     pintar(
       el("div", { class: "autodiag-cabecera" }, [
         el("p", { class: "autodiag-eyebrow", text: TEXTOS_RESULTADO.eyebrow }),
-        el("h2", { id: "autodiag-titulo", class: "autodiag-titulo learnworlds-subheading learnworlds-subheading-small", "data-foco": true, tabindex: "-1", text: TEXTOS_RESULTADO.titulo }),
+        el("h2", { id: "autodiag-titulo", class: "autodiag-titulo learnworlds-subheading learnworlds-subheading-small", "data-foco": true, tabindex: "-1", text: a.tituloResultado || TEXTOS_RESULTADO.titulo }),
         el("p", { class: "autodiag-fecha", text: "Diagn\xF3stico del " + fechaLarga(guardado.fecha) })
       ]),
       // Arquetipo + triángulo
@@ -942,7 +970,7 @@
         el("h3", { class: "autodiag-seccion-titulo", text: TEXTOS_RESULTADO.retosTitulo }),
         el("p", {
           class: "autodiag-texto",
-          text: n > 0 ? "Seg\xFAn tus respuestas hay " + NUMEROS[n] + (n === 1 ? " \xE1rea en la" : " \xE1reas en las") + " que pod\xE9is mejorar:" : "Seg\xFAn tus respuestas no hay ning\xFAn \xE1rea que necesite mejorar con urgencia. Vuestro reto es otro:"
+          text: r.arquetipo === ARQUETIPO_TODO_UN_POCO ? "Seg\xFAn tus respuestas, las tres \xE1reas tienen margen de mejora, sin que ninguna destaque sobre las dem\xE1s:" : n > 0 ? "Seg\xFAn tus respuestas hay " + NUMEROS[n] + (n === 1 ? " \xE1rea en la" : " \xE1reas en las") + " que pod\xE9is mejorar:" : "Seg\xFAn tus respuestas no hay ning\xFAn \xE1rea que necesite mejorar con urgencia. Vuestro reto es otro:"
         }),
         n > 0 ? el(
           "ol",
@@ -953,7 +981,7 @@
               el("div", {}, [
                 el("p", { class: "autodiag-reto-titulo" }, [
                   document.createTextNode(AREAS[area].reto.titulo),
-                  i === 0 && n > 1 ? el("span", { class: "autodiag-etiqueta", text: "Prioritario" }) : null
+                  i === 0 && n > 1 && r.arquetipo !== ARQUETIPO_TODO_UN_POCO ? el("span", { class: "autodiag-etiqueta", text: "Prioritario" }) : null
                 ]),
                 el("p", { class: "autodiag-reto-texto", text: AREAS[area].reto.texto })
               ])

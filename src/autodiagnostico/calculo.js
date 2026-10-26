@@ -15,9 +15,17 @@ export function puntuaciones(respuestas) {
   return p;
 }
 
+// Excepción: con las seis preguntas en «un poco» las tres áreas suman 2 (Bloqueo sistémico), pero sin ninguna
+// preocupación fuerte. Ese caso tiene su propio arquetipo, «Foco por definir».
+export const ARQUETIPO_TODO_UN_POCO = 9;
+
+export function todoUnPoco(respuestas) {
+  return PREGUNTAS.every((q, i) => q.tipo !== 'escala' || respuestas[i] === 1);
+}
+
 export function arquetipoDe(p) {
   const fuertes = ['A', 'B', 'C'].filter((a) => p[a] < UMBRAL_MEJORAR).join('');
-  const clave = Object.keys(ARQUETIPOS).find((k) => ARQUETIPOS[k].fuertes.join('') === fuertes);
+  const clave = Object.keys(ARQUETIPOS).find((k) => Number(k) !== ARQUETIPO_TODO_UN_POCO && ARQUETIPOS[k].fuertes.join('') === fuertes);
   return Number(clave);
 }
 
@@ -38,7 +46,7 @@ export function resultadoDe(respuestas) {
   const p = puntuaciones(respuestas);
   return {
     puntuaciones: p,
-    arquetipo: arquetipoDe(p),
+    arquetipo: todoUnPoco(respuestas) ? ARQUETIPO_TODO_UN_POCO : arquetipoDe(p),
     retos: retosOrdenados(p),
     tamano: PREGUNTAS[6].opciones[respuestas[6]].valor,
   };
@@ -90,7 +98,8 @@ export const CIERRE_PROPUESTA = 'Lo concretaríamos contigo, a partir de lo que 
 // y «y en …») + '.' + cierre. Sin focos, introFocos es '' y focos [].
 export function propuestaPartes(respuestas) {
   const r = resultadoDe(respuestas);
-  const { nivel, focos } = focosDe(respuestas);
+  // Con todo en «un poco» no hay focos que destacar: la propuesta es precisamente elegirlos.
+  const { nivel, focos } = r.arquetipo === ARQUETIPO_TODO_UN_POCO ? { nivel: 0, focos: [] } : focosDe(respuestas);
   return {
     solucion: ARQUETIPOS[r.arquetipo].solucion,
     introFocos: focos.length === 0 ? '' : nivel === 2 ? 'Por lo que más te preocupa, pondríamos el foco en ' : 'Por lo que nos cuentas, pondríamos el foco en ',

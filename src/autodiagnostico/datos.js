@@ -115,7 +115,8 @@ export const PREGUNTAS = [
   },
 ];
 
-// Ocho arquetipos: uno por cada combinación de áreas «fuerte» / «a mejorar» (ver calculo.js).
+// Ocho arquetipos, uno por cada combinación de áreas «fuerte» / «a mejorar» (ver calculo.js), y un noveno para
+// quien responde «Me preocupa un poco» a todo.
 //   radiografia: desde la experiencia y en condicional (lo que solemos encontrar en equipos con este perfil): el
 //   diagnóstico sale de seis preguntas, no permite afirmar nada de forma absoluta.
 //   fuertes: áreas que están bien (el resto necesitan mejorar).
@@ -305,6 +306,33 @@ export const ARQUETIPOS = {
     // Primera frase de «Próximos pasos» (ver propuestaDe en calculo.js).
     solucion:
       'Con equipos así solemos proponer estímulos de frontera, como masterclasses y programas avanzados (Beyond the Prompt, Diseño de Futuros, Economía Conductual), que abran nuevas preguntas.',
+  },
+  // Caso especial: las seis preguntas en «Me preocupa un poco» (ver ARQUETIPO_TODO_UN_POCO en calculo.js). Las tres
+  // áreas quedan «a mejorar», como en Bloqueo sistémico, pero sin ninguna preocupación fuerte: no es una crisis, es
+  // no tener claro todavía dónde está el problema.
+  9: {
+    nombre: 'Foco por definir',
+    // Título propio de la pantalla final (el general, «Ya sabemos qué puede estar frenando…», choca con este perfil).
+    tituloResultado: 'Ya sabemos por dónde empezar a mirar',
+    lema: 'Muchas cosas mejorables, ninguna urgente: el reto es decidir por dónde empezar.',
+    fuertes: [],
+    radiografia:
+      'Cuando todo preocupa un poco y nada destaca, solemos encontrar equipos que funcionan, pero con la sensación de que podrían rendir más. Muchas veces el primer paso es poner nombre a lo que de verdad pesa.',
+    oportunidades: [
+      'Pasar de una inquietud general a dos o tres prioridades claras.',
+      'Evitar repartir el esfuerzo entre muchos frentes sin avanzar en ninguno.',
+      'Contar con una mirada externa que ayude a separar lo urgente de lo importante.',
+    ],
+    mensaje:
+      'Cuando todo parece mejorable, lo difícil no es encontrar qué trabajar, sino elegir. Empezar por el foco adecuado ahorra tiempo, presupuesto y formación que no responde a lo que el equipo necesita.',
+    leadMagnet: {
+      activo: false,
+      titulo: 'Guía: Cómo priorizar el desarrollo de tu equipo',
+      descripcion: 'Preguntas y criterios para pasar de una inquietud general a un plan de formación con foco.',
+    },
+    // «Próximos pasos» sin focos: con todo empatado, cualquier orden sería arbitrario (ver propuestaPartes).
+    solucion:
+      'Con equipos así solemos empezar por una conversación con quienes lo lideran, para ordenar prioridades y elegir uno o dos focos con los que arrancar.',
   },
 };
 
