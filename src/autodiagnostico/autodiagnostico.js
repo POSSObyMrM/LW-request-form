@@ -475,6 +475,17 @@ function enviarAPosso(datos) {
     });
 }
 
+// «Política de Privacidad» dentro de un texto, como enlace a la página de privacidad del sitio.
+function textoConPrivacidad(texto) {
+  const i = texto.indexOf('Política de Privacidad');
+  if (i === -1) return [document.createTextNode(texto)];
+  return [
+    document.createTextNode(texto.slice(0, i)),
+    el('a', { href: '/privacy', target: '_blank', rel: 'noopener', text: 'Política de Privacidad' }),
+    document.createTextNode(texto.slice(i + 'Política de Privacidad'.length)),
+  ];
+}
+
 function validarEmail(form, input) {
   const email = input.value.trim();
   const ok = EMAIL_RE.test(email);
@@ -519,7 +530,7 @@ function pintarResultado(guardado) {
   const casilla = (id, texto, obligatoria) =>
     el('label', { class: 'autodiag-casilla', for: id }, [
       el('input', { id, type: 'checkbox', required: obligatoria || null }),
-      el('span', {}, [document.createTextNode(texto + ' '), obligatoria ? null : el('span', { class: 'autodiag-opcional', text: '(opcional)' })]),
+      el('span', {}, [...textoConPrivacidad(texto), document.createTextNode(' '), obligatoria ? null : el('span', { class: 'autodiag-opcional', text: '(opcional)' })]),
     ]);
   const formContacto = el('form', { class: 'autodiag-form autodiag-form-contacto', novalidate: true, hidden: true }, [
     campoTexto('autodiag-nombre', 'Tu nombre', { autocomplete: 'name', maxlength: '120', required: true }),
@@ -556,9 +567,11 @@ function pintarResultado(guardado) {
     if (!email) return;
     const empresa = obligatorio('autodiag-empresa', 'Escribe el nombre de tu empresa.');
     if (!empresa) return;
-    if (!formContacto.querySelector('#autodiag-privacidad').checked) {
+    const privacidad = formContacto.querySelector('#autodiag-privacidad');
+    privacidad.classList.toggle('is-invalido', !privacidad.checked);
+    if (!privacidad.checked) {
       aviso.textContent = 'Para poder responderte, acepta la Política de Privacidad.';
-      formContacto.querySelector('#autodiag-privacidad').focus();
+      privacidad.focus();
       return;
     }
     const datos = {

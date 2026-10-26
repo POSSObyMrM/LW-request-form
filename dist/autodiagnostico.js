@@ -712,6 +712,15 @@
       if (!ok || !j.ok) throw new Error(j && j.error || "Error al enviar");
     });
   }
+  function textoConPrivacidad(texto) {
+    const i = texto.indexOf("Pol\xEDtica de Privacidad");
+    if (i === -1) return [document.createTextNode(texto)];
+    return [
+      document.createTextNode(texto.slice(0, i)),
+      el("a", { href: "/privacy", target: "_blank", rel: "noopener", text: "Pol\xEDtica de Privacidad" }),
+      document.createTextNode(texto.slice(i + "Pol\xEDtica de Privacidad".length))
+    ];
+  }
   function validarEmail(form, input) {
     const email = input.value.trim();
     const ok = EMAIL_RE.test(email);
@@ -749,7 +758,7 @@
     ]);
     const casilla = (id, texto, obligatoria) => el("label", { class: "autodiag-casilla", for: id }, [
       el("input", { id, type: "checkbox", required: obligatoria || null }),
-      el("span", {}, [document.createTextNode(texto + " "), obligatoria ? null : el("span", { class: "autodiag-opcional", text: "(opcional)" })])
+      el("span", {}, [...textoConPrivacidad(texto), document.createTextNode(" "), obligatoria ? null : el("span", { class: "autodiag-opcional", text: "(opcional)" })])
     ]);
     const formContacto = el("form", { class: "autodiag-form autodiag-form-contacto", novalidate: true, hidden: true }, [
       campoTexto("autodiag-nombre", "Tu nombre", { autocomplete: "name", maxlength: "120", required: true }),
@@ -786,9 +795,11 @@
       if (!email) return;
       const empresa = obligatorio("autodiag-empresa", "Escribe el nombre de tu empresa.");
       if (!empresa) return;
-      if (!formContacto.querySelector("#autodiag-privacidad").checked) {
+      const privacidad = formContacto.querySelector("#autodiag-privacidad");
+      privacidad.classList.toggle("is-invalido", !privacidad.checked);
+      if (!privacidad.checked) {
         aviso.textContent = "Para poder responderte, acepta la Pol\xEDtica de Privacidad.";
-        formContacto.querySelector("#autodiag-privacidad").focus();
+        privacidad.focus();
         return;
       }
       const datos = {
